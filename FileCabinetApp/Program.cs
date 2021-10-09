@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace FileCabinetApp
 {
@@ -16,6 +17,8 @@ namespace FileCabinetApp
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
+            new Tuple<string, Action<string>>("create", Create),
+            new Tuple<string, Action<string>>("list", List),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -95,6 +98,38 @@ namespace FileCabinetApp
         {
             Console.WriteLine("Exiting an application...");
             isRunning = false;
+        }
+
+        private static void Create(string parameters)
+        {
+            Console.Write("FirstName: ");
+            string firstname = Console.ReadLine() ?? string.Empty;
+            Console.Write("LastName: ");
+            string lastname = Console.ReadLine() ?? string.Empty;
+            Console.Write("DateOfBirth (month.day.year): ");
+            DateTime dateOfBirth;
+            while (true)
+            {
+                try
+                {
+                    dateOfBirth = Convert.ToDateTime(Console.ReadLine() ?? default, CultureInfo.InvariantCulture);
+                    break;
+                }
+                catch (FormatException)
+                {
+                    dateOfBirth = default;
+                    Console.WriteLine("Uncorrect data");
+                }
+            }
+
+            var record = new FileCabinetService();
+            int num = record.CreateRecord(firstname, lastname, dateOfBirth);
+            Console.WriteLine($"Record #{num} is created");
+        }
+
+        private static void List(string parameters)
+        {
+            Console.WriteLine("not implemented yet");
         }
     }
 }
