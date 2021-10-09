@@ -10,7 +10,7 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
-
+        private static readonly FileCabinetService Service = new ();
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -122,14 +122,16 @@ namespace FileCabinetApp
                 }
             }
 
-            var record = new FileCabinetService();
-            int num = record.CreateRecord(firstname, lastname, dateOfBirth);
+            int num = Service.CreateRecord(firstname, lastname, dateOfBirth);
             Console.WriteLine($"Record #{num} is created");
         }
 
         private static void List(string parameters)
         {
-            Console.WriteLine("not implemented yet");
+            foreach (var record in Service.GetRecords())
+            {
+                Console.WriteLine("#{0}, {1}, {2}, {3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture));
+            }
         }
     }
 }
