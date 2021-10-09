@@ -107,22 +107,15 @@ namespace FileCabinetApp
             Console.Write("LastName: ");
             string lastname = Console.ReadLine() ?? string.Empty;
             Console.Write("DateOfBirth (month.day.year): ");
-            DateTime dateOfBirth;
-            while (true)
-            {
-                try
-                {
-                    dateOfBirth = Convert.ToDateTime(Console.ReadLine() ?? default, CultureInfo.InvariantCulture);
-                    break;
-                }
-                catch (FormatException)
-                {
-                    dateOfBirth = default;
-                    Console.WriteLine("Uncorrect data");
-                }
-            }
+            DateTime dateOfBirth = Convert.ToDateTime(Console.ReadLine(), CultureInfo.InvariantCulture);
+            Console.Write("Personal count type (A, B, C): ");
+            char type = Convert.ToChar(Console.ReadLine(), CultureInfo.InvariantCulture);
+            Console.Write("Personal count number (four digits): ");
+            short number = Convert.ToInt16(Console.ReadLine(), CultureInfo.InvariantCulture);
+            Console.Write("Personal count balance: ");
+            decimal balance = Convert.ToDecimal(Console.ReadLine(), CultureInfo.InvariantCulture);
 
-            int num = Service.CreateRecord(firstname, lastname, dateOfBirth);
+            int num = Service.CreateRecord(firstname, lastname, dateOfBirth, type, number, balance);
             Console.WriteLine($"Record #{num} is created");
         }
 
@@ -130,7 +123,7 @@ namespace FileCabinetApp
         {
             foreach (var record in Service.GetRecords())
             {
-                Console.WriteLine("#{0}, {1}, {2}, {3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture));
+                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
             }
         }
     }
