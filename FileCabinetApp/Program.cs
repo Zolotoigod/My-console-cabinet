@@ -13,6 +13,7 @@ namespace FileCabinetApp
         private const int ExplanationHelpIndex = 2;
         private static readonly FileCabinetService Service = new ();
         private static bool isRunning = true;
+        private static readonly string[] Format = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy" };
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
@@ -146,7 +147,7 @@ namespace FileCabinetApp
                     DateTime dateOfBirth;
                     while (true)
                     {
-                        if (DateTime.TryParse(Console.ReadLine(), out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
+                        if (DateTime.TryParseExact(Console.ReadLine(), Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
                         {
                             break;
                         }
@@ -257,7 +258,7 @@ namespace FileCabinetApp
             DateTime dateOfBirth;
             while (true)
             {
-                if (DateTime.TryParse(Console.ReadLine(), out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
+                if (DateTime.TryParseExact(Console.ReadLine(), Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
                 {
                     break;
                 }
