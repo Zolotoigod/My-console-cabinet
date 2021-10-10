@@ -128,13 +128,10 @@ namespace FileCabinetApp
             while (true)
             {
                 store = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter))
+                if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter) && store.Length >= 2 && store.Length <= 60)
                 {
-                    if (store.Length >= 2 && store.Length <= 60)
-                    {
-                        lastname = store;
-                        break;
-                    }
+                    lastname = store;
+                    break;
                 }
                 else
                 {
@@ -146,20 +143,18 @@ namespace FileCabinetApp
             DateTime dateOfBirth;
             while (true)
             {
-                if (DateTime.TryParse(Console.ReadLine(), out dateOfBirth))
+                if (DateTime.TryParse(Console.ReadLine(), out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
                 {
-                    if (dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
-                    {
-                        break;
-                    }
+                    break;
                 }
                 else
                 {
                     Console.WriteLine("Incorrect dateOfBirth");
+                    Console.Write("DateOfBirth (month.day.year): ");
                 }
             }
 
-            Console.Write("Personal count type (A, B, C): ");
+            Console.Write("Personal account type (A, B, C): ");
             char type;
             while (true)
             {
@@ -172,40 +167,37 @@ namespace FileCabinetApp
                 else
                 {
                     Console.WriteLine("Incorrect type of account");
+                    Console.Write("Personal account type (A, B, C): ");
                 }
             }
 
-            Console.Write("Personal count number (four digits): ");
+            Console.Write("Personal account number (four digits): ");
             short number;
             while (true)
             {
-                if (short.TryParse(Console.ReadLine(), out number))
+                if (short.TryParse(Console.ReadLine(), out number) && number > 0 && number <= 9999)
                 {
-                    if (number > 0 && number <= 9999)
-                    {
-                        break;
-                    }
+                     break;
                 }
                 else
                 {
                     Console.WriteLine("Incorrect number of account");
+                    Console.Write("Personal account number (four digits): ");
                 }
             }
 
-            Console.Write("Personal count balance: ");
+            Console.Write("Personal account balance: ");
             decimal balance;
             while (true)
             {
-                if (decimal.TryParse(Console.ReadLine(), out balance))
+                if (decimal.TryParse(Console.ReadLine(), out balance) && balance > 0)
                 {
-                    if (balance > 0)
-                    {
-                        break;
-                    }
+                    break;
                 }
                 else
                 {
                     Console.WriteLine("Incorrect balance of account");
+                    Console.Write("Personal account balance: ");
                 }
             }
 
