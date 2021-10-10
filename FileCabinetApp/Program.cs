@@ -20,6 +20,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("exit", Exit),
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
+            new Tuple<string, Action<string>>("edit", Edit),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -101,6 +102,122 @@ namespace FileCabinetApp
             isRunning = false;
         }
 
+        private static void Edit(string parameters)
+        {
+            int id;
+            if (int.TryParse(parameters, out id))
+            {
+                if (id <= Service.GetStat() && id > 0)
+                {
+                    string store;
+                    Console.Write("FirstName: ");
+                    string firstname;
+                    while (true)
+                    {
+                        store = Console.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter) && store.Length >= 2 && store.Length <= 60)
+                        {
+                            firstname = store;
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Incorrect FirstName");
+                        }
+                    }
+
+                    Console.Write("LastName: ");
+                    string lastname;
+                    while (true)
+                    {
+                        store = Console.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter) && store.Length >= 2 && store.Length <= 60)
+                        {
+                            lastname = store;
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Incorrect LastName");
+                        }
+                    }
+
+                    Console.Write("DateOfBirth (month.day.year): ");
+                    DateTime dateOfBirth;
+                    while (true)
+                    {
+                        if (DateTime.TryParse(Console.ReadLine(), out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Incorrect dateOfBirth");
+                            Console.Write("DateOfBirth (month.day.year): ");
+                        }
+                    }
+
+                    Console.Write("Personal account type (A, B, C): ");
+                    char type;
+                    while (true)
+                    {
+                        store = Console.ReadLine().ToUpper(CultureInfo.InvariantCulture);
+                        if ((store.StartsWith('A') || store.StartsWith('B') || store.StartsWith('C')) && store.Length == 1)
+                        {
+                            type = store[0];
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Incorrect type of account");
+                            Console.Write("Personal account type (A, B, C): ");
+                        }
+                    }
+
+                    Console.Write("Personal account number (four digits): ");
+                    short number;
+                    while (true)
+                    {
+                        if (short.TryParse(Console.ReadLine(), out number) && number > 0 && number <= 9999)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Incorrect number of account");
+                            Console.Write("Personal account number (four digits): ");
+                        }
+                    }
+
+                    Console.Write("Personal account balance: ");
+                    decimal balance;
+                    while (true)
+                    {
+                        if (decimal.TryParse(Console.ReadLine(), out balance) && balance > 0)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Incorrect balance of account");
+                            Console.Write("Personal account balance: ");
+                        }
+                    }
+
+                    Service.EditRecord(id, firstname, lastname, dateOfBirth, type, number, balance);
+                    Console.WriteLine($"record #{id} is updated");
+                }
+                else
+                {
+                    Console.WriteLine($"#{parameters} record is not found");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Incorrect id");
+            }
+        }
+
         private static void Create(string parameters)
         {
             string store;
@@ -109,13 +226,10 @@ namespace FileCabinetApp
             while (true)
             {
                 store = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter))
+                if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter) && store.Length >= 2 && store.Length <= 60)
                 {
-                    if (store.Length >= 2 && store.Length <= 60)
-                    {
-                        firstname = store;
-                        break;
-                    }
+                    firstname = store;
+                    break;
                 }
                 else
                 {
