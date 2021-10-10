@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 
 namespace FileCabinetApp
 {
@@ -102,18 +103,111 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
+            string store;
             Console.Write("FirstName: ");
-            string firstname = Console.ReadLine();
+            string firstname;
+            while (true)
+            {
+                store = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter))
+                {
+                    if (store.Length >= 2 && store.Length <= 60)
+                    {
+                        firstname = store;
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect FirstName");
+                }
+            }
+
             Console.Write("LastName: ");
-            string lastname = Console.ReadLine();
+            string lastname;
+            while (true)
+            {
+                store = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter))
+                {
+                    if (store.Length >= 2 && store.Length <= 60)
+                    {
+                        lastname = store;
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect LastName");
+                }
+            }
+
             Console.Write("DateOfBirth (month.day.year): ");
-            DateTime dateOfBirth = Convert.ToDateTime(Console.ReadLine(), CultureInfo.InvariantCulture);
+            DateTime dateOfBirth;
+            while (true)
+            {
+                if (DateTime.TryParse(Console.ReadLine(), out dateOfBirth))
+                {
+                    if (dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect dateOfBirth");
+                }
+            }
+
             Console.Write("Personal count type (A, B, C): ");
-            char type = Convert.ToChar(Console.ReadLine(), CultureInfo.InvariantCulture);
+            char type;
+            while (true)
+            {
+                store = Console.ReadLine().ToUpper(CultureInfo.InvariantCulture);
+                if ((store.StartsWith('A') || store.StartsWith('B') || store.StartsWith('C')) && store.Length == 1)
+                {
+                    type = store[0];
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect type of account");
+                }
+            }
+
             Console.Write("Personal count number (four digits): ");
-            short number = Convert.ToInt16(Console.ReadLine(), CultureInfo.InvariantCulture);
+            short number;
+            while (true)
+            {
+                if (short.TryParse(Console.ReadLine(), out number))
+                {
+                    if (number > 0 && number <= 9999)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect number of account");
+                }
+            }
+
             Console.Write("Personal count balance: ");
-            decimal balance = Convert.ToDecimal(Console.ReadLine(), CultureInfo.InvariantCulture);
+            decimal balance;
+            while (true)
+            {
+                if (decimal.TryParse(Console.ReadLine(), out balance))
+                {
+                    if (balance > 0)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect balance of account");
+                }
+            }
 
             int num = Service.CreateRecord(firstname, lastname, dateOfBirth, type, number, balance);
             Console.WriteLine($"Record #{num} is created");
