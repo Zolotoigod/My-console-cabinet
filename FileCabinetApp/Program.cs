@@ -103,9 +103,9 @@ namespace FileCabinetApp
         private static void Create(string parameters)
         {
             Console.Write("FirstName: ");
-            string firstname = Console.ReadLine() ?? string.Empty;
+            string firstname = Console.ReadLine();
             Console.Write("LastName: ");
-            string lastname = Console.ReadLine() ?? string.Empty;
+            string lastname = Console.ReadLine();
             Console.Write("DateOfBirth (month.day.year): ");
             DateTime dateOfBirth = Convert.ToDateTime(Console.ReadLine(), CultureInfo.InvariantCulture);
             Console.Write("Personal count type (A, B, C): ");
