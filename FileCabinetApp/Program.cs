@@ -11,7 +11,7 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
-        private static readonly FileCabinetService Service = new ();
+        private static readonly FileCabinetService Service = new();
         private static readonly string[] Format = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy" };
         private static bool isRunning = true;
 
@@ -22,6 +22,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
+            new Tuple<string, Action<string>>("find", Find),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -292,7 +293,7 @@ namespace FileCabinetApp
             {
                 if (short.TryParse(Console.ReadLine(), out number) && number > 0 && number <= 9999)
                 {
-                     break;
+                    break;
                 }
                 else
                 {
@@ -318,6 +319,30 @@ namespace FileCabinetApp
 
             int num = Service.CreateRecord(firstname, lastname, dateOfBirth, type, number, balance);
             Console.WriteLine($"Record #{num} is created");
+        }
+
+        private static void Find(string parameters)
+        {
+            string[] serchedValue = parameters.Split(' ', 2);
+            serchedValue[0] = serchedValue[0].ToUpperInvariant();
+            switch (serchedValue[0])
+            {
+                case "FIRSTNAME":
+                    {
+                        foreach (var record in Service.FindByFirstName(serchedValue[1]))
+                        {
+                            Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                        }
+
+                        break;
+                    }
+
+                case "_":
+                    {
+                        Console.WriteLine("Unknown field");
+                        break;
+                    }
+            }
         }
 
         private static void List(string parameters)
