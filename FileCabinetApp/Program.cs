@@ -37,6 +37,12 @@ namespace FileCabinetApp
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
 
+            // Add eny tast objekt
+            Service.CreateRecord("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m);
+            Service.CreateRecord("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m);
+            Service.CreateRecord("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m);
+            Service.CreateRecord("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m);
+
             do
             {
                 Console.Write("> ");
@@ -323,25 +329,42 @@ namespace FileCabinetApp
 
         private static void Find(string parameters)
         {
-            string[] serchedValue = parameters.Split(' ', 2);
-            serchedValue[0] = serchedValue[0].ToUpperInvariant();
-            switch (serchedValue[0])
+            string[] serchedField = parameters.Split(' ', 2);
+            if (serchedField.Length == 2)
             {
-                case "FIRSTNAME":
-                    {
-                        foreach (var record in Service.FindByFirstName(serchedValue[1]))
+                serchedField[0] = serchedField[0].ToUpperInvariant();
+                switch (serchedField[0])
+                {
+                    case "FIRSTNAME":
                         {
-                            Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                            foreach (var record in Service.FindByFirstName(serchedField[1]))
+                            {
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                            }
+
+                            break;
                         }
 
-                        break;
-                    }
+                    case "LASTNAME":
+                        {
+                            foreach (var record in Service.FindByLastName(serchedField[1]))
+                            {
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                            }
 
-                case "_":
-                    {
-                        Console.WriteLine("Unknown field");
-                        break;
-                    }
+                            break;
+                        }
+
+                    case "_":
+                        {
+                            Console.WriteLine("Unknown field");
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Incorrect find parameters");
             }
         }
 

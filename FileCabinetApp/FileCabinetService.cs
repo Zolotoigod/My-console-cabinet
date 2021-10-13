@@ -67,6 +67,30 @@ namespace FileCabinetApp
                 }
             }
 
+            if (serchedRecs.Count == 0)
+            {
+                Console.WriteLine($"Firstname ({firstName}) not found");
+            }
+
+            return serchedRecs.ToArray();
+        }
+
+        public FileCabinetRecord[] FindByLastName(string lastName)
+        {
+            List<FileCabinetRecord> serchedRecs = new ();
+            foreach (var record in this.list)
+            {
+                if (record.LastName.ToUpperInvariant() == lastName?.ToUpperInvariant())
+                {
+                    serchedRecs.Add(record);
+                }
+            }
+
+            if (serchedRecs.Count == 0)
+            {
+                Console.WriteLine($"Lastname ({lastName}) not found");
+            }
+
             return serchedRecs.ToArray();
         }
     }
