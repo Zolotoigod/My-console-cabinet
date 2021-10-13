@@ -93,5 +93,30 @@ namespace FileCabinetApp
 
             return serchedRecs.ToArray();
         }
+
+        public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirth)
+        {
+            DateTime result;
+            if (!DateTime.TryParse(dateOfBirth, out result))
+            {
+                Console.WriteLine($"Lastname ({dateOfBirth}) not found");
+            }
+
+            List<FileCabinetRecord> serchedRecs = new ();
+            foreach (var record in this.list)
+            {
+                if (record.DateOfBirth == result)
+                {
+                    serchedRecs.Add(record);
+                }
+            }
+
+            if (serchedRecs.Count == 0)
+            {
+                Console.WriteLine($"Incorrect date");
+            }
+
+            return serchedRecs.ToArray();
+        }
     }
 }

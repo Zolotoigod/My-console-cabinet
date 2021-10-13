@@ -355,6 +355,16 @@ namespace FileCabinetApp
                             break;
                         }
 
+                    case "DATEOFBIRTH":
+                        {
+                            foreach (var record in Service.FindByDateOfBirth(serchedField[1]))
+                            {
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                            }
+
+                            break;
+                        }
+
                     case "_":
                         {
                             Console.WriteLine("Unknown field");
