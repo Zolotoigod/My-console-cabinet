@@ -213,16 +213,16 @@ namespace FileCabinetApp
                     }
 
                     Service.EditRecord(id, firstname, lastname, dateOfBirth, type, number, balance);
-                    Console.WriteLine($"record #{id} is updated");
+                    Console.WriteLine($"record #{id} is updated\n");
                 }
                 else
                 {
-                    Console.WriteLine($"#{parameters} record is not found");
+                    Console.WriteLine($"#{parameters} record is not found\n");
                 }
             }
             else
             {
-                Console.WriteLine("Incorrect id");
+                Console.WriteLine("Incorrect id\n");
             }
         }
 
@@ -324,7 +324,7 @@ namespace FileCabinetApp
             }
 
             int num = Service.CreateRecord(firstname, lastname, dateOfBirth, type, number, balance);
-            Console.WriteLine($"Record #{num} is created");
+            Console.WriteLine($"Record #{num} is created\n");
         }
 
         private static void Find(string parameters)
@@ -337,9 +337,14 @@ namespace FileCabinetApp
                 {
                     case "FIRSTNAME":
                         {
+                            if (Service.FindByFirstName(serchedField[1]).Length == 0)
+                            {
+                                Console.WriteLine($"firstName {serchedField[1]} not found\n");
+                            }
+
                             foreach (var record in Service.FindByFirstName(serchedField[1]))
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}\n", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
                             }
 
                             break;
@@ -349,7 +354,7 @@ namespace FileCabinetApp
                         {
                             foreach (var record in Service.FindByLastName(serchedField[1]))
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}\n", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
                             }
 
                             break;
@@ -359,7 +364,7 @@ namespace FileCabinetApp
                         {
                             foreach (var record in Service.FindByDateOfBirth(serchedField[1]))
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}\n", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
                             }
 
                             break;
@@ -367,14 +372,14 @@ namespace FileCabinetApp
 
                     case "_":
                         {
-                            Console.WriteLine("Unknown field");
+                            Console.WriteLine("Unknown field\n");
                             break;
                         }
                 }
             }
             else
             {
-                Console.WriteLine("Incorrect find parameters");
+                Console.WriteLine("Incorrect find parameters\n");
             }
         }
 
@@ -384,6 +389,8 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
             }
+
+            Console.WriteLine();
         }
     }
 }

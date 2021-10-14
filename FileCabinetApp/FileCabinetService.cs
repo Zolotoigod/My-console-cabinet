@@ -7,6 +7,7 @@ namespace FileCabinetApp
     public class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new ();
+        private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
 
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
         {
@@ -32,18 +33,42 @@ namespace FileCabinetApp
             };
 
             this.list.Add(record);
+            if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
+            {
+                this.firstNameDictionary[firstName.ToUpperInvariant()].Add(record);
+            }
+            else
+            {
+                this.firstNameDictionary.Add(firstName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
+            }
+
             return record.Id;
         }
 
         public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
         {
             var record = this.list[id - 1];
+
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                throw new ArgumentNullException(nameof(firstName), "FirstName can't be null");
+            }
+
+            if (string.IsNullOrWhiteSpace(lastName))
+            {
+                throw new ArgumentNullException(nameof(lastName), "LastName can't be null");
+            }
+
+            this.firstNameDictionary.Remove(record.FirstName.ToUpperInvariant());
+
             record.FirstName = firstName?.Length >= 2 && firstName.Length <= 60 ? firstName : throw new ArgumentException("incorrect FirstName");
             record.LastName = lastName?.Length >= 2 && lastName.Length <= 60 ? lastName : throw new ArgumentException("incorrect FirstName");
             record.DateOfBirth = dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year ? dateOfBirth : throw new ArgumentException("Year of birth should be more than 1950 end less than current date");
             record.PersonalAccountType = char.ToUpper(type, CultureInfo.InvariantCulture).Equals('A') || char.ToUpper(type, CultureInfo.InvariantCulture).Equals('B') || char.ToUpper(type, CultureInfo.InvariantCulture).Equals('C') ? type : throw new ArgumentException("Type can be A, B, C only");
             record.PersonalAccountNumber = number > 0 && number <= 9999 ? number : throw new ArgumentException("Number should be more than 0 end less than 9999");
             record.PersonalAccountBalance = balance > 0 ? balance : throw new ArgumentException("Balance can't be less than zero");
+
+            this.firstNameDictionary.Add(firstName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
         }
 
         public FileCabinetRecord[] GetRecords()
@@ -58,21 +83,14 @@ namespace FileCabinetApp
 
         public FileCabinetRecord[] FindByFirstName(string firstName)
         {
-            List<FileCabinetRecord> serchedRecs = new ();
-            foreach (var record in this.list)
+            if (this.firstNameDictionary.ContainsKey(firstName?.ToUpperInvariant()))
             {
-                if (record.FirstName.ToUpperInvariant() == firstName?.ToUpperInvariant())
-                {
-                    serchedRecs.Add(record);
-                }
+                return this.firstNameDictionary[firstName.ToUpperInvariant()].ToArray();
             }
-
-            if (serchedRecs.Count == 0)
+            else
             {
-                Console.WriteLine($"Firstname ({firstName}) not found");
+                return Array.Empty<FileCabinetRecord>();
             }
-
-            return serchedRecs.ToArray();
         }
 
         public FileCabinetRecord[] FindByLastName(string lastName)
