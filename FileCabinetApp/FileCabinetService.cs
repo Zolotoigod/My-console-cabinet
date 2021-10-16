@@ -6,8 +6,11 @@ namespace FileCabinetApp
 {
     public class FileCabinetService
     {
+        internal static readonly string[] DateFormat = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy", "dd MM yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd,MM,yyyy" };
         private readonly List<FileCabinetRecord> list = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
+        private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
+        private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
 
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
         {
@@ -33,6 +36,9 @@ namespace FileCabinetApp
             };
 
             this.list.Add(record);
+
+            #region dictionary
+
             if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
             {
                 this.firstNameDictionary[firstName.ToUpperInvariant()].Add(record);
@@ -42,6 +48,24 @@ namespace FileCabinetApp
                 this.firstNameDictionary.Add(firstName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
             }
 
+            if (this.lastNameDictionary.ContainsKey(lastName.ToUpperInvariant()))
+            {
+                this.lastNameDictionary[lastName.ToUpperInvariant()].Add(record);
+            }
+            else
+            {
+                this.lastNameDictionary.Add(lastName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
+            }
+
+            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
+            {
+                this.dateOfBirthDictionary[dateOfBirth].Add(record);
+            }
+            else
+            {
+                this.dateOfBirthDictionary.Add(dateOfBirth, new List<FileCabinetRecord> { record });
+            }
+            #endregion
             return record.Id;
         }
 
@@ -95,46 +119,31 @@ namespace FileCabinetApp
 
         public FileCabinetRecord[] FindByLastName(string lastName)
         {
-            List<FileCabinetRecord> serchedRecs = new ();
-            foreach (var record in this.list)
+            if (this.lastNameDictionary.ContainsKey(lastName?.ToUpperInvariant()))
             {
-                if (record.LastName.ToUpperInvariant() == lastName?.ToUpperInvariant())
-                {
-                    serchedRecs.Add(record);
-                }
+                return this.lastNameDictionary[lastName.ToUpperInvariant()].ToArray();
             }
-
-            if (serchedRecs.Count == 0)
+            else
             {
-                Console.WriteLine($"Lastname ({lastName}) not found");
+                return Array.Empty<FileCabinetRecord>();
             }
-
-            return serchedRecs.ToArray();
         }
 
         public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirth)
         {
-            DateTime result;
-            if (!DateTime.TryParse(dateOfBirth, out result))
+            if (!DateTime.TryParseExact(dateOfBirth, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime resultDate))
             {
-                Console.WriteLine($"Lastname ({dateOfBirth}) not found");
+                return null;
             }
 
-            List<FileCabinetRecord> serchedRecs = new ();
-            foreach (var record in this.list)
+            if (this.dateOfBirthDictionary.ContainsKey(resultDate))
             {
-                if (record.DateOfBirth == result)
-                {
-                    serchedRecs.Add(record);
-                }
+                return this.dateOfBirthDictionary[resultDate].ToArray();
             }
-
-            if (serchedRecs.Count == 0)
+            else
             {
-                Console.WriteLine($"Incorrect date");
+                return Array.Empty<FileCabinetRecord>();
             }
-
-            return serchedRecs.ToArray();
         }
     }
 }

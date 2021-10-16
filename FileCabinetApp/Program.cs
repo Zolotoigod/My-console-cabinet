@@ -11,8 +11,7 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
-        private static readonly FileCabinetService Service = new();
-        private static readonly string[] Format = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy" };
+        private static readonly FileCabinetService Service = new ();
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -154,7 +153,7 @@ namespace FileCabinetApp
                     DateTime dateOfBirth;
                     while (true)
                     {
-                        if (DateTime.TryParseExact(Console.ReadLine(), Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
+                        if (DateTime.TryParseExact(Console.ReadLine(), FileCabinetService.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
                         {
                             break;
                         }
@@ -265,7 +264,7 @@ namespace FileCabinetApp
             DateTime dateOfBirth;
             while (true)
             {
-                if (DateTime.TryParseExact(Console.ReadLine(), Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
+                if (DateTime.TryParseExact(Console.ReadLine(), FileCabinetService.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
                 {
                     break;
                 }
@@ -340,33 +339,55 @@ namespace FileCabinetApp
                             if (Service.FindByFirstName(serchedField[1]).Length == 0)
                             {
                                 Console.WriteLine($"firstName {serchedField[1]} not found\n");
+                                break;
                             }
 
                             foreach (var record in Service.FindByFirstName(serchedField[1]))
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}\n", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
                             }
 
+                            Console.WriteLine();
                             break;
                         }
 
                     case "LASTNAME":
                         {
-                            foreach (var record in Service.FindByLastName(serchedField[1]))
+                            if (Service.FindByLastName(serchedField[1]).Length == 0)
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}\n", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                                Console.WriteLine($"Lastname {serchedField[1]} not found\n");
+                                break;
                             }
 
+                            foreach (var record in Service.FindByLastName(serchedField[1]))
+                            {
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                            }
+
+                            Console.WriteLine();
                             break;
                         }
 
                     case "DATEOFBIRTH":
                         {
-                            foreach (var record in Service.FindByDateOfBirth(serchedField[1]))
+                            if (Service.FindByDateOfBirth(serchedField[1]) == null)
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}\n", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                                Console.WriteLine("Incorrect date\n");
+                                break;
                             }
 
+                            if (Service.FindByDateOfBirth(serchedField[1]).Length == 0)
+                            {
+                                Console.WriteLine($"DateOfBirth {serchedField[1]} not found\n");
+                                break;
+                            }
+
+                            foreach (var record in Service.FindByDateOfBirth(serchedField[1]))
+                            {
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                            }
+
+                            Console.WriteLine();
                             break;
                         }
 
