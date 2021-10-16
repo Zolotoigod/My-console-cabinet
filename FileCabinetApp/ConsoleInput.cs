@@ -4,8 +4,15 @@ using System.Linq;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// Class get data from console.
+    /// </summary>
     internal class ConsoleInput : IInput
     {
+        /// <summary>
+        /// Get FirstName from console.
+        /// </summary>
+        /// <returns>string.</returns>
         string IInput.Input_FirstName()
         {
             Console.Write("FirstName: ");
@@ -25,6 +32,10 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// Get LastName from console.
+        /// </summary>
+        /// <returns>string.</returns>
         string IInput.Input_LastName()
         {
             Console.Write("LastName: ");
@@ -44,6 +55,10 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// Get DateOfBirth from console.
+        /// </summary>
+        /// <returns>DateTime.</returns>
         DateTime IInput.Input_DateOfBirth()
         {
             Console.Write("DateOfBirth (month.day.year): ");
@@ -61,6 +76,10 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// Get Type from console.
+        /// </summary>
+        /// <returns>char.</returns>
         char IInput.Input_Type()
         {
             Console.Write("Personal account type (A, B, C): ");
@@ -80,6 +99,10 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// Get Number from console.
+        /// </summary>
+        /// <returns>short.</returns>
         short IInput.Input_Number()
         {
             Console.Write("Personal account number (four digits): ");
@@ -97,6 +120,10 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// Get Balance from console.
+        /// </summary>
+        /// <returns>decimal.</returns>
         decimal IInput.Input_Balance()
         {
             Console.Write("Personal account balance: ");

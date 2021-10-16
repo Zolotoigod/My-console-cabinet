@@ -4,14 +4,30 @@ using System.Globalization;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// Service.
+    /// </summary>
     public class FileCabinetService
     {
+        /// <summary>
+        /// Field set the dateformat.
+        /// </summary>
         internal static readonly string[] DateFormat = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy", "dd MM yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd,MM,yyyy" };
         private readonly List<FileCabinetRecord> list = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
 
+        /// <summary>
+        /// Create record in service.
+        /// </summary>
+        /// <param name="firstName">set firstname.</param>
+        /// <param name="lastName">set lastname.</param>
+        /// <param name="dateOfBirth">set dateOfBirth.</param>
+        /// <param name="type">set type.</param>
+        /// <param name="number">set number.</param>
+        /// <param name="balance">set balance.</param>
+        /// <returns>Return id of record.</returns>
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
         {
             if (string.IsNullOrWhiteSpace(firstName))
@@ -40,6 +56,16 @@ namespace FileCabinetApp
             return record.Id;
         }
 
+        /// <summary>
+        /// Edit record in service by id.
+        /// </summary>
+        /// <param name="id"> id of record.</param>
+        /// <param name="firstName">set firstname.</param>
+        /// <param name="lastName">set lastname.</param>
+        /// <param name="dateOfBirth">set dateOfBirth.</param>
+        /// <param name="type">set type.</param>
+        /// <param name="number">set number.</param>
+        /// <param name="balance">set balance.</param>
         public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
         {
             var record = this.list[id - 1];
@@ -66,16 +92,29 @@ namespace FileCabinetApp
             this.firstNameDictionary.Add(firstName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
         }
 
+        /// <summary>
+        /// Return all record in servise.
+        /// </summary>
+        /// <returns>Array of records.</returns>
         public FileCabinetRecord[] GetRecords()
         {
             return this.list.ToArray();
         }
 
+        /// <summary>
+        /// Metod returned count of records.
+        /// </summary>
+        /// <returns>int count.</returns>
         public int GetStat()
         {
             return this.list.Count;
         }
 
+        /// <summary>
+        /// Serch the record in service by firstname, use dictionary.
+        /// </summary>
+        /// <param name="firstName">Parametr for search.</param>
+        /// <returns>list of FileCabinetRecord.</returns>
         public FileCabinetRecord[] FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.ContainsKey(firstName?.ToUpperInvariant()))
@@ -88,6 +127,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// Serch the record in service by Lastname, use dictionary.
+        /// </summary>
+        /// <param name="lastName">Parametr for search.</param>
+        /// <returns>list of FileCabinetRecord.</returns>
         public FileCabinetRecord[] FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.ContainsKey(lastName?.ToUpperInvariant()))
@@ -100,6 +144,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// Serch the record in service by DateOfBirth, use dictionary.
+        /// </summary>
+        /// <param name="dateOfBirth">Parametr for search.</param>
+        /// <returns>list of FileCabinetRecord.</returns>
         public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirth)
         {
             if (!DateTime.TryParseExact(dateOfBirth, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime resultDate))

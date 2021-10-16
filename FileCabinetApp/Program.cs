@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// Client for File-Cabinet-Service.
+    /// </summary>
     public static class Program
     {
         private const string DeveloperName = "Vladislav Shalkevich";
@@ -35,10 +37,13 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
         };
 
-        public static void Main(string[] args)
+        /// <summary>
+        /// Main Client metod.
+        /// </summary>
+        public static void Main()
         {
-            Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
-            Console.WriteLine(Program.HintMessage);
+            Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
+            Console.WriteLine(HintMessage);
             Console.WriteLine();
 
             // Add eny tast objekt
