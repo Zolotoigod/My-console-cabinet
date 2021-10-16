@@ -12,7 +12,6 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
         private static readonly FileCabinetService Service = new ();
-        private static readonly string[] Format = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy" };
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -22,6 +21,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
+            new Tuple<string, Action<string>>("find", Find),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -35,6 +35,12 @@ namespace FileCabinetApp
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
+
+            // Add eny tast objekt
+            Service.CreateRecord("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m);
+            Service.CreateRecord("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m);
+            Service.CreateRecord("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m);
+            Service.CreateRecord("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m);
 
             do
             {
@@ -147,7 +153,7 @@ namespace FileCabinetApp
                     DateTime dateOfBirth;
                     while (true)
                     {
-                        if (DateTime.TryParseExact(Console.ReadLine(), Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
+                        if (DateTime.TryParseExact(Console.ReadLine(), FileCabinetService.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
                         {
                             break;
                         }
@@ -206,16 +212,16 @@ namespace FileCabinetApp
                     }
 
                     Service.EditRecord(id, firstname, lastname, dateOfBirth, type, number, balance);
-                    Console.WriteLine($"record #{id} is updated");
+                    Console.WriteLine($"record #{id} is updated\n");
                 }
                 else
                 {
-                    Console.WriteLine($"#{parameters} record is not found");
+                    Console.WriteLine($"#{parameters} record is not found\n");
                 }
             }
             else
             {
-                Console.WriteLine("Incorrect id");
+                Console.WriteLine("Incorrect id\n");
             }
         }
 
@@ -258,7 +264,7 @@ namespace FileCabinetApp
             DateTime dateOfBirth;
             while (true)
             {
-                if (DateTime.TryParseExact(Console.ReadLine(), Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
+                if (DateTime.TryParseExact(Console.ReadLine(), FileCabinetService.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
                 {
                     break;
                 }
@@ -292,7 +298,7 @@ namespace FileCabinetApp
             {
                 if (short.TryParse(Console.ReadLine(), out number) && number > 0 && number <= 9999)
                 {
-                     break;
+                    break;
                 }
                 else
                 {
@@ -317,7 +323,85 @@ namespace FileCabinetApp
             }
 
             int num = Service.CreateRecord(firstname, lastname, dateOfBirth, type, number, balance);
-            Console.WriteLine($"Record #{num} is created");
+            Console.WriteLine($"Record #{num} is created\n");
+        }
+
+        private static void Find(string parameters)
+        {
+            string[] serchedField = parameters.Split(' ', 2);
+            if (serchedField.Length == 2)
+            {
+                serchedField[0] = serchedField[0].ToUpperInvariant();
+                switch (serchedField[0])
+                {
+                    case "FIRSTNAME":
+                        {
+                            if (Service.FindByFirstName(serchedField[1]).Length == 0)
+                            {
+                                Console.WriteLine($"firstName {serchedField[1]} not found\n");
+                                break;
+                            }
+
+                            foreach (var record in Service.FindByFirstName(serchedField[1]))
+                            {
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                            }
+
+                            Console.WriteLine();
+                            break;
+                        }
+
+                    case "LASTNAME":
+                        {
+                            if (Service.FindByLastName(serchedField[1]).Length == 0)
+                            {
+                                Console.WriteLine($"Lastname {serchedField[1]} not found\n");
+                                break;
+                            }
+
+                            foreach (var record in Service.FindByLastName(serchedField[1]))
+                            {
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                            }
+
+                            Console.WriteLine();
+                            break;
+                        }
+
+                    case "DATEOFBIRTH":
+                        {
+                            if (Service.FindByDateOfBirth(serchedField[1]) == null)
+                            {
+                                Console.WriteLine("Incorrect date\n");
+                                break;
+                            }
+
+                            if (Service.FindByDateOfBirth(serchedField[1]).Length == 0)
+                            {
+                                Console.WriteLine($"DateOfBirth {serchedField[1]} not found\n");
+                                break;
+                            }
+
+                            foreach (var record in Service.FindByDateOfBirth(serchedField[1]))
+                            {
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                            }
+
+                            Console.WriteLine();
+                            break;
+                        }
+
+                    case "_":
+                        {
+                            Console.WriteLine("Unknown field\n");
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Incorrect find parameters\n");
+            }
         }
 
         private static void List(string parameters)
@@ -326,6 +410,8 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
             }
+
+            Console.WriteLine();
         }
     }
 }
