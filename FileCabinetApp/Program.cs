@@ -27,6 +27,10 @@ namespace FileCabinetApp
         private static string[][] helpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
+            new string[] { "create", "creates a record", "The 'create' command creates a record." },
+            new string[] { "edit", "edits the record by id", "The 'edit' edits the record by id." },
+            new string[] { "find", "searches a record by field", "The 'find' searches a record by field." },
+            new string[] { "list", "prints all of records", "The 'list' command prints all of records." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
 
@@ -391,7 +395,7 @@ namespace FileCabinetApp
                             break;
                         }
 
-                    case "_":
+                    default:
                         {
                             Console.WriteLine("Unknown field\n");
                             break;
