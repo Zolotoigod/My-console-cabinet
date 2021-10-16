@@ -12,6 +12,17 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
         private static readonly FileCabinetService Service = new ();
+
+        private static readonly string[][] HelpMessages = new string[][]
+        {
+            new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
+            new string[] { "create", "creates a record", "The 'create' command creates a record." },
+            new string[] { "edit", "edits the record by id", "The 'edit' edits the record by id." },
+            new string[] { "find", "searches a record by field", "The 'find' searches a record by field." },
+            new string[] { "list", "prints all of records", "The 'list' command prints all of records." },
+            new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
+        };
+
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -22,16 +33,6 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
-        };
-
-        private static string[][] helpMessages = new string[][]
-        {
-            new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
-            new string[] { "create", "creates a record", "The 'create' command creates a record." },
-            new string[] { "edit", "edits the record by id", "The 'edit' edits the record by id." },
-            new string[] { "find", "searches a record by field", "The 'find' searches a record by field." },
-            new string[] { "list", "prints all of records", "The 'list' command prints all of records." },
-            new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
 
         public static void Main(string[] args)
@@ -84,10 +85,10 @@ namespace FileCabinetApp
         {
             if (!string.IsNullOrEmpty(parameters))
             {
-                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(HelpMessages, 0, HelpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.InvariantCultureIgnoreCase));
                 if (index >= 0)
                 {
-                    Console.WriteLine(helpMessages[index][Program.ExplanationHelpIndex]);
+                    Console.WriteLine(HelpMessages[index][Program.ExplanationHelpIndex]);
                 }
                 else
                 {
@@ -98,7 +99,7 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("Available commands:");
 
-                foreach (var helpMessage in helpMessages)
+                foreach (var helpMessage in HelpMessages)
                 {
                     Console.WriteLine("\t{0}\t- {1}", helpMessage[Program.CommandHelpIndex], helpMessage[Program.DescriptionHelpIndex]);
                 }
@@ -115,105 +116,17 @@ namespace FileCabinetApp
 
         private static void Edit(string parameters)
         {
-            int id;
-            if (int.TryParse(parameters, out id))
+            if (int.TryParse(parameters, out int id))
             {
                 if (id <= Service.GetStat() && id > 0)
                 {
-                    string store;
-                    Console.Write("FirstName: ");
-                    string firstname;
-                    while (true)
-                    {
-                        store = Console.ReadLine();
-                        if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter) && store.Length >= 2 && store.Length <= 60)
-                        {
-                            firstname = store;
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Incorrect FirstName");
-                        }
-                    }
-
-                    Console.Write("LastName: ");
-                    string lastname;
-                    while (true)
-                    {
-                        store = Console.ReadLine();
-                        if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter) && store.Length >= 2 && store.Length <= 60)
-                        {
-                            lastname = store;
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Incorrect LastName");
-                        }
-                    }
-
-                    Console.Write("DateOfBirth (month.day.year): ");
-                    DateTime dateOfBirth;
-                    while (true)
-                    {
-                        if (DateTime.TryParseExact(Console.ReadLine(), FileCabinetService.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Incorrect dateOfBirth");
-                            Console.Write("DateOfBirth (month.day.year): ");
-                        }
-                    }
-
-                    Console.Write("Personal account type (A, B, C): ");
-                    char type;
-                    while (true)
-                    {
-                        store = Console.ReadLine().ToUpper(CultureInfo.InvariantCulture);
-                        if ((store.StartsWith('A') || store.StartsWith('B') || store.StartsWith('C')) && store.Length == 1)
-                        {
-                            type = store[0];
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Incorrect type of account");
-                            Console.Write("Personal account type (A, B, C): ");
-                        }
-                    }
-
-                    Console.Write("Personal account number (four digits): ");
-                    short number;
-                    while (true)
-                    {
-                        if (short.TryParse(Console.ReadLine(), out number) && number > 0 && number <= 9999)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Incorrect number of account");
-                            Console.Write("Personal account number (four digits): ");
-                        }
-                    }
-
-                    Console.Write("Personal account balance: ");
-                    decimal balance;
-                    while (true)
-                    {
-                        if (decimal.TryParse(Console.ReadLine(), out balance) && balance > 0)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Incorrect balance of account");
-                            Console.Write("Personal account balance: ");
-                        }
-                    }
+                    IInput input = new ConsoleInput();
+                    string firstname = input.Input_FirstName();
+                    string lastname = input.Input_LastName();
+                    DateTime dateOfBirth = input.Input_DateOfBirth();
+                    char type = input.Input_Type();
+                    short number = input.Input_Number();
+                    decimal balance = input.Input_Balance();
 
                     Service.EditRecord(id, firstname, lastname, dateOfBirth, type, number, balance);
                     Console.WriteLine($"record #{id} is updated\n");
@@ -231,101 +144,13 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            string store;
-            Console.Write("FirstName: ");
-            string firstname;
-            while (true)
-            {
-                store = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter) && store.Length >= 2 && store.Length <= 60)
-                {
-                    firstname = store;
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Incorrect FirstName");
-                }
-            }
-
-            Console.Write("LastName: ");
-            string lastname;
-            while (true)
-            {
-                store = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(store) && store.All(char.IsLetter) && store.Length >= 2 && store.Length <= 60)
-                {
-                    lastname = store;
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Incorrect LastName");
-                }
-            }
-
-            Console.Write("DateOfBirth (month.day.year): ");
-            DateTime dateOfBirth;
-            while (true)
-            {
-                if (DateTime.TryParseExact(Console.ReadLine(), FileCabinetService.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOfBirth) && dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year)
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Incorrect dateOfBirth");
-                    Console.Write("DateOfBirth (month.day.year): ");
-                }
-            }
-
-            Console.Write("Personal account type (A, B, C): ");
-            char type;
-            while (true)
-            {
-                store = Console.ReadLine().ToUpper(CultureInfo.InvariantCulture);
-                if ((store.StartsWith('A') || store.StartsWith('B') || store.StartsWith('C')) && store.Length == 1)
-                {
-                    type = store[0];
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Incorrect type of account");
-                    Console.Write("Personal account type (A, B, C): ");
-                }
-            }
-
-            Console.Write("Personal account number (four digits): ");
-            short number;
-            while (true)
-            {
-                if (short.TryParse(Console.ReadLine(), out number) && number > 0 && number <= 9999)
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Incorrect number of account");
-                    Console.Write("Personal account number (four digits): ");
-                }
-            }
-
-            Console.Write("Personal account balance: ");
-            decimal balance;
-            while (true)
-            {
-                if (decimal.TryParse(Console.ReadLine(), out balance) && balance > 0)
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Incorrect balance of account");
-                    Console.Write("Personal account balance: ");
-                }
-            }
-
+            IInput input = new ConsoleInput();
+            string firstname = input.Input_FirstName();
+            string lastname = input.Input_LastName();
+            DateTime dateOfBirth = input.Input_DateOfBirth();
+            char type = input.Input_Type();
+            short number = input.Input_Number();
+            decimal balance = input.Input_Balance();
             int num = Service.CreateRecord(firstname, lastname, dateOfBirth, type, number, balance);
             Console.WriteLine($"Record #{num} is created\n");
         }
