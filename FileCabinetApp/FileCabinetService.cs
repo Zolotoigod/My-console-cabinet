@@ -21,38 +21,38 @@ namespace FileCabinetApp
         /// <summary>
         /// Create record in service.
         /// </summary>
-        /// <param name="firstName">set firstname.</param>
-        /// <param name="lastName">set lastname.</param>
-        /// <param name="dateOfBirth">set dateOfBirth.</param>
-        /// <param name="type">set type.</param>
-        /// <param name="number">set number.</param>
-        /// <param name="balance">set balance.</param>
-        /// <returns>Return id of record.</returns>
-        public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
+        /// <param name="store">Record push in service.</param>
+        /// <returns>Record ID.</returns>
+        public int CreateRecord(FileCabinetRecord store)
         {
-            if (string.IsNullOrWhiteSpace(firstName))
+            if (store is null)
             {
-                throw new ArgumentNullException(nameof(firstName), "FirstName can't be null");
+                throw new ArgumentNullException(nameof(store.FirstName), "Record is null");
             }
 
-            if (string.IsNullOrWhiteSpace(lastName))
+            if (string.IsNullOrWhiteSpace(store.FirstName))
             {
-                throw new ArgumentNullException(nameof(lastName), "LastName can't be null");
+                throw new ArgumentNullException(nameof(store.FirstName), "FirstName can't be null");
+            }
+
+            if (string.IsNullOrWhiteSpace(store.LastName))
+            {
+                throw new ArgumentNullException(nameof(store.LastName), "LastName can't be null");
             }
 
             var record = new FileCabinetRecord
             {
                 Id = this.list.Count + 1,
-                FirstName = firstName.Length >= 2 && firstName.Length <= 60 ? firstName : throw new ArgumentException("incorrect FirstName"),
-                LastName = lastName.Length >= 2 && lastName.Length <= 60 ? lastName : throw new ArgumentException("incorrect FirstName"),
-                DateOfBirth = dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year ? dateOfBirth : throw new ArgumentException("Year of birth should be more than 1950 end less than current date"),
-                PersonalAccountType = char.ToUpper(type, CultureInfo.InvariantCulture).Equals('A') || char.ToUpper(type, CultureInfo.InvariantCulture).Equals('B') || char.ToUpper(type, CultureInfo.InvariantCulture).Equals('C') ? type : throw new ArgumentException("Type can be A, B, C only"),
-                PersonalAccountNumber = number > 0 && number <= 9999 ? number : throw new ArgumentException("Number should be more than 0 end less than 9999"),
-                PersonalAccountBalance = balance > 0 ? balance : throw new ArgumentException("Balance can't be less than zero"),
+                FirstName = store.FirstName.Length >= 2 && store.FirstName.Length <= 60 ? store.FirstName : throw new ArgumentException("incorrect FirstName"),
+                LastName = store.LastName.Length >= 2 && store.LastName.Length <= 60 ? store.LastName : throw new ArgumentException("incorrect FirstName"),
+                DateOfBirth = store.DateOfBirth.Year >= 1950 && store.DateOfBirth.Year <= DateTime.Today.Year ? store.DateOfBirth : throw new ArgumentException("Year of birth should be more than 1950 end less than current date"),
+                Type = char.ToUpper(store.Type, CultureInfo.InvariantCulture).Equals('A') || char.ToUpper(store.Type, CultureInfo.InvariantCulture).Equals('B') || char.ToUpper(store.Type, CultureInfo.InvariantCulture).Equals('C') ? store.Type : throw new ArgumentException("Type can be A, B, C only"),
+                Number = store.Number > 0 && store.Number <= 9999 ? store.Number : throw new ArgumentException("Number should be more than 0 end less than 9999"),
+                Balance = store.Balance > 0 ? store.Balance : throw new ArgumentException("Balance can't be less than zero"),
             };
 
             this.list.Add(record);
-            this.UpdateDictionaries(firstName, lastName, dateOfBirth, record);
+            this.UpdateDictionaries(store.FirstName, store.LastName, store.DateOfBirth, record);
             return record.Id;
         }
 
@@ -60,36 +60,38 @@ namespace FileCabinetApp
         /// Edit record in service by id.
         /// </summary>
         /// <param name="id"> id of record.</param>
-        /// <param name="firstName">set firstname.</param>
-        /// <param name="lastName">set lastname.</param>
-        /// <param name="dateOfBirth">set dateOfBirth.</param>
-        /// <param name="type">set type.</param>
-        /// <param name="number">set number.</param>
-        /// <param name="balance">set balance.</param>
-        public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
+        /// <param name="store">New record data.</param>
+        public void EditRecord(int id, FileCabinetRecord store)
         {
             var record = this.list[id - 1];
 
-            if (string.IsNullOrWhiteSpace(firstName))
+            if (store is null)
             {
-                throw new ArgumentNullException(nameof(firstName), "FirstName can't be null");
+                throw new ArgumentNullException(nameof(store.FirstName), "New record is null");
             }
 
-            if (string.IsNullOrWhiteSpace(lastName))
+            if (string.IsNullOrWhiteSpace(store.FirstName))
             {
-                throw new ArgumentNullException(nameof(lastName), "LastName can't be null");
+                throw new ArgumentNullException(nameof(store.FirstName), "FirstName can't be null");
+            }
+
+            if (string.IsNullOrWhiteSpace(store.LastName))
+            {
+                throw new ArgumentNullException(nameof(store.LastName), "LastName can't be null");
             }
 
             this.firstNameDictionary.Remove(record.FirstName.ToUpperInvariant());
+            this.lastNameDictionary.Remove(record.LastName.ToUpperInvariant());
+            this.dateOfBirthDictionary.Remove(record.DateOfBirth);
 
-            record.FirstName = firstName?.Length >= 2 && firstName.Length <= 60 ? firstName : throw new ArgumentException("incorrect FirstName");
-            record.LastName = lastName?.Length >= 2 && lastName.Length <= 60 ? lastName : throw new ArgumentException("incorrect FirstName");
-            record.DateOfBirth = dateOfBirth.Year >= 1950 && dateOfBirth.Year <= DateTime.Today.Year ? dateOfBirth : throw new ArgumentException("Year of birth should be more than 1950 end less than current date");
-            record.PersonalAccountType = char.ToUpper(type, CultureInfo.InvariantCulture).Equals('A') || char.ToUpper(type, CultureInfo.InvariantCulture).Equals('B') || char.ToUpper(type, CultureInfo.InvariantCulture).Equals('C') ? type : throw new ArgumentException("Type can be A, B, C only");
-            record.PersonalAccountNumber = number > 0 && number <= 9999 ? number : throw new ArgumentException("Number should be more than 0 end less than 9999");
-            record.PersonalAccountBalance = balance > 0 ? balance : throw new ArgumentException("Balance can't be less than zero");
+            record.FirstName = store.FirstName.Length >= 2 && store.FirstName.Length <= 60 ? store.FirstName : throw new ArgumentException("incorrect FirstName");
+            record.LastName = store.LastName.Length >= 2 && store.LastName.Length <= 60 ? store.LastName : throw new ArgumentException("incorrect FirstName");
+            record.DateOfBirth = store.DateOfBirth.Year >= 1950 && store.DateOfBirth.Year <= DateTime.Today.Year ? store.DateOfBirth : throw new ArgumentException("Year of birth should be more than 1950 end less than current date");
+            record.Type = char.ToUpper(store.Type, CultureInfo.InvariantCulture).Equals('A') || char.ToUpper(store.Type, CultureInfo.InvariantCulture).Equals('B') || char.ToUpper(store.Type, CultureInfo.InvariantCulture).Equals('C') ? store.Type : throw new ArgumentException("Type can be A, B, C only");
+            record.Number = store.Number > 0 && store.Number <= 9999 ? store.Number : throw new ArgumentException("Number should be more than 0 end less than 9999");
+            record.Balance = store.Balance > 0 ? store.Balance : throw new ArgumentException("Balance can't be less than zero");
 
-            this.firstNameDictionary.Add(firstName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
+            this.UpdateDictionaries(store.FirstName, store.LastName, store.DateOfBirth, record);
         }
 
         /// <summary>
@@ -166,6 +168,13 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// Update dictionaries.
+        /// </summary>
+        /// <param name="firstName">set firstName.</param>
+        /// <param name="lastName">set lastName.</param>
+        /// <param name="dateOfBirth">set dateOfBirth.</param>
+        /// <param name="record">record for udate.</param>
         private void UpdateDictionaries(string firstName, string lastName, DateTime dateOfBirth, FileCabinetRecord record)
         {
             if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))

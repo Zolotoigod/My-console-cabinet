@@ -47,10 +47,10 @@ namespace FileCabinetApp
             Console.WriteLine();
 
             // Add eny tast objekt
-            Service.CreateRecord("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m);
-            Service.CreateRecord("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m);
-            Service.CreateRecord("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m);
-            Service.CreateRecord("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m);
+            Service.CreateRecord(new FileCabinetRecord("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
+            Service.CreateRecord(new FileCabinetRecord("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
+            Service.CreateRecord(new FileCabinetRecord("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
+            Service.CreateRecord(new FileCabinetRecord("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
 
             do
             {
@@ -126,14 +126,17 @@ namespace FileCabinetApp
                 if (id <= Service.GetStat() && id > 0)
                 {
                     IInput input = new ConsoleInput();
-                    string firstname = input.Input_FirstName();
-                    string lastname = input.Input_LastName();
-                    DateTime dateOfBirth = input.Input_DateOfBirth();
-                    char type = input.Input_Type();
-                    short number = input.Input_Number();
-                    decimal balance = input.Input_Balance();
+                    FileCabinetRecord record = new FileCabinetRecord
+                    {
+                        FirstName = input.Input_FirstName(),
+                        LastName = input.Input_LastName(),
+                        DateOfBirth = input.Input_DateOfBirth(),
+                        Type = input.Input_Type(),
+                        Number = input.Input_Number(),
+                        Balance = input.Input_Balance(),
+                    };
 
-                    Service.EditRecord(id, firstname, lastname, dateOfBirth, type, number, balance);
+                    Service.EditRecord(id, record);
                     Console.WriteLine($"record #{id} is updated\n");
                 }
                 else
@@ -150,14 +153,17 @@ namespace FileCabinetApp
         private static void Create(string parameters)
         {
             IInput input = new ConsoleInput();
-            string firstname = input.Input_FirstName();
-            string lastname = input.Input_LastName();
-            DateTime dateOfBirth = input.Input_DateOfBirth();
-            char type = input.Input_Type();
-            short number = input.Input_Number();
-            decimal balance = input.Input_Balance();
-            int num = Service.CreateRecord(firstname, lastname, dateOfBirth, type, number, balance);
-            Console.WriteLine($"Record #{num} is created\n");
+            FileCabinetRecord record = new FileCabinetRecord
+            {
+                FirstName = input.Input_FirstName(),
+                LastName = input.Input_LastName(),
+                DateOfBirth = input.Input_DateOfBirth(),
+                Type = input.Input_Type(),
+                Number = input.Input_Number(),
+                Balance = input.Input_Balance(),
+            };
+            int id = Service.CreateRecord(record);
+            Console.WriteLine($"Record #{id} is created\n");
         }
 
         private static void Find(string parameters)
@@ -178,7 +184,7 @@ namespace FileCabinetApp
 
                             foreach (var record in Service.FindByFirstName(serchedField[1]))
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
                             }
 
                             Console.WriteLine();
@@ -195,7 +201,7 @@ namespace FileCabinetApp
 
                             foreach (var record in Service.FindByLastName(serchedField[1]))
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
                             }
 
                             Console.WriteLine();
@@ -218,7 +224,7 @@ namespace FileCabinetApp
 
                             foreach (var record in Service.FindByDateOfBirth(serchedField[1]))
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
                             }
 
                             Console.WriteLine();
@@ -242,7 +248,7 @@ namespace FileCabinetApp
         {
             foreach (var record in Service.GetRecords())
             {
-                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.PersonalAccountType, record.PersonalAccountNumber, record.PersonalAccountBalance);
+                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
             }
 
             Console.WriteLine();

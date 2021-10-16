@@ -4,5 +4,240 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.ConsoleInput">
+            <summary>
+            Class get data from console.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_FirstName">
+            <summary>
+            Get FirstName from console.
+            </summary>
+            <returns>string.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_LastName">
+            <summary>
+            Get LastName from console.
+            </summary>
+            <returns>string.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_DateOfBirth">
+            <summary>
+            Get DateOfBirth from console.
+            </summary>
+            <returns>DateTime.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_Type">
+            <summary>
+            Get Type from console.
+            </summary>
+            <returns>char.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_Number">
+            <summary>
+            Get Number from console.
+            </summary>
+            <returns>short.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_Balance">
+            <summary>
+            Get Balance from console.
+            </summary>
+            <returns>decimal.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecord">
+            <summary>
+            Service record.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecord.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecord"/> class whith default parametres.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecord.#ctor(System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecord"/> class whith custom parametres.
+            </summary>
+            <param name="firstName">Get firstName.</param>
+            <param name="lastName">Get lastName.</param>
+            <param name="dateOfBirth">Get dateOfBirth.</param>
+            <param name="type">Get type.</param>
+            <param name="number">Get number.</param>
+            <param name="balance">Get balance.</param>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Id">
+            <summary>
+            Gets or sets record ID.
+            </summary>
+            <value>
+            Record ID.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.FirstName">
+            <summary>
+            Gets or sets record FirstName.
+            </summary>
+            <value>
+            Record FirstName.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.LastName">
+            <summary>
+            Gets or sets record LastName.
+            </summary>
+            <value>
+            Record LastName.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirth">
+            <summary>
+            Gets or sets record DateOfBirth.
+            </summary>
+            <value>
+            Record DateOfBirth.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Type">
+            <summary>
+            Gets or sets record Personal Account Type.
+            </summary>
+            <value>
+            Record Personal Account Type.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Number">
+            <summary>
+            Gets or sets record Personal Account Number.
+            </summary>
+            <value>
+            Record Personal Account Number.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Balance">
+            <summary>
+            Gets or sets record Personal Account Balance.
+            </summary>
+            <value>
+            Record Personal Account Balance.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService">
+            <summary>
+            Service.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.FileCabinetService.DateFormat">
+            <summary>
+            Field set the dateformat.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Create record in service.
+            </summary>
+            <param name="store">Record push in service.</param>
+            <returns>Record ID.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Edit record in service by id.
+            </summary>
+            <param name="id"> id of record.</param>
+            <param name="store">New record data.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
+            <summary>
+            Return all record in servise.
+            </summary>
+            <returns>Array of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
+            <summary>
+            Metod returned count of records.
+            </summary>
+            <returns>int count.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Serch the record in service by firstname, use dictionary.
+            </summary>
+            <param name="firstName">Parametr for search.</param>
+            <returns>list of FileCabinetRecord.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Serch the record in service by Lastname, use dictionary.
+            </summary>
+            <param name="lastName">Parametr for search.</param>
+            <returns>list of FileCabinetRecord.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.String)">
+            <summary>
+            Serch the record in service by DateOfBirth, use dictionary.
+            </summary>
+            <param name="dateOfBirth">Parametr for search.</param>
+            <returns>list of FileCabinetRecord.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.UpdateDictionaries(System.String,System.String,System.DateTime,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Update dictionaries.
+            </summary>
+            <param name="firstName">set firstName.</param>
+            <param name="lastName">set lastName.</param>
+            <param name="dateOfBirth">set dateOfBirth.</param>
+            <param name="record">record for udate.</param>
+        </member>
+        <member name="T:FileCabinetApp.IInput">
+            <summary>
+            Inteface for define the basiс input rules.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IInput.Input_FirstName">
+            <summary>
+            rule for input FirstName.
+            </summary>
+            <returns>string.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IInput.Input_LastName">
+            <summary>
+            rule for input LastName.
+            </summary>
+            <returns>string.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IInput.Input_DateOfBirth">
+            <summary>
+            rule for input DateOfBirth.
+            </summary>
+            <returns>DateTime.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IInput.Input_Type">
+            <summary>
+            rule for input Type.
+            </summary>
+            <returns>char.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IInput.Input_Number">
+            <summary>
+            rule for input Number.
+            </summary>
+            <returns>short.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IInput.Input_Balance">
+            <summary>
+            rule for input Balance.
+            </summary>
+            <returns>decimal.</returns>
+        </member>
+        <member name="T:FileCabinetApp.Program">
+            <summary>
+            Client for File-Cabinet-Service.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Program.Main">
+            <summary>
+            Main Client metod.
+            </summary>
+        </member>
     </members>
 </doc>
