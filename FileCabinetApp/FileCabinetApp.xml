@@ -45,6 +45,30 @@
             </summary>
             <returns>decimal.</returns>
         </member>
+        <member name="T:FileCabinetApp.CustomValidator">
+            <summary>
+            Validator vith custom parameters.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.FileCabinetApp#IRecordValidator#ValidateParametres(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Validate data.
+            </summary>
+            <param name="store">validate parameters.</param>
+            <returns>Return array of validate results.</returns>
+        </member>
+        <member name="T:FileCabinetApp.DefaultValidator">
+            <summary>
+            Validator vith default parameters.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.FileCabinetApp#IRecordValidator#ValidateParametres(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Validate data.
+            </summary>
+            <param name="store">validate parameters.</param>
+            <returns>Return array of validate results.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Service record.
@@ -179,6 +203,13 @@
             <param name="dateOfBirth">Parametr for search.</param>
             <returns>list of FileCabinetRecord.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.CreateValidator(System.String[])">
+            <summary>
+            Create validator with given validatin rules.
+            </summary>
+            <param name="args">input data.</param>
+            /// <returns>sstring validaor.</returns>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetService.UpdateDictionaries(System.String,System.String,System.DateTime,FileCabinetApp.FileCabinetRecord)">
             <summary>
             Update dictionaries.
@@ -229,15 +260,28 @@
             </summary>
             <returns>decimal.</returns>
         </member>
+        <member name="T:FileCabinetApp.IRecordValidator">
+            <summary>
+            Inteface for difine basic validation rules.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateParametres(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Basic validation rule for string.
+            </summary>
+            <param name="parameters">Validation value.</param>
+            <returns>bool, validation result.</returns>
+        </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
             Client for File-Cabinet-Service.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.Program.Main">
+        <member name="M:FileCabinetApp.Program.Main(System.String[])">
             <summary>
             Main Client metod.
             </summary>
+            <param name="args">input data.</param>
         </member>
     </members>
 </doc>

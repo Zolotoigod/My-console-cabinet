@@ -25,6 +25,7 @@ namespace FileCabinetApp
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
 
+        private static string validationRules;
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -40,9 +41,12 @@ namespace FileCabinetApp
         /// <summary>
         /// Main Client metod.
         /// </summary>
-        public static void Main()
+        /// <param name="args">input data.</param>
+        public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
+            validationRules = Service.CreateValidator(args);
+            Console.WriteLine($"Using {validationRules} validation rules");
             Console.WriteLine(HintMessage);
             Console.WriteLine();
 
