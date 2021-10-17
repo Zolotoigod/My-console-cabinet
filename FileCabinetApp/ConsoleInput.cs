@@ -27,7 +27,7 @@ namespace FileCabinetApp
                 else
                 {
                     Console.WriteLine("Incorrect FirstName");
-                    Console.WriteLine("FirstName: ");
+                    Console.Write("FirstName: ");
                 }
             }
         }
@@ -50,7 +50,7 @@ namespace FileCabinetApp
                 else
                 {
                     Console.WriteLine("Incorrect LastName");
-                    Console.WriteLine("LastName: ");
+                    Console.Write("LastName: ");
                 }
             }
         }

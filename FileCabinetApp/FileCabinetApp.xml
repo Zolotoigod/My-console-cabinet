@@ -208,7 +208,7 @@
             Create validator with given validatin rules.
             </summary>
             <param name="args">input data.</param>
-            /// <returns>sstring validaor.</returns>
+            /// <returns>validaor.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.UpdateDictionaries(System.String,System.String,System.DateTime,FileCabinetApp.FileCabinetRecord)">
             <summary>

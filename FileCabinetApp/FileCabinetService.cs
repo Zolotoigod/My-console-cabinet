@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace FileCabinetApp
@@ -9,50 +10,6 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetService
     {
-        public FileCabinetService()
-        {
-        }
-
-        public FileCabinetService(string[] args)
-        {
-            if (args == null || args.Length == 0 || string.IsNullOrEmpty(args[0]))
-            {
-                this.validator = new DefaultValidator();
-            }
-
-            string[] validator = args[0].Split(new char[] { '=', ' ' }, 2);
-
-            if (Array.IndexOf(this.validationComands, validator[0].ToLowerInvariant()) >= 0)
-            {
-                switch (validator[1].ToLowerInvariant())
-                {
-                    case "default":
-                        {
-                            this.validator = new DefaultValidator();
-                            break;
-                        }
-
-                    case "custom":
-                        {
-                            this.validator = new CustomValidator();
-                            break;
-                        }
-
-                    default:
-                        {
-                            this.validator = new DefaultValidator();
-                            Console.WriteLine($"Validator {validator[1]} unsupported");
-                            break;
-                        }
-                }
-            }
-            else
-            {
-                this.validator = new DefaultValidator();
-                Console.WriteLine($"command {validator[0]} unsupported");
-            }
-        }
-
         /// <summary>
         /// Field set the dateformat.
         /// </summary>
@@ -118,9 +75,9 @@ namespace FileCabinetApp
         /// Return all record in servise.
         /// </summary>
         /// <returns>Array of records.</returns>
-        public FileCabinetRecord[] GetRecords()
+        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            return this.list.ToArray();
+            return this.list.AsReadOnly();
         }
 
         /// <summary>
@@ -137,15 +94,15 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">Parametr for search.</param>
         /// <returns>list of FileCabinetRecord.</returns>
-        public FileCabinetRecord[] FindByFirstName(string firstName)
+        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.ContainsKey(firstName?.ToUpperInvariant()))
             {
-                return this.firstNameDictionary[firstName.ToUpperInvariant()].ToArray();
+                return this.firstNameDictionary[firstName.ToUpperInvariant()].AsReadOnly();
             }
             else
             {
-                return Array.Empty<FileCabinetRecord>();
+                return new List<FileCabinetRecord>().AsReadOnly();
             }
         }
 
@@ -154,15 +111,15 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">Parametr for search.</param>
         /// <returns>list of FileCabinetRecord.</returns>
-        public FileCabinetRecord[] FindByLastName(string lastName)
+        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.ContainsKey(lastName?.ToUpperInvariant()))
             {
-                return this.lastNameDictionary[lastName.ToUpperInvariant()].ToArray();
+                return this.lastNameDictionary[lastName.ToUpperInvariant()].AsReadOnly();
             }
             else
             {
-                return Array.Empty<FileCabinetRecord>();
+                return new List<FileCabinetRecord>().AsReadOnly();
             }
         }
 
@@ -171,7 +128,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateOfBirth">Parametr for search.</param>
         /// <returns>list of FileCabinetRecord.</returns>
-        public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirth)
+        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
             if (!DateTime.TryParseExact(dateOfBirth, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime resultDate))
             {
@@ -180,11 +137,11 @@ namespace FileCabinetApp
 
             if (this.dateOfBirthDictionary.ContainsKey(resultDate))
             {
-                return this.dateOfBirthDictionary[resultDate].ToArray();
+                return this.dateOfBirthDictionary[resultDate].AsReadOnly();
             }
             else
             {
-                return Array.Empty<FileCabinetRecord>();
+                return new List<FileCabinetRecord>().AsReadOnly();
             }
         }
 
@@ -192,12 +149,13 @@ namespace FileCabinetApp
         /// Create validator with given validatin rules.
         /// </summary>
         /// <param name="args">input data.</param>
-        /// /// <returns>sstring validaor.</returns>
-        public string CreateValidator(string[] args)
+        /// /// <returns>validaor.</returns>
+        internal IRecordValidator CreateValidator(string[] args)
         {
             if (args == null || args.Length == 0 || string.IsNullOrEmpty(args[0]))
             {
-                return "default";
+                this.validator = new DefaultValidator();
+                return new DefaultValidator();
             }
 
             string[] validator = args[0].Split(new char[] { '=', ' ' }, 2);
@@ -209,20 +167,20 @@ namespace FileCabinetApp
                     case "default":
                         {
                             this.validator = new DefaultValidator();
-                            return "default";
+                            return new DefaultValidator();
                         }
 
                     case "custom":
                         {
                             this.validator = new CustomValidator();
-                            return "custom";
+                            return new CustomValidator();
                         }
 
                     default:
                         {
                             this.validator = new DefaultValidator();
                             Console.WriteLine($"Validator {validator[1]} unsupported");
-                            return "default";
+                            return new DefaultValidator();
                         }
                 }
             }
@@ -230,7 +188,7 @@ namespace FileCabinetApp
             {
                 this.validator = new DefaultValidator();
                 Console.WriteLine($"command {validator[0]} unsupported");
-                return "default";
+                return new DefaultValidator();
             }
         }
 

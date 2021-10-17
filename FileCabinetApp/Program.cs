@@ -25,7 +25,7 @@ namespace FileCabinetApp
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
 
-        private static string validationRules;
+        private static IRecordValidator validator;
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -45,8 +45,8 @@ namespace FileCabinetApp
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
-            validationRules = Service.CreateValidator(args);
-            Console.WriteLine($"Using {validationRules} validation rules");
+            validator = Service.CreateValidator(args);
+            Console.WriteLine($"Using {validator} validation rules");
             Console.WriteLine(HintMessage);
             Console.WriteLine();
 
@@ -157,7 +157,7 @@ namespace FileCabinetApp
         private static void Create(string parameters)
         {
             IInput input = new ConsoleInput();
-            FileCabinetRecord record = new FileCabinetRecord
+            FileCabinetRecord record = new ()
             {
                 FirstName = input.Input_FirstName(),
                 LastName = input.Input_LastName(),
@@ -180,7 +180,7 @@ namespace FileCabinetApp
                 {
                     case "FIRSTNAME":
                         {
-                            if (Service.FindByFirstName(serchedField[1]).Length == 0)
+                            if (Service.FindByFirstName(serchedField[1]).Count == 0)
                             {
                                 Console.WriteLine($"firstName {serchedField[1]} not found\n");
                                 break;
@@ -197,7 +197,7 @@ namespace FileCabinetApp
 
                     case "LASTNAME":
                         {
-                            if (Service.FindByLastName(serchedField[1]).Length == 0)
+                            if (Service.FindByLastName(serchedField[1]).Count == 0)
                             {
                                 Console.WriteLine($"Lastname {serchedField[1]} not found\n");
                                 break;
@@ -220,7 +220,7 @@ namespace FileCabinetApp
                                 break;
                             }
 
-                            if (Service.FindByDateOfBirth(serchedField[1]).Length == 0)
+                            if (Service.FindByDateOfBirth(serchedField[1]).Count == 0)
                             {
                                 Console.WriteLine($"DateOfBirth {serchedField[1]} not found\n");
                                 break;

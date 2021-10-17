@@ -43,5 +43,10 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(store.LastName), "LastName can't be null");
             }
         }
+
+        public override string ToString()
+        {
+            return "dufault";
+        }
     }
 }
