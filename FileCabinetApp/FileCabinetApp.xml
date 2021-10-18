@@ -203,6 +203,39 @@
             <param name="dateOfBirth">set dateOfBirth.</param>
             <param name="record">record for udate.</param>
         </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.ValidationData)">
+            <summary>
+            Create record in service.
+            </summary>
+            <param name="store">Record push in service.</param>
+            <returns>Record ID.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.ValidationData)">
+            <summary>
+            Edit record in service by id.
+            </summary>
+            <param name="id"> id of record.</param>
+            <param name="store">New record data.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetRecords">
+            <summary>
+            Return all record in servise.
+            </summary>
+            <returns>Array of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetStat">
+            <summary>
+            Metod returned count of records.
+            </summary>
+            <returns>int count.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Serch the record in service by firstname, use dictionary.
+            </summary>
+            <param name="firstName">Parametr for search.</param>
+            <returns>list of FileCabinetRecord.</returns>
+        </member>
         <member name="T:FileCabinetApp.IInput">
             <summary>
             Inteface for define the basiс input rules.
