@@ -50,7 +50,7 @@
             Validator vith custom parameters.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CustomValidator.FileCabinetApp#IRecordValidator#ValidateParametres(FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.CustomValidator.FileCabinetApp#IRecordValidator#ValidateParametres(FileCabinetApp.ValidationData)">
             <summary>
             Validate data.
             </summary>
@@ -62,7 +62,7 @@
             Validator vith default parameters.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.DefaultValidator.FileCabinetApp#IRecordValidator#ValidateParametres(FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.DefaultValidator.FileCabinetApp#IRecordValidator#ValidateParametres(FileCabinetApp.ValidationData)">
             <summary>
             Validate data.
             </summary>
@@ -73,22 +73,6 @@
             <summary>
             Service record.
             </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetRecord.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecord"/> class whith default parametres.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetRecord.#ctor(System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecord"/> class whith custom parametres.
-            </summary>
-            <param name="firstName">Get firstName.</param>
-            <param name="lastName">Get lastName.</param>
-            <param name="dateOfBirth">Get dateOfBirth.</param>
-            <param name="type">Get type.</param>
-            <param name="number">Get number.</param>
-            <param name="balance">Get balance.</param>
         </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.Id">
             <summary>
@@ -156,14 +140,14 @@
             Field set the dateformat.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.ValidationData)">
             <summary>
             Create record in service.
             </summary>
             <param name="store">Record push in service.</param>
             <returns>Record ID.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.ValidationData)">
             <summary>
             Edit record in service by id.
             </summary>
@@ -265,7 +249,7 @@
             Inteface for difine basic validation rules.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.IRecordValidator.ValidateParametres(FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateParametres(FileCabinetApp.ValidationData)">
             <summary>
             Basic validation rule for string.
             </summary>
@@ -282,6 +266,65 @@
             Main Client metod.
             </summary>
             <param name="args">input data.</param>
+        </member>
+        <member name="M:FileCabinetApp.ValidationData.#ctor(System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ValidationData"/> class whith custom parametres.
+            </summary>
+            <param name="firstName">Get firstName.</param>
+            <param name="lastName">Get lastName.</param>
+            <param name="dateOfBirth">Get dateOfBirth.</param>
+            <param name="type">Get type.</param>
+            <param name="number">Get number.</param>
+            <param name="balance">Get balance.</param>
+        </member>
+        <member name="P:FileCabinetApp.ValidationData.FirstName">
+            <summary>
+            Gets or sets record FirstName.
+            </summary>
+            <value>
+            Record FirstName.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationData.LastName">
+            <summary>
+            Gets or sets record LastName.
+            </summary>
+            <value>
+            Record LastName.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationData.DateOfBirth">
+            <summary>
+            Gets or sets record DateOfBirth.
+            </summary>
+            <value>
+            Record DateOfBirth.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationData.Type">
+            <summary>
+            Gets or sets record Personal Account Type.
+            </summary>
+            <value>
+            Record Personal Account Type.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationData.Number">
+            <summary>
+            Gets or sets record Personal Account Number.
+            </summary>
+            <value>
+            Record Personal Account Number.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.ValidationData.Balance">
+            <summary>
+            Gets or sets record Personal Account Balance.
+            </summary>
+            <value>
+            Record Personal Account Balance.
+            </value>
         </member>
     </members>
 </doc>

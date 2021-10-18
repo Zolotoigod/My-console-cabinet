@@ -12,8 +12,8 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="parameters">Validation value.</param>
         /// <returns>bool, validation result.</returns>
-        internal bool[] ValidateParametres(FileCabinetRecord parameters);
+        internal bool[] ValidateParametres(ValidationData parameters);
 
-        internal void ValidationNull(FileCabinetRecord store);
+        internal void ValidationNull(ValidationData store);
     }
 }

@@ -51,10 +51,10 @@ namespace FileCabinetApp
             Console.WriteLine();
 
             // Add eny tast objekt
-            Service.CreateRecord(new FileCabinetRecord("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
-            Service.CreateRecord(new FileCabinetRecord("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
-            Service.CreateRecord(new FileCabinetRecord("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
-            Service.CreateRecord(new FileCabinetRecord("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
+            Service.CreateRecord(new ValidationData("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
+            Service.CreateRecord(new ValidationData("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
+            Service.CreateRecord(new ValidationData("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
+            Service.CreateRecord(new ValidationData("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
 
             do
             {
@@ -130,7 +130,7 @@ namespace FileCabinetApp
                 if (id <= Service.GetStat() && id > 0)
                 {
                     IInput input = new ConsoleInput();
-                    FileCabinetRecord record = new FileCabinetRecord
+                    ValidationData record = new ()
                     {
                         FirstName = input.Input_FirstName(),
                         LastName = input.Input_LastName(),
@@ -157,7 +157,7 @@ namespace FileCabinetApp
         private static void Create(string parameters)
         {
             IInput input = new ConsoleInput();
-            FileCabinetRecord record = new ()
+            ValidationData record = new ()
             {
                 FirstName = input.Input_FirstName(),
                 LastName = input.Input_LastName(),

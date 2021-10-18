@@ -14,7 +14,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="store">validate parameters.</param>
         /// <returns>Return array of validate results.</returns>
-        bool[] IRecordValidator.ValidateParametres(FileCabinetRecord store)
+        bool[] IRecordValidator.ValidateParametres(ValidationData store)
         {
             bool[] validationResult = new bool[6];
             validationResult[0] = !string.IsNullOrWhiteSpace(store.FirstName) && store.FirstName.All(char.IsLetter) && store.FirstName.Length >= 2 && store.FirstName.Length <= 30;
@@ -26,7 +26,7 @@ namespace FileCabinetApp
             return validationResult;
         }
 
-        void IRecordValidator.ValidationNull(FileCabinetRecord store)
+        void IRecordValidator.ValidationNull(ValidationData store)
         {
             if (store == null)
             {

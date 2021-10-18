@@ -1,20 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace FileCabinetApp
 {
-    /// <summary>
-    /// Service record.
-    /// </summary>
-    public class FileCabinetRecord
+    internal class ValidationData
     {
+        internal ValidationData()
+        {
+        }
+
         /// <summary>
-        /// Gets or sets record ID.
+        /// Initializes a new instance of the <see cref="ValidationData"/> class whith custom parametres.
         /// </summary>
-        /// <value>
-        /// Record ID.
-        /// </value>
-        public int Id { get; set; }
+        /// <param name="firstName">Get firstName.</param>
+        /// <param name="lastName">Get lastName.</param>
+        /// <param name="dateOfBirth">Get dateOfBirth.</param>
+        /// <param name="type">Get type.</param>
+        /// <param name="number">Get number.</param>
+        /// <param name="balance">Get balance.</param>
+        internal ValidationData(string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
+        {
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.DateOfBirth = dateOfBirth;
+            this.Type = type;
+            this.Number = number;
+            this.Balance = balance;
+        }
 
         /// <summary>
         /// Gets or sets record FirstName.
