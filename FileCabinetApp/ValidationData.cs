@@ -2,7 +2,7 @@
 
 namespace FileCabinetApp
 {
-    internal class ValidationData
+    public class ValidationData
     {
         internal ValidationData()
         {

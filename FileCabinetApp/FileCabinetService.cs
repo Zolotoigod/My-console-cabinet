@@ -26,7 +26,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="store">Record push in service.</param>
         /// <returns>Record ID.</returns>
-        internal int CreateRecord(ValidationData store)
+        public int CreateRecord(ValidationData store)
         {
             this.validator.ValidationNull(store);
             bool[] rules = this.validator.ValidateParametres(store);
@@ -51,7 +51,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="id"> id of record.</param>
         /// <param name="store">New record data.</param>
-        internal void EditRecord(int id, ValidationData store)
+        public void EditRecord(int id, ValidationData store)
         {
             var record = this.list[id - 1];
 
