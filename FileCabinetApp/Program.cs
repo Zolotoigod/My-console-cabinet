@@ -25,7 +25,7 @@ namespace FileCabinetApp
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
 
-        private static IRecordValidator validator;
+        private static BaseValidationRules validationRules;
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -45,16 +45,16 @@ namespace FileCabinetApp
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
-            validator = Service.CreateValidator(args);
-            Console.WriteLine($"Using {validator} validation rules");
+            validationRules = Service.CreateValidator(args);
+            Console.WriteLine($"Using {validationRules} validation rules");
             Console.WriteLine(HintMessage);
             Console.WriteLine();
 
             // Add eny tast objekt
-            Service.CreateRecord(new ValidationData("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
-            Service.CreateRecord(new ValidationData("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
-            Service.CreateRecord(new ValidationData("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
-            Service.CreateRecord(new ValidationData("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
+            Service.CreateRecord(new DataStorage("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
+            Service.CreateRecord(new DataStorage("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
+            Service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
+            Service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
 
             do
             {
@@ -123,23 +123,20 @@ namespace FileCabinetApp
             isRunning = false;
         }
 
+        private static void Create(string parameters)
+        {
+            DataStorage record = new (validationRules);
+            int id = Service.CreateRecord(record);
+            Console.WriteLine($"Record #{id} is created\n");
+        }
+
         private static void Edit(string parameters)
         {
             if (int.TryParse(parameters, out int id))
             {
                 if (id <= Service.GetStat() && id > 0)
                 {
-                    IInput input = new ConsoleInput();
-                    ValidationData record = new ()
-                    {
-                        FirstName = input.Input_FirstName(),
-                        LastName = input.Input_LastName(),
-                        DateOfBirth = input.Input_DateOfBirth(),
-                        Type = input.Input_Type(),
-                        Number = input.Input_Number(),
-                        Balance = input.Input_Balance(),
-                    };
-
+                    DataStorage record = new (validationRules);
                     Service.EditRecord(id, record);
                     Console.WriteLine($"record #{id} is updated\n");
                 }
@@ -152,22 +149,6 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("Incorrect id\n");
             }
-        }
-
-        private static void Create(string parameters)
-        {
-            IInput input = new ConsoleInput();
-            ValidationData record = new ()
-            {
-                FirstName = input.Input_FirstName(),
-                LastName = input.Input_LastName(),
-                DateOfBirth = input.Input_DateOfBirth(),
-                Type = input.Input_Type(),
-                Number = input.Input_Number(),
-                Balance = input.Input_Balance(),
-            };
-            int id = Service.CreateRecord(record);
-            Console.WriteLine($"Record #{id} is created\n");
         }
 
         private static void Find(string parameters)

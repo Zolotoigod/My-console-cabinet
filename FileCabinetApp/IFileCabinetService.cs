@@ -2,21 +2,21 @@
 
 namespace FileCabinetApp
 {
-    internal interface IFileCabinetService
+    public interface IFileCabinetService
     {
         /// <summary>
         /// Create record in service.
         /// </summary>
         /// <param name="store">Record push in service.</param>
         /// <returns>Record ID.</returns>
-        public int CreateRecord(ValidationData store);
+        public int CreateRecord(DataStorage store);
 
         /// <summary>
         /// Edit record in service by id.
         /// </summary>
         /// <param name="id"> id of record.</param>
         /// <param name="store">New record data.</param>
-        public void EditRecord(int id, ValidationData store);
+        public void EditRecord(int id, DataStorage store);
 
         /// <summary>
         /// Return all record in servise.

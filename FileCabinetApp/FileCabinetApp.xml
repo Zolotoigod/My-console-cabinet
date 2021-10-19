@@ -4,70 +4,84 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.BaseValidationRules">
+            <summary>
+            Inteface for difine basic validation rules.
+            </summary>
+        </member>
         <member name="T:FileCabinetApp.ConsoleInput">
             <summary>
             Class get data from console.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_FirstName">
-            <summary>
-            Get FirstName from console.
-            </summary>
-            <returns>string.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_LastName">
-            <summary>
-            Get LastName from console.
-            </summary>
-            <returns>string.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_DateOfBirth">
-            <summary>
-            Get DateOfBirth from console.
-            </summary>
-            <returns>DateTime.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_Type">
-            <summary>
-            Get Type from console.
-            </summary>
-            <returns>char.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_Number">
-            <summary>
-            Get Number from console.
-            </summary>
-            <returns>short.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ConsoleInput.FileCabinetApp#IInput#Input_Balance">
-            <summary>
-            Get Balance from console.
-            </summary>
-            <returns>decimal.</returns>
-        </member>
-        <member name="T:FileCabinetApp.CustomValidator">
+        <member name="T:FileCabinetApp.CustomValdationRules">
             <summary>
             Validator vith custom parameters.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CustomValidator.FileCabinetApp#IRecordValidator#ValidateParametres(FileCabinetApp.ValidationData)">
+        <member name="M:FileCabinetApp.DataStorage.#ctor(System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
             <summary>
-            Validate data.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.DataStorage"/> class whith custom parametres.
             </summary>
-            <param name="store">validate parameters.</param>
-            <returns>Return array of validate results.</returns>
+            <param name="firstName">Get firstName.</param>
+            <param name="lastName">Get lastName.</param>
+            <param name="dateOfBirth">Get dateOfBirth.</param>
+            <param name="type">Get type.</param>
+            <param name="number">Get number.</param>
+            <param name="balance">Get balance.</param>
         </member>
-        <member name="T:FileCabinetApp.DefaultValidator">
+        <member name="P:FileCabinetApp.DataStorage.FirstName">
+            <summary>
+            Gets or sets record FirstName.
+            </summary>
+            <value>
+            Record FirstName.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.DataStorage.LastName">
+            <summary>
+            Gets or sets record LastName.
+            </summary>
+            <value>
+            Record LastName.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.DataStorage.DateOfBirth">
+            <summary>
+            Gets or sets record DateOfBirth.
+            </summary>
+            <value>
+            Record DateOfBirth.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.DataStorage.Type">
+            <summary>
+            Gets or sets record Personal Account Type.
+            </summary>
+            <value>
+            Record Personal Account Type.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.DataStorage.Number">
+            <summary>
+            Gets or sets record Personal Account Number.
+            </summary>
+            <value>
+            Record Personal Account Number.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.DataStorage.Balance">
+            <summary>
+            Gets or sets record Personal Account Balance.
+            </summary>
+            <value>
+            Record Personal Account Balance.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.DefaultValidateRules">
             <summary>
             Validator vith default parameters.
             </summary>
-        </member>
-        <member name="M:FileCabinetApp.DefaultValidator.FileCabinetApp#IRecordValidator#ValidateParametres(FileCabinetApp.ValidationData)">
-            <summary>
-            Validate data.
-            </summary>
-            <param name="store">validate parameters.</param>
-            <returns>Return array of validate results.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -140,20 +154,6 @@
             Field set the dateformat.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.ValidationData)">
-            <summary>
-            Create record in service.
-            </summary>
-            <param name="store">Record push in service.</param>
-            <returns>Record ID.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.ValidationData)">
-            <summary>
-            Edit record in service by id.
-            </summary>
-            <param name="id"> id of record.</param>
-            <param name="store">New record data.</param>
-        </member>
         <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
             <summary>
             Return all record in servise.
@@ -203,14 +203,14 @@
             <param name="dateOfBirth">set dateOfBirth.</param>
             <param name="record">record for udate.</param>
         </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.ValidationData)">
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.DataStorage)">
             <summary>
             Create record in service.
             </summary>
             <param name="store">Record push in service.</param>
             <returns>Record ID.</returns>
         </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.ValidationData)">
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.DataStorage)">
             <summary>
             Edit record in service by id.
             </summary>
@@ -241,54 +241,6 @@
             Inteface for define the basiс input rules.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.IInput.Input_FirstName">
-            <summary>
-            rule for input FirstName.
-            </summary>
-            <returns>string.</returns>
-        </member>
-        <member name="M:FileCabinetApp.IInput.Input_LastName">
-            <summary>
-            rule for input LastName.
-            </summary>
-            <returns>string.</returns>
-        </member>
-        <member name="M:FileCabinetApp.IInput.Input_DateOfBirth">
-            <summary>
-            rule for input DateOfBirth.
-            </summary>
-            <returns>DateTime.</returns>
-        </member>
-        <member name="M:FileCabinetApp.IInput.Input_Type">
-            <summary>
-            rule for input Type.
-            </summary>
-            <returns>char.</returns>
-        </member>
-        <member name="M:FileCabinetApp.IInput.Input_Number">
-            <summary>
-            rule for input Number.
-            </summary>
-            <returns>short.</returns>
-        </member>
-        <member name="M:FileCabinetApp.IInput.Input_Balance">
-            <summary>
-            rule for input Balance.
-            </summary>
-            <returns>decimal.</returns>
-        </member>
-        <member name="T:FileCabinetApp.IRecordValidator">
-            <summary>
-            Inteface for difine basic validation rules.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.IRecordValidator.ValidateParametres(FileCabinetApp.ValidationData)">
-            <summary>
-            Basic validation rule for string.
-            </summary>
-            <param name="parameters">Validation value.</param>
-            <returns>bool, validation result.</returns>
-        </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
             Client for File-Cabinet-Service.
@@ -299,65 +251,6 @@
             Main Client metod.
             </summary>
             <param name="args">input data.</param>
-        </member>
-        <member name="M:FileCabinetApp.ValidationData.#ctor(System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.ValidationData"/> class whith custom parametres.
-            </summary>
-            <param name="firstName">Get firstName.</param>
-            <param name="lastName">Get lastName.</param>
-            <param name="dateOfBirth">Get dateOfBirth.</param>
-            <param name="type">Get type.</param>
-            <param name="number">Get number.</param>
-            <param name="balance">Get balance.</param>
-        </member>
-        <member name="P:FileCabinetApp.ValidationData.FirstName">
-            <summary>
-            Gets or sets record FirstName.
-            </summary>
-            <value>
-            Record FirstName.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.ValidationData.LastName">
-            <summary>
-            Gets or sets record LastName.
-            </summary>
-            <value>
-            Record LastName.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.ValidationData.DateOfBirth">
-            <summary>
-            Gets or sets record DateOfBirth.
-            </summary>
-            <value>
-            Record DateOfBirth.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.ValidationData.Type">
-            <summary>
-            Gets or sets record Personal Account Type.
-            </summary>
-            <value>
-            Record Personal Account Type.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.ValidationData.Number">
-            <summary>
-            Gets or sets record Personal Account Number.
-            </summary>
-            <value>
-            Record Personal Account Number.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.ValidationData.Balance">
-            <summary>
-            Gets or sets record Personal Account Balance.
-            </summary>
-            <value>
-            Record Personal Account Balance.
-            </value>
         </member>
     </members>
 </doc>

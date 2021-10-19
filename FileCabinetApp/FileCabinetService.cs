@@ -13,62 +13,39 @@ namespace FileCabinetApp
         /// <summary>
         /// Field set the dateformat.
         /// </summary>
-        internal static readonly string[] DateFormat = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy", "dd MM yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd,MM,yyyy" };
+        public static readonly string[] DateFormat = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy", "dd MM yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd,MM,yyyy" };
         private readonly List<FileCabinetRecord> list = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
         private readonly string[] validationComands = { "--validation-rules", "--v" };
-        private IRecordValidator validator;
+        private BaseValidationRules validationRules;
 
-        /// <summary>
-        /// Create record in service.
-        /// </summary>
-        /// <param name="store">Record push in service.</param>
-        /// <returns>Record ID.</returns>
-        public int CreateRecord(ValidationData store)
+        public int CreateRecord(DataStorage storage)
         {
-            this.validator.ValidationNull(store);
-            bool[] rules = this.validator.ValidateParametres(store);
-            var record = new FileCabinetRecord
-            {
-                Id = this.list.Count + 1,
-                FirstName = rules[0] ? store?.FirstName : throw new ArgumentException("incorrect FirstName"),
-                LastName = rules[1] ? store.LastName : throw new ArgumentException("incorrect FirstName"),
-                DateOfBirth = rules[2] ? store.DateOfBirth : throw new ArgumentException("Year of birth should be more than 1950 end less than current date"),
-                Type = rules[3] ? store.Type : throw new ArgumentException("Type can be A, B, C only"),
-                Number = rules[4] ? store.Number : throw new ArgumentException("Number should be more than 0 end less than 9999"),
-                Balance = rules[5] ? store.Balance : throw new ArgumentException("Balance can't be less than zero"),
-            };
-
+            BaseValidationRules.ValidationNull(storage);
+            var record = new FileCabinetRecord(storage, this.validationRules, this.list.Count);
             this.list.Add(record);
-            this.UpdateDictionaries(store.FirstName, store.LastName, store.DateOfBirth, record);
+            this.UpdateDictionaries(storage.FirstName, storage.LastName, storage.DateOfBirth, record);
             return record.Id;
         }
 
-        /// <summary>
-        /// Edit record in service by id.
-        /// </summary>
-        /// <param name="id"> id of record.</param>
-        /// <param name="store">New record data.</param>
-        public void EditRecord(int id, ValidationData store)
+        public void EditRecord(int id, DataStorage storage)
         {
             var record = this.list[id - 1];
-
-            this.validator.ValidationNull(store);
-            bool[] rules = this.validator.ValidateParametres(store);
+            BaseValidationRules.ValidationNull(storage);
             this.firstNameDictionary.Remove(record.FirstName.ToUpperInvariant());
             this.lastNameDictionary.Remove(record.LastName.ToUpperInvariant());
             this.dateOfBirthDictionary.Remove(record.DateOfBirth);
 
-            record.FirstName = rules[0] ? store?.FirstName : throw new ArgumentException("incorrect FirstName");
-            record.LastName = rules[1] ? store.LastName : throw new ArgumentException("incorrect FirstName");
-            record.DateOfBirth = rules[2] ? store.DateOfBirth : throw new ArgumentException("Year of birth should be more than 1950 end less than current date");
-            record.Type = rules[3] ? store.Type : throw new ArgumentException("Type can be A, B, C only");
-            record.Number = rules[4] ? store.Number : throw new ArgumentException("Number should be more than 0 end less than 9999");
-            record.Balance = rules[5] ? store.Balance : throw new ArgumentException("Balance can't be less than zero");
+            record.FirstName = this.validationRules.NameValidationRules(storage.FirstName) ? storage?.FirstName : throw new ArgumentException("incorrect FirstName");
+            record.LastName = this.validationRules.NameValidationRules(storage.LastName) ? storage.LastName : throw new ArgumentException("incorrect FirstName");
+            record.DateOfBirth = this.validationRules.DateValidationRules(storage.DateOfBirth) ? storage.DateOfBirth : throw new ArgumentException("Year of birth should be more than 1950 end less than current date");
+            record.Type = this.validationRules.TypeValidationRules(storage.Type) ? storage.Type : throw new ArgumentException("Type can be A, B, C only");
+            record.Number = this.validationRules.NumberValidationRules(storage.Number) ? storage.Number : throw new ArgumentException("Number should be more than 0 end less than 9999");
+            record.Balance = this.validationRules.BalanceValidationRules(storage.Balance) ? storage.Balance : throw new ArgumentException("Balance can't be less than zero");
 
-            this.UpdateDictionaries(store.FirstName, store.LastName, store.DateOfBirth, record);
+            this.UpdateDictionaries(storage.FirstName, storage.LastName, storage.DateOfBirth, record);
         }
 
         /// <summary>
@@ -150,12 +127,12 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="args">input data.</param>
         /// /// <returns>validaor.</returns>
-        internal IRecordValidator CreateValidator(string[] args)
+        public BaseValidationRules CreateValidator(string[] args)
         {
             if (args == null || args.Length == 0 || string.IsNullOrEmpty(args[0]))
             {
-                this.validator = new DefaultValidator();
-                return new DefaultValidator();
+                this.validationRules = new DefaultValidateRules();
+                return new DefaultValidateRules();
             }
 
             string[] validator = args[0].Split(new char[] { '=', ' ' }, 2);
@@ -166,29 +143,29 @@ namespace FileCabinetApp
                 {
                     case "default":
                         {
-                            this.validator = new DefaultValidator();
-                            return new DefaultValidator();
+                            this.validationRules = new DefaultValidateRules();
+                            return new DefaultValidateRules();
                         }
 
                     case "custom":
                         {
-                            this.validator = new CustomValidator();
-                            return new CustomValidator();
+                            this.validationRules = new CustomValdationRules();
+                            return new CustomValdationRules();
                         }
 
                     default:
                         {
-                            this.validator = new DefaultValidator();
+                            this.validationRules = new DefaultValidateRules();
                             Console.WriteLine($"Validator {validator[1]} unsupported");
-                            return new DefaultValidator();
+                            return new DefaultValidateRules();
                         }
                 }
             }
             else
             {
-                this.validator = new DefaultValidator();
+                this.validationRules = new DefaultValidateRules();
                 Console.WriteLine($"command {validator[0]} unsupported");
-                return new DefaultValidator();
+                return new DefaultValidateRules();
             }
         }
 

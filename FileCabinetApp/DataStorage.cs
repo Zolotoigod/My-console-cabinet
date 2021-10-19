@@ -2,14 +2,28 @@
 
 namespace FileCabinetApp
 {
-    public class ValidationData
+    public class DataStorage
     {
-        internal ValidationData()
+        public DataStorage(BaseValidationRules validationRules)
         {
+            IInput input = new ConsoleInput();
+            DataValidator validator = new (validationRules);
+            Console.Write("FirstName: ");
+            this.FirstName = input.ReadInput(DataConverter.NameConvert, validator.NameValidator);
+            Console.Write("LastName: ");
+            this.LastName = input.ReadInput(DataConverter.NameConvert, validator.NameValidator);
+            Console.Write("Date of birth (month.day.year): ");
+            this.DateOfBirth = input.ReadInput(DataConverter.DateConvert, validator.DateValidator);
+            Console.Write("Personal account type (A, B, C): ");
+            this.Type = input.ReadInput(DataConverter.TypeConvert, validator.TypeValidator);
+            Console.Write("Personal account number: ");
+            this.Number = input.ReadInput(DataConverter.NumberConvert, validator.NumberValidator);
+            Console.Write("Account balance: ");
+            this.Balance = input.ReadInput(DataConverter.BalanceConvert, validator.BalanceValidator);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationData"/> class whith custom parametres.
+        /// Initializes a new instance of the <see cref="DataStorage"/> class whith custom parametres.
         /// </summary>
         /// <param name="firstName">Get firstName.</param>
         /// <param name="lastName">Get lastName.</param>
@@ -17,7 +31,7 @@ namespace FileCabinetApp
         /// <param name="type">Get type.</param>
         /// <param name="number">Get number.</param>
         /// <param name="balance">Get balance.</param>
-        internal ValidationData(string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
+        public DataStorage(string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
         {
             this.FirstName = firstName;
             this.LastName = lastName;

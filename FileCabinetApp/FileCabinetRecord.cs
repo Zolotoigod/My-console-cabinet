@@ -8,6 +8,23 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetRecord
     {
+        public FileCabinetRecord()
+        {
+        }
+
+        public FileCabinetRecord(DataStorage storage, BaseValidationRules validationRules, int listCount)
+        {
+            this.Id = listCount + 1;
+            BaseValidationRules.ValidationNull(storage);
+            validationRules ??= new DefaultValidateRules();
+            this.FirstName = validationRules.NameValidationRules(storage.FirstName) ? storage?.FirstName : throw new ArgumentException("incorrect FirstName");
+            this.LastName = validationRules.NameValidationRules(storage.LastName) ? storage.LastName : throw new ArgumentException("incorrect FirstName");
+            this.DateOfBirth = validationRules.DateValidationRules(storage.DateOfBirth) ? storage.DateOfBirth : throw new ArgumentException("Year of birth should be more than 1950 end less than current date");
+            this.Type = validationRules.TypeValidationRules(storage.Type) ? storage.Type : throw new ArgumentException("Type can be A, B, C only");
+            this.Number = validationRules.NumberValidationRules(storage.Number) ? storage.Number : throw new ArgumentException("Number should be more than 0 end less than 9999");
+            this.Balance = validationRules.BalanceValidationRules(storage.Balance) ? storage.Balance : throw new ArgumentException("Balance can't be less than zero");
+        }
+
         /// <summary>
         /// Gets or sets record ID.
         /// </summary>
