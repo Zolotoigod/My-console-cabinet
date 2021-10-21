@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 
 namespace FileCabinetApp
 {
@@ -33,6 +34,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
+            new Tuple<string, Action<string>>("export-csv", Export),
         };
 
         private static BaseValidationRules validationRules;
@@ -237,6 +239,53 @@ namespace FileCabinetApp
             }
 
             Console.WriteLine();
+        }
+
+        private static void Export(string parameters)
+        {
+            if (File.Exists(parameters))
+            {
+                ConsoleKey key;
+                do
+                {
+                    Console.WriteLine($"File is exist - rewrite {parameters} [Y / N]> ");
+                    key = Console.ReadKey().Key;
+                    Console.WriteLine();
+                }
+                while (!(((int)key) == 89 || (int)key == 78));
+
+                if (KeySwitch(key))
+                {
+                    CallWriter(parameters);
+                }
+            }
+            else
+            {
+                CallWriter(parameters);
+            }
+        }
+
+        private static bool KeySwitch(ConsoleKey key) => key switch
+        {
+            ConsoleKey.Y => true,
+            ConsoleKey.N => false,
+            _ => false
+        };
+
+        private static void CallWriter(string parameters)
+        {
+            var newSnapshot = Service.MakeSnapshot();
+            try
+            {
+                StreamWriter writer = new (parameters, false, System.Text.Encoding.UTF8);
+                newSnapshot.SaveToCSV(writer);
+                writer.Close();
+                Console.WriteLine($"All records are exported to file {parameters}.");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine($"Export failed: can't open file {parameters}");
+            }
         }
     }
 }

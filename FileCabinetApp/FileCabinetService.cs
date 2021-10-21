@@ -11,14 +11,15 @@ namespace FileCabinetApp
     public class FileCabinetService : IFileCabinetService
     {
         /// <summary>
-        /// Field set the dateformat.
+        /// The field sets the available dateformat.
         /// </summary>
         public static readonly string[] DateFormat = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy", "dd MM yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd,MM,yyyy" };
+        private const string AvailableFields = "ID, F.tName, L.Name, D.OfBirth, Type, Number, Balance";
+        private readonly string[] validationComands = { "--validation-rules", "--v" };
         private readonly List<FileCabinetRecord> list = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
-        private readonly string[] validationComands = { "--validation-rules", "--v" };
         private BaseValidationRules validationRules;
 
         public int CreateRecord(DataStorage storage)
@@ -167,6 +168,11 @@ namespace FileCabinetApp
                 Console.WriteLine($"command {validator[0]} unsupported");
                 return new DefaultValidateRules();
             }
+        }
+
+        public FileCabinetServiceSnapshot MakeSnapshot()
+        {
+            return new FileCabinetServiceSnapshot(this.list, AvailableFields);
         }
 
         /// <summary>
