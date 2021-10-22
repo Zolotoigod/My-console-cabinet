@@ -83,6 +83,58 @@
             Validator vith default parameters.
             </summary>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetMemoryService">
+            <summary>
+            Service.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.FileCabinetMemoryService.DateFormat">
+            <summary>
+            The field sets the available dateformat.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetRecords">
+            <summary>
+            Return all record in servise.
+            </summary>
+            <returns>Array of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetStat">
+            <summary>
+            Metod returned count of records.
+            </summary>
+            <returns>int count.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByFirstName(System.String)">
+            <summary>
+            Serch the record in service by firstname, use dictionary.
+            </summary>
+            <param name="firstName">Parametr for search.</param>
+            <returns>list of FileCabinetRecord.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByLastName(System.String)">
+            <summary>
+            Serch the record in service by Lastname, use dictionary.
+            </summary>
+            <param name="lastName">Parametr for search.</param>
+            <returns>list of FileCabinetRecord.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByDateOfBirth(System.String)">
+            <summary>
+            Serch the record in service by DateOfBirth, use dictionary.
+            </summary>
+            <param name="dateOfBirth">Parametr for search.</param>
+            <returns>list of FileCabinetRecord.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.UpdateDictionaries(System.String,System.String,System.DateTime,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Update dictionaries.
+            </summary>
+            <param name="firstName">set firstName.</param>
+            <param name="lastName">set lastName.</param>
+            <param name="dateOfBirth">set dateOfBirth.</param>
+            <param name="record">record for udate.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Service record.
@@ -143,65 +195,6 @@
             <value>
             Record Personal Account Balance.
             </value>
-        </member>
-        <member name="T:FileCabinetApp.FileCabinetService">
-            <summary>
-            Service.
-            </summary>
-        </member>
-        <member name="F:FileCabinetApp.FileCabinetService.DateFormat">
-            <summary>
-            The field sets the available dateformat.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
-            <summary>
-            Return all record in servise.
-            </summary>
-            <returns>Array of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
-            <summary>
-            Metod returned count of records.
-            </summary>
-            <returns>int count.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
-            <summary>
-            Serch the record in service by firstname, use dictionary.
-            </summary>
-            <param name="firstName">Parametr for search.</param>
-            <returns>list of FileCabinetRecord.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
-            <summary>
-            Serch the record in service by Lastname, use dictionary.
-            </summary>
-            <param name="lastName">Parametr for search.</param>
-            <returns>list of FileCabinetRecord.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.String)">
-            <summary>
-            Serch the record in service by DateOfBirth, use dictionary.
-            </summary>
-            <param name="dateOfBirth">Parametr for search.</param>
-            <returns>list of FileCabinetRecord.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateValidator(System.String[])">
-            <summary>
-            Create validator with given validatin rules.
-            </summary>
-            <param name="args">input data.</param>
-            /// <returns>validaor.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.UpdateDictionaries(System.String,System.String,System.DateTime,FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            Update dictionaries.
-            </summary>
-            <param name="firstName">set firstName.</param>
-            <param name="lastName">set lastName.</param>
-            <param name="dateOfBirth">set dateOfBirth.</param>
-            <param name="record">record for udate.</param>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.DataStorage)">
             <summary>

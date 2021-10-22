@@ -1,14 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace FileCabinetApp
 {
-    public class FileCabinetFilesystemService : IFileCabinetService
+    public class FileCabinetFilesystemService : IFileCabinetService, IDisposable
     {
+        private readonly BaseValidationRules validationRules;
+        private readonly FileStream streamDB;
+
+        public FileCabinetFilesystemService(BaseValidationRules validationRules)
+        {
+            this.validationRules = validationRules;
+            this.streamDB = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
+        }
+
         public int CreateRecord(DataStorage store)
         {
             throw new NotImplementedException();
@@ -42,6 +48,30 @@ namespace FileCabinetApp
         public int GetStat()
         {
             throw new NotImplementedException();
+        }
+
+        public FileCabinetServiceSnapshot MakeSnapshot()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string ToString()
+        {
+            return "Filesistem";
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.streamDB.Close();
+            }
         }
     }
 }

@@ -15,7 +15,6 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
         private static readonly string[] AvailableExportFormats = { "csv", "xml" };
-        private static readonly FileCabinetMemoryService Service = new ();
 
         private static readonly string[][] HelpMessages = new string[][]
         {
@@ -38,6 +37,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("export", Export),
         };
 
+        private static IFileCabinetService service;
         private static BaseValidationRules validationRules;
         private static bool isRunning = true;
 
@@ -48,16 +48,19 @@ namespace FileCabinetApp
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
-            validationRules = Service.CreateValidator(args);
-            Console.WriteLine($"Using {validationRules} validation rules");
+            if (args != null)
+            {
+                AdditionalComandsMain(args);
+            }
+
             Console.WriteLine(HintMessage);
             Console.WriteLine();
 
             // Add eny test objekt
-            Service.CreateRecord(new DataStorage("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
-            Service.CreateRecord(new DataStorage("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
-            Service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
-            Service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
+            service.CreateRecord(new DataStorage("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
+            service.CreateRecord(new DataStorage("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
+            service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
+            service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
 
             do
             {
@@ -129,7 +132,7 @@ namespace FileCabinetApp
         private static void Create(string parameters)
         {
             DataStorage record = new (validationRules);
-            int id = Service.CreateRecord(record);
+            int id = service.CreateRecord(record);
             Console.WriteLine($"Record #{id} is created\n");
         }
 
@@ -137,10 +140,10 @@ namespace FileCabinetApp
         {
             if (int.TryParse(parameters, out int id))
             {
-                if (id <= Service.GetStat() && id > 0)
+                if (id <= service.GetStat() && id > 0)
                 {
                     DataStorage record = new (validationRules);
-                    Service.EditRecord(id, record);
+                    service.EditRecord(id, record);
                     Console.WriteLine($"record #{id} is updated\n");
                 }
                 else
@@ -164,13 +167,13 @@ namespace FileCabinetApp
                 {
                     case "FIRSTNAME":
                         {
-                            if (Service.FindByFirstName(serchedField[1]).Count == 0)
+                            if (service.FindByFirstName(serchedField[1]).Count == 0)
                             {
                                 Console.WriteLine($"firstName {serchedField[1]} not found\n");
                                 break;
                             }
 
-                            foreach (var record in Service.FindByFirstName(serchedField[1]))
+                            foreach (var record in service.FindByFirstName(serchedField[1]))
                             {
                                 Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
                             }
@@ -181,13 +184,13 @@ namespace FileCabinetApp
 
                     case "LASTNAME":
                         {
-                            if (Service.FindByLastName(serchedField[1]).Count == 0)
+                            if (service.FindByLastName(serchedField[1]).Count == 0)
                             {
                                 Console.WriteLine($"Lastname {serchedField[1]} not found\n");
                                 break;
                             }
 
-                            foreach (var record in Service.FindByLastName(serchedField[1]))
+                            foreach (var record in service.FindByLastName(serchedField[1]))
                             {
                                 Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
                             }
@@ -198,19 +201,19 @@ namespace FileCabinetApp
 
                     case "DATEOFBIRTH":
                         {
-                            if (Service.FindByDateOfBirth(serchedField[1]) == null)
+                            if (service.FindByDateOfBirth(serchedField[1]) == null)
                             {
                                 Console.WriteLine("Incorrect date\n");
                                 break;
                             }
 
-                            if (Service.FindByDateOfBirth(serchedField[1]).Count == 0)
+                            if (service.FindByDateOfBirth(serchedField[1]).Count == 0)
                             {
                                 Console.WriteLine($"DateOfBirth {serchedField[1]} not found\n");
                                 break;
                             }
 
-                            foreach (var record in Service.FindByDateOfBirth(serchedField[1]))
+                            foreach (var record in service.FindByDateOfBirth(serchedField[1]))
                             {
                                 Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
                             }
@@ -234,7 +237,7 @@ namespace FileCabinetApp
 
         private static void List(string parameters)
         {
-            foreach (var record in Service.GetRecords())
+            foreach (var record in service.GetRecords())
             {
                 Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
             }
@@ -291,7 +294,7 @@ namespace FileCabinetApp
 
         private static void CallCSVWriter(string parameters)
         {
-            var newSnapshot = Service.MakeSnapshot();
+            var newSnapshot = service.MakeSnapshot();
             try
             {
                 StreamWriter writer = new (parameters, false, System.Text.Encoding.UTF8);
@@ -307,7 +310,7 @@ namespace FileCabinetApp
 
         private static void CallXMLWriter(string parameters)
         {
-            var newSnapshot = Service.MakeSnapshot();
+            var newSnapshot = service.MakeSnapshot();
             try
             {
                 StreamWriter writer = new (parameters, false, System.Text.Encoding.UTF8);
@@ -318,6 +321,96 @@ namespace FileCabinetApp
             catch (DirectoryNotFoundException)
             {
                 Console.WriteLine($"Export failed: can't open file {parameters}");
+            }
+        }
+
+        private static void AdditionalComandsMain(string[] args)
+        {
+            int validationIndex = Array.FindIndex(args, 0, args.Length, match => match.Equals("--validation_rules", StringComparison.InvariantCultureIgnoreCase) || match.Equals("--v", StringComparison.InvariantCultureIgnoreCase));
+            int storageIndex = Array.FindIndex(args, 0, args.Length, match => match.Equals("--storage", StringComparison.InvariantCultureIgnoreCase) || match.Equals("--s", StringComparison.InvariantCultureIgnoreCase));
+            if (validationIndex >= 0)
+            {
+                SetValidator(args, validationIndex, out validationRules);
+            }
+            else
+            {
+                validationRules = new DefaultValidateRules();
+            }
+
+            if (storageIndex >= 0)
+            {
+                SetStorage(args, storageIndex, validationRules, out service);
+            }
+            else
+            {
+                service = new FileCabinetMemoryService(validationRules);
+            }
+
+            Console.WriteLine($"Using {validationRules} validation rules");
+            Console.WriteLine($"Using {service} storage");
+        }
+
+        private static void SetValidator(string[] args, int validationIndex, out BaseValidationRules validationRules)
+        {
+            if (!string.IsNullOrWhiteSpace(args[validationIndex + 1]))
+            {
+                switch (args[validationIndex + 1].ToLowerInvariant())
+                {
+                    case "default":
+                        {
+                            validationRules = new DefaultValidateRules();
+                            break;
+                        }
+
+                    case "custom":
+                        {
+                            validationRules = new CustomValdationRules();
+                            break;
+                        }
+
+                    default:
+                        {
+                            validationRules = new DefaultValidateRules();
+                            Console.WriteLine($"Validator {args[validationIndex + 1]} unsupported");
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                validationRules = new DefaultValidateRules();
+            }
+        }
+
+        private static void SetStorage(string[] args, int storageIndex, BaseValidationRules validationRules, out IFileCabinetService service)
+        {
+            if (!string.IsNullOrWhiteSpace(args[storageIndex + 1]))
+            {
+                switch (args[storageIndex + 1].ToLowerInvariant())
+                {
+                    case "memory":
+                        {
+                            service = new FileCabinetMemoryService(validationRules);
+                            break;
+                        }
+
+                    case "file":
+                        {
+                            service = new FileCabinetFilesystemService(validationRules);
+                            break;
+                        }
+
+                    default:
+                        {
+                            service = new FileCabinetMemoryService(validationRules);
+                            Console.WriteLine($"Service storage {args[storageIndex + 1]} unsupported");
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                service = new FileCabinetMemoryService(validationRules);
             }
         }
     }

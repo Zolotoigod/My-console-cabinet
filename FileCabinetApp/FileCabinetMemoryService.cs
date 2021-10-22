@@ -15,12 +15,16 @@ namespace FileCabinetApp
         /// </summary>
         public static readonly string[] DateFormat = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy", "dd MM yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd,MM,yyyy" };
         private const string AvailableFields = "ID, F.tName, L.Name, D.OfBirth, Type, Number, Balance";
-        private readonly string[] validationComands = { "--validation-rules", "--v" };
         private readonly List<FileCabinetRecord> list = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
-        private BaseValidationRules validationRules;
+        private readonly BaseValidationRules validationRules;
+
+        public FileCabinetMemoryService(BaseValidationRules validationRules)
+        {
+            this.validationRules = validationRules;
+        }
 
         public int CreateRecord(DataStorage storage)
         {
@@ -123,56 +127,14 @@ namespace FileCabinetApp
             }
         }
 
-        /// <summary>
-        /// Create validator with given validatin rules.
-        /// </summary>
-        /// <param name="args">input data.</param>
-        /// /// <returns>validaor.</returns>
-        public BaseValidationRules CreateValidator(string[] args)
-        {
-            if (args == null || args.Length == 0 || string.IsNullOrEmpty(args[0]))
-            {
-                this.validationRules = new DefaultValidateRules();
-                return new DefaultValidateRules();
-            }
-
-            string[] validator = args[0].Split(new char[] { '=', ' ' }, 2);
-
-            if (Array.IndexOf(this.validationComands, validator[0].ToLowerInvariant()) >= 0)
-            {
-                switch (validator[1].ToLowerInvariant())
-                {
-                    case "default":
-                        {
-                            this.validationRules = new DefaultValidateRules();
-                            return new DefaultValidateRules();
-                        }
-
-                    case "custom":
-                        {
-                            this.validationRules = new CustomValdationRules();
-                            return new CustomValdationRules();
-                        }
-
-                    default:
-                        {
-                            this.validationRules = new DefaultValidateRules();
-                            Console.WriteLine($"Validator {validator[1]} unsupported");
-                            return new DefaultValidateRules();
-                        }
-                }
-            }
-            else
-            {
-                this.validationRules = new DefaultValidateRules();
-                Console.WriteLine($"command {validator[0]} unsupported");
-                return new DefaultValidateRules();
-            }
-        }
-
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(this.list, AvailableFields);
+        }
+
+        public override string ToString()
+        {
+            return "Memory";
         }
 
         /// <summary>
