@@ -15,7 +15,7 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
         private static readonly string[] AvailableExportFormats = { "csv", "xml" };
-        private static readonly FileCabinetService Service = new ();
+        private static readonly FileCabinetMemoryService Service = new ();
 
         private static readonly string[][] HelpMessages = new string[][]
         {

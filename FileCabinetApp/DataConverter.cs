@@ -17,7 +17,7 @@ namespace FileCabinetApp
         public static Tuple<bool, string, DateTime> DateConvert(string input)
         {
             Tuple<bool, string, DateTime> result = new (
-                    DateTime.TryParseExact(input, FileCabinetService.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth),
+                    DateTime.TryParseExact(input, FileCabinetMemoryService.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth),
                     $"Correct date format (month.day.year)",
                     dateOfBirth);
             return result;

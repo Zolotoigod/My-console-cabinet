@@ -8,7 +8,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Service.
     /// </summary>
-    public class FileCabinetService : IFileCabinetService
+    public class FileCabinetMemoryService : IFileCabinetService
     {
         /// <summary>
         /// The field sets the available dateformat.
