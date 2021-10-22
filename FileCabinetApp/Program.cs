@@ -14,6 +14,7 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+        private static readonly string[] AvailableExportFormats = { "csv", "xml" };
         private static readonly FileCabinetService Service = new ();
 
         private static readonly string[][] HelpMessages = new string[][]
@@ -34,7 +35,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
-            new Tuple<string, Action<string>>("export-csv", Export),
+            new Tuple<string, Action<string>>("export", Export),
         };
 
         private static BaseValidationRules validationRules;
@@ -243,12 +244,21 @@ namespace FileCabinetApp
 
         private static void Export(string parameters)
         {
-            if (File.Exists(parameters))
+            string[] exportParams = parameters.Split(' ', 2);
+            var index = Array.FindIndex(AvailableExportFormats, 0, AvailableExportFormats.Length, match => match.Equals(exportParams[0], StringComparison.InvariantCultureIgnoreCase));
+            if (index < 0)
+            {
+                exportParams[1] = "Export format unsupported!";
+            }
+
+            var exportFormat = WriterFormatSwitch(index);
+
+            if (File.Exists(exportParams[1]))
             {
                 ConsoleKey key;
                 do
                 {
-                    Console.WriteLine($"File is exist - rewrite {parameters} [Y / N]> ");
+                    Console.WriteLine($"File is exist - rewrite {exportParams[1]} [Y / N]> ");
                     key = Console.ReadKey().Key;
                     Console.WriteLine();
                 }
@@ -256,14 +266,21 @@ namespace FileCabinetApp
 
                 if (KeySwitch(key))
                 {
-                    CallWriter(parameters);
+                    exportFormat(exportParams[1]);
                 }
             }
             else
             {
-                CallWriter(parameters);
+                exportFormat(exportParams[1]);
             }
         }
+
+        private static Action<string> WriterFormatSwitch(int index) => index switch
+        {
+            0 => CallCSVWriter,
+            1 => CallXMLWriter,
+            _ => Console.WriteLine
+        };
 
         private static bool KeySwitch(ConsoleKey key) => key switch
         {
@@ -272,13 +289,29 @@ namespace FileCabinetApp
             _ => false
         };
 
-        private static void CallWriter(string parameters)
+        private static void CallCSVWriter(string parameters)
         {
             var newSnapshot = Service.MakeSnapshot();
             try
             {
                 StreamWriter writer = new (parameters, false, System.Text.Encoding.UTF8);
                 newSnapshot.SaveToCSV(writer);
+                writer.Close();
+                Console.WriteLine($"All records are exported to file {parameters}.");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine($"Export failed: can't open file {parameters}");
+            }
+        }
+
+        private static void CallXMLWriter(string parameters)
+        {
+            var newSnapshot = Service.MakeSnapshot();
+            try
+            {
+                StreamWriter writer = new (parameters, false, System.Text.Encoding.UTF8);
+                newSnapshot.SaveToXML(writer);
                 writer.Close();
                 Console.WriteLine($"All records are exported to file {parameters}.");
             }

@@ -23,5 +23,17 @@ namespace FileCabinetApp
                 newWriter.Write(record);
             }
         }
+
+        public void SaveToXML(TextWriter writer)
+        {
+            FileCabinetRecordXmlWriter newWriter = new (writer);
+            newWriter.RootStart("records");
+            foreach (var record in this.records)
+            {
+                newWriter.Write(record);
+            }
+
+            newWriter.RootEnd();
+        }
     }
 }
