@@ -151,7 +151,7 @@
         </member>
         <member name="F:FileCabinetApp.FileCabinetService.DateFormat">
             <summary>
-            Field set the dateformat.
+            The field sets the available dateformat.
             </summary>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
