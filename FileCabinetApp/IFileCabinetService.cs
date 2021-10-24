@@ -7,16 +7,16 @@ namespace FileCabinetApp
         /// <summary>
         /// Create record in service.
         /// </summary>
-        /// <param name="store">Record push in service.</param>
+        /// <param name="storeage">Record push in service.</param>
         /// <returns>Record ID.</returns>
-        public int CreateRecord(DataStorage store);
+        public int CreateRecord(DataStorage storeage);
 
         /// <summary>
         /// Edit record in service by id.
         /// </summary>
         /// <param name="id"> id of record.</param>
-        /// <param name="store">New record data.</param>
-        public void EditRecord(int id, DataStorage store);
+        /// <param name="storage">New record data.</param>
+        public void EditRecord(int id, DataStorage storage);
 
         /// <summary>
         /// Return all record in servise.

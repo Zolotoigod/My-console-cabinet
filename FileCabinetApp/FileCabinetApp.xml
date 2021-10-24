@@ -200,7 +200,7 @@
             <summary>
             Create record in service.
             </summary>
-            <param name="store">Record push in service.</param>
+            <param name="storeage">Record push in service.</param>
             <returns>Record ID.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.DataStorage)">
@@ -208,7 +208,7 @@
             Edit record in service by id.
             </summary>
             <param name="id"> id of record.</param>
-            <param name="store">New record data.</param>
+            <param name="storage">New record data.</param>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.GetRecords">
             <summary>

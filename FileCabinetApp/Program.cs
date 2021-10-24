@@ -125,6 +125,12 @@ namespace FileCabinetApp
 
         private static void Exit(string parameters)
         {
+            if (service is FileCabinetFilesystemService)
+            {
+                FileCabinetFilesystemService end = (FileCabinetFilesystemService)service;
+                end.Dispose();
+            }
+
             Console.WriteLine("Exiting an application...");
             isRunning = false;
         }
