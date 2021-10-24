@@ -245,7 +245,7 @@ namespace FileCabinetApp
         {
             foreach (var record in service.GetRecords())
             {
-                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
+                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f2}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
             }
 
             Console.WriteLine();
