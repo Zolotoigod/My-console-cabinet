@@ -73,7 +73,7 @@ namespace FileCabinetApp
 
         public int GetStat()
         {
-            throw new NotImplementedException();
+            return this.lastRecordNumber;
         }
 
         public FileCabinetServiceSnapshot MakeSnapshot()
@@ -96,6 +96,8 @@ namespace FileCabinetApp
         {
             if (disposing)
             {
+                this.writer.Close();
+                this.reader.Close();
                 this.streamDB.Dispose();
             }
         }
