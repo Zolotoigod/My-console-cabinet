@@ -57,10 +57,10 @@ namespace FileCabinetApp
             Console.WriteLine();
 
             // Add eny test objekt
-            service.CreateRecord(new DataStorage("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
+            /*service.CreateRecord(new DataStorage("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
             service.CreateRecord(new DataStorage("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
             service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
-            service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));
+            service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'A', 3434, 3.14m));*/
 
             do
             {

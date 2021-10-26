@@ -12,31 +12,38 @@ namespace FileCabinetApp
     {
         private readonly BaseValidationRules validationRules;
         private readonly FileStream streamDB;
-        private readonly long beginOF;
+        private readonly int recordSize = sizeof(short) + sizeof(int) + 120 + 120 + (3 * sizeof(int)) + 2 + sizeof(short) + sizeof(decimal);
+        private readonly UTF8Encoding coder = new ();
+        private readonly short reservedField = 7;
         private int lastRecordNumber;
-        private string recordsFormat = "{0,-6} | {1,-10} | {2,-20} | {3,-30} | {4, -30}\n";
-        private StreamWriter writer;
-        private StreamReader reader;
 
         public FileCabinetFilesystemService(BaseValidationRules validationRules)
         {
             this.validationRules = validationRules;
-            this.streamDB = new FileStream("cabinet-records.db", FileMode.Create);
-            this.writer = new StreamWriter(this.streamDB);
-            this.reader = new StreamReader(this.streamDB);
-            this.writer.Write(string.Format(CultureInfo.InvariantCulture, this.recordsFormat, "Offset", "DataType", "Field Size (bytes)", "Name", "Discription"));
-            this.writer.WriteLine(RecordSeparate("-"));
-            this.beginOF = this.streamDB.Position;
-            this.writer.Flush();
+            bool existNow = false;
+            if (File.Exists("cabinet-records.db"))
+            {
+                existNow = true;
+            }
+
+            this.streamDB = new FileStream("cabinet-records.db", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            if (existNow)
+            {
+                this.streamDB.Position = this.streamDB.Length - this.recordSize + 2;
+                using (BinaryReader reader = new (this.streamDB, Encoding.UTF8, true))
+                {
+                    this.lastRecordNumber = reader.ReadInt32();
+                }
+            }
         }
 
         public int CreateRecord(DataStorage storage)
         {
             BaseValidationRules.ValidationNull(storage);
             var record = new FileCabinetRecord(storage, this.validationRules, this.lastRecordNumber);
-            this.WriteRecordToStream(record);
-            this.lastRecordNumber = record.Id;
-            return this.lastRecordNumber;
+            this.WriteRecordToFile(record);
+            this.lastRecordNumber += 1;
+            return record.Id;
         }
 
         public void EditRecord(int id, DataStorage storeage)
@@ -61,14 +68,15 @@ namespace FileCabinetApp
 
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            this.streamDB.Position = this.beginOF + 219;
-            List<FileCabinetRecord> list = new ();
-            for (int i = 0; i < this.lastRecordNumber; i++)
+            int startPosition = 0;
+            List<FileCabinetRecord> records = new ();
+            for (int i = 1; i <= this.lastRecordNumber; i++)
             {
-                list.Add(this.ReadRecordFromStream());
+                records.Add(this.ReadRecordFormFile(startPosition));
+                startPosition += this.recordSize;
             }
 
-            return list.AsReadOnly();
+            return records.AsReadOnly();
         }
 
         public int GetStat()
@@ -96,103 +104,56 @@ namespace FileCabinetApp
         {
             if (disposing)
             {
-                this.writer.Close();
-                this.reader.Close();
                 this.streamDB.Dispose();
             }
         }
 
-        private static string RecordSeparate(string recordSeparatSymbol, int count = 108)
+        private static char[] GetFixLenthString(string value, int count)
         {
-            StringBuilder resultString = new StringBuilder();
-            for (int i = 0; i < count; i++)
+            char[] result = Enumerable.Repeat(' ', count).ToArray();
+            char[] name = value.ToCharArray();
+            name.CopyTo(result, 0);
+            return result;
+        }
+
+        private FileCabinetRecord ReadRecordFormFile(int streamposition)
+        {
+            this.streamDB.Position = streamposition;
+            FileCabinetRecord readedRecord = new ();
+            using (BinaryReader reader = new (this.streamDB, Encoding.UTF8, true))
             {
-               resultString.Append(recordSeparatSymbol);
+                reader.ReadInt16();
+                readedRecord.Id = reader.ReadInt32();
+                readedRecord.FirstName = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
+                readedRecord.LastName = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
+                int year = reader.ReadInt32();
+                int month = reader.ReadInt32();
+                int day = reader.ReadInt32();
+                readedRecord.DateOfBirth = new DateTime(year, month, day);
+                readedRecord.Type = this.coder.GetChars(reader.ReadBytes(2))[0];
+                readedRecord.Number = reader.ReadInt16();
+                readedRecord.Balance = reader.ReadDecimal();
             }
 
-            return resultString.ToString();
+            return readedRecord;
         }
 
-        private void WriteRecordToStream(FileCabinetRecord record)
+        private void WriteRecordToFile(FileCabinetRecord record)
         {
-            int offset = 0;
-            string formatRecord = string.Format(CultureInfo.InvariantCulture, this.recordsFormat, offset, "short", "2", "Status", "Reserved");
-            this.writer.Write(formatRecord);
-            offset += 2;
-
-            formatRecord = string.Format(CultureInfo.InvariantCulture, this.recordsFormat, offset, "int32", sizeof(int), "ID", record.Id);
-            this.writer.Write(formatRecord);
-            offset += sizeof(int);
-
-            formatRecord = string.Format(CultureInfo.InvariantCulture, this.recordsFormat, offset, "Char[]", 120, "FirstName", record.FirstName);
-            this.writer.Write(formatRecord);
-            offset += 120;
-
-            formatRecord = string.Format(CultureInfo.InvariantCulture, this.recordsFormat, offset, "Char[]", 120, "LastName", record.LastName);
-            this.writer.Write(formatRecord);
-            offset += 120;
-
-            formatRecord = string.Format(CultureInfo.InvariantCulture, this.recordsFormat, offset, "int32", sizeof(int), "Year", record.DateOfBirth.Year);
-            this.writer.Write(formatRecord);
-            offset += sizeof(int);
-
-            formatRecord = string.Format(CultureInfo.InvariantCulture, this.recordsFormat, offset, "int32", sizeof(int), "Month", record.DateOfBirth.Month);
-            this.writer.Write(formatRecord);
-            offset += sizeof(int);
-
-            formatRecord = string.Format(CultureInfo.InvariantCulture, this.recordsFormat, offset, "int32", sizeof(int), "Day", record.DateOfBirth.Day);
-            this.writer.Write(formatRecord);
-            offset += sizeof(int);
-
-            formatRecord = string.Format(CultureInfo.InvariantCulture, this.recordsFormat, offset, "Char", sizeof(char), "Type", record.Type);
-            this.writer.Write(formatRecord);
-            offset += sizeof(char);
-
-            formatRecord = string.Format(CultureInfo.InvariantCulture, "{0,-6} | {1,-10} | {2,-20} | {3,-30} | {4:0000}\n", offset, "short", sizeof(short), "Number", record.Number);
-            this.writer.Write(formatRecord);
-            offset += sizeof(short);
-
-            formatRecord = string.Format(CultureInfo.InvariantCulture, "{0,-6} | {1,-10} | {2,-20} | {3,-30} | {4:N2}\n", offset, "decimal", sizeof(decimal), "Balance", record.Balance);
-            this.writer.Write(formatRecord);
-            this.writer.WriteLine(RecordSeparate("-"));
-            this.writer.Flush();
-        }
-
-        private FileCabinetRecord ReadRecordFromStream()
-        {
-            FileCabinetRecord record = new ();
-            this.reader.ReadLine();
-            string[] valueArray = this.reader.ReadLine().Split('|', StringSplitOptions.TrimEntries);
-            record.Id = int.Parse(valueArray[4], CultureInfo.InvariantCulture);
-
-            valueArray = this.reader.ReadLine().Split('|', StringSplitOptions.TrimEntries);
-            record.FirstName = valueArray[4];
-
-            valueArray = this.reader.ReadLine().Split('|', StringSplitOptions.TrimEntries);
-            record.LastName = valueArray[4];
-
-            valueArray = this.reader.ReadLine().Split('|', StringSplitOptions.TrimEntries);
-            int year = int.Parse(valueArray[4], CultureInfo.InvariantCulture);
-
-            valueArray = this.reader.ReadLine().Split('|', StringSplitOptions.TrimEntries);
-            int month = int.Parse(valueArray[4], CultureInfo.InvariantCulture);
-
-            valueArray = this.reader.ReadLine().Split('|', StringSplitOptions.TrimEntries);
-            int day = int.Parse(valueArray[4], CultureInfo.InvariantCulture);
-
-            record.DateOfBirth = new DateTime(year, month, day);
-
-            valueArray = this.reader.ReadLine().Split('|', StringSplitOptions.TrimEntries);
-            record.Type = valueArray[4][0];
-
-            valueArray = this.reader.ReadLine().Split('|', StringSplitOptions.TrimEntries);
-            record.Number = short.Parse(valueArray[4], CultureInfo.InvariantCulture);
-
-            valueArray = this.reader.ReadLine().Split('|', StringSplitOptions.TrimEntries);
-            record.Balance = decimal.Parse(valueArray[4], CultureInfo.InvariantCulture);
-
-            this.reader.ReadLine();
-            return record;
+            this.streamDB.Position = this.streamDB.Length;
+            using (BinaryWriter writer = new (this.streamDB, Encoding.UTF8, true))
+            {
+                writer.Write(this.reservedField);
+                writer.Write(record.Id);
+                writer.Write(this.coder.GetBytes(GetFixLenthString(record.FirstName, 120)));
+                writer.Write(this.coder.GetBytes(GetFixLenthString(record.LastName, 120)));
+                writer.Write(record.DateOfBirth.Year);
+                writer.Write(record.DateOfBirth.Month);
+                writer.Write(record.DateOfBirth.Day);
+                writer.Write(this.coder.GetBytes(GetFixLenthString(record.Type.ToString(), 2)));
+                writer.Write(record.Number);
+                writer.Write(record.Balance);
+            }
         }
     }
 }
