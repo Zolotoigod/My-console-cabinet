@@ -41,14 +41,16 @@ namespace FileCabinetApp
         {
             BaseValidationRules.ValidationNull(storage);
             var record = new FileCabinetRecord(storage, this.validationRules, this.lastRecordNumber);
-            this.WriteRecordToFile(record);
+            this.WriteRecordToFile(record, this.streamDB.Length);
             this.lastRecordNumber += 1;
             return record.Id;
         }
 
-        public void EditRecord(int id, DataStorage storeage)
+        public void EditRecord(int id, DataStorage storage)
         {
-            throw new NotImplementedException();
+            long position = (this.recordSize * (id - 1)) + 6;
+            var record = new FileCabinetRecord(storage, this.validationRules, this.lastRecordNumber);
+            this.WriteRecordToFile(record, position, false);
         }
 
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
@@ -116,9 +118,9 @@ namespace FileCabinetApp
             return result;
         }
 
-        private FileCabinetRecord ReadRecordFormFile(int streamposition)
+        private FileCabinetRecord ReadRecordFormFile(int position)
         {
-            this.streamDB.Position = streamposition;
+            this.streamDB.Position = position;
             FileCabinetRecord readedRecord = new ();
             using (BinaryReader reader = new (this.streamDB, Encoding.UTF8, true))
             {
@@ -138,13 +140,17 @@ namespace FileCabinetApp
             return readedRecord;
         }
 
-        private void WriteRecordToFile(FileCabinetRecord record)
+        private void WriteRecordToFile(FileCabinetRecord record, long position, bool isCreate = true)
         {
-            this.streamDB.Position = this.streamDB.Length;
+            this.streamDB.Position = position;
             using (BinaryWriter writer = new (this.streamDB, Encoding.UTF8, true))
             {
-                writer.Write(this.reservedField);
-                writer.Write(record.Id);
+                if (isCreate)
+                {
+                    writer.Write(this.reservedField);
+                    writer.Write(record.Id);
+                }
+
                 writer.Write(this.coder.GetBytes(GetFixLenthString(record.FirstName, 120)));
                 writer.Write(this.coder.GetBytes(GetFixLenthString(record.LastName, 120)));
                 writer.Write(record.DateOfBirth.Year);
