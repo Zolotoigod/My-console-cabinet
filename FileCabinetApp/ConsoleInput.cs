@@ -4,7 +4,7 @@
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Class get data from console.
+    /// Class gets data from console.
     /// </summary>
     public class ConsoleInput : IInput
     {

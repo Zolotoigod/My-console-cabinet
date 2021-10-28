@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,18 +14,22 @@ namespace FileCabinetApp
         private readonly int recordSize = sizeof(short) + sizeof(int) + 120 + 120 + (3 * sizeof(int)) + 2 + sizeof(short) + sizeof(decimal);
         private readonly UTF8Encoding coder = new ();
         private readonly short reservedField = 7;
+        private readonly Dictionary<string, List<long>> firstNameDictionary = new ();
+        private readonly Dictionary<string, List<long>> lastNameDictionary = new ();
+        private readonly Dictionary<DateTime, List<long>> dateOfBirthDictionary = new ();
+        private readonly string filename = "cabinet-records.db";
         private int lastRecordNumber;
 
         public FileCabinetFilesystemService(BaseValidationRules validationRules)
         {
             this.validationRules = validationRules;
             bool existNow = false;
-            if (File.Exists("cabinet-records.db"))
+            if (File.Exists(this.filename))
             {
                 existNow = true;
             }
 
-            this.streamDB = new FileStream("cabinet-records.db", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            this.streamDB = new FileStream(this.filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             if (existNow)
             {
                 this.streamDB.Position = this.streamDB.Length - this.recordSize + 2;
@@ -34,6 +37,8 @@ namespace FileCabinetApp
                 {
                     this.lastRecordNumber = reader.ReadInt32();
                 }
+
+                this.InitialDictionary();
             }
         }
 
@@ -41,6 +46,7 @@ namespace FileCabinetApp
         {
             BaseValidationRules.ValidationNull(storage);
             var record = new FileCabinetRecord(storage, this.validationRules, this.lastRecordNumber);
+            this.UpdateDictionary(storage, this.streamDB.Length);
             this.WriteRecordToFile(record, this.streamDB.Length);
             this.lastRecordNumber += 1;
             return record.Id;
@@ -50,22 +56,66 @@ namespace FileCabinetApp
         {
             long position = (this.recordSize * (id - 1)) + 6;
             var record = new FileCabinetRecord(storage, this.validationRules, this.lastRecordNumber);
+            this.firstNameDictionary.Remove(storage.FirstName);
+            this.lastNameDictionary.Remove(storage.LastName);
+            this.dateOfBirthDictionary.Remove(storage.DateOfBirth);
+            this.UpdateDictionary(storage, position - 6);
             this.WriteRecordToFile(record, position, false);
         }
 
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
-            throw new NotImplementedException();
+            DateTime date = new ();
+            if (DateTime.TryParse(dateOfBirth, out date) && this.dateOfBirthDictionary.ContainsKey(date))
+            {
+                List<FileCabinetRecord> result = new ();
+                for (int i = 0; i < this.dateOfBirthDictionary[date].Count; i++)
+                {
+                    result.Add(this.ReadRecordFormFile(this.dateOfBirthDictionary[date][i]));
+                }
+
+                return result.AsReadOnly();
+            }
+            else
+            {
+                return new List<FileCabinetRecord>().AsReadOnly();
+            }
         }
 
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            throw new NotImplementedException();
+            if (this.firstNameDictionary.ContainsKey(firstName?.ToUpperInvariant()))
+            {
+                List<FileCabinetRecord> result = new ();
+                for (int i = 0; i < this.firstNameDictionary[firstName.ToUpperInvariant()].Count; i++)
+                {
+                    result.Add(this.ReadRecordFormFile(this.firstNameDictionary[firstName.ToUpperInvariant()][i]));
+                }
+
+                return result.AsReadOnly();
+            }
+            else
+            {
+                return new List<FileCabinetRecord>().AsReadOnly();
+            }
         }
 
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            throw new NotImplementedException();
+            if (this.lastNameDictionary.ContainsKey(lastName?.ToUpperInvariant()))
+            {
+                List<FileCabinetRecord> result = new ();
+                for (int i = 0; i < this.lastNameDictionary[lastName.ToUpperInvariant()].Count; i++)
+                {
+                    result.Add(this.ReadRecordFormFile(this.lastNameDictionary[lastName.ToUpperInvariant()][i]));
+                }
+
+                return result.AsReadOnly();
+            }
+            else
+            {
+                return new List<FileCabinetRecord>().AsReadOnly();
+            }
         }
 
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
@@ -118,7 +168,7 @@ namespace FileCabinetApp
             return result;
         }
 
-        private FileCabinetRecord ReadRecordFormFile(int position)
+        private FileCabinetRecord ReadRecordFormFile(long position)
         {
             this.streamDB.Position = position;
             FileCabinetRecord readedRecord = new ();
@@ -128,10 +178,7 @@ namespace FileCabinetApp
                 readedRecord.Id = reader.ReadInt32();
                 readedRecord.FirstName = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
                 readedRecord.LastName = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
-                int year = reader.ReadInt32();
-                int month = reader.ReadInt32();
-                int day = reader.ReadInt32();
-                readedRecord.DateOfBirth = new DateTime(year, month, day);
+                readedRecord.DateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
                 readedRecord.Type = this.coder.GetChars(reader.ReadBytes(2))[0];
                 readedRecord.Number = reader.ReadInt16();
                 readedRecord.Balance = reader.ReadDecimal();
@@ -160,6 +207,34 @@ namespace FileCabinetApp
                 writer.Write(record.Number);
                 writer.Write(record.Balance);
             }
+        }
+
+        private void InitialDictionary()
+        {
+            for (long pos = 0; pos < this.streamDB.Length; pos += this.recordSize)
+            {
+                this.streamDB.Position = pos + 6;
+                using (BinaryReader reader = new (this.streamDB, Encoding.UTF8, true))
+                {
+                    string bufferS = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
+                    DictionaryManager.NameDictUpdate(this.firstNameDictionary, bufferS, pos);
+
+                    bufferS = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
+                    DictionaryManager.NameDictUpdate(this.lastNameDictionary, bufferS, pos);
+
+                    DateTime bufferD = new (reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                    DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, bufferD, pos);
+                }
+            }
+        }
+
+        private void UpdateDictionary(DataStorage starage, long position)
+        {
+            DictionaryManager.NameDictUpdate(this.firstNameDictionary, starage.FirstName, position);
+
+            DictionaryManager.NameDictUpdate(this.lastNameDictionary, starage.LastName, position);
+
+            DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, starage.DateOfBirth, position);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace FileCabinetApp
 
         public override bool TypeValidationRules(char type)
         {
-            char[] availableType = { 'A', 'B', 'C', 'D' };
+            char[] availableType = { 'A', 'B', 'C' };
             return availableType.Contains(char.ToUpper(type, CultureInfo.InvariantCulture));
         }
     }

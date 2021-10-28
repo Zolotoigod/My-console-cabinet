@@ -14,6 +14,7 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+        private const string ConsleFormat = "#{0}, {1}, {2}, {3}, {4}, {5}, {6:f2}";
         private static readonly string[] AvailableExportFormats = { "csv", "xml" };
 
         private static readonly string[][] HelpMessages = new string[][]
@@ -57,12 +58,12 @@ namespace FileCabinetApp
             Console.WriteLine();
 
             // Add eny test objekt
-            service.CreateRecord(new DataStorage("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
+            /*service.CreateRecord(new DataStorage("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
             service.CreateRecord(new DataStorage("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
             service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'B', 3434, 3.14m));
             service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'B', 3434, 3.14m));
             service.CreateRecord(new DataStorage("Anna", "Rose", new DateTime(1994, 07, 18), 'A', 4242, 10000000m));
-            service.CreateRecord(new DataStorage("Lucifer", "Morningstar", new DateTime(1951, 01, 22), 'A', 6666, 666666.666m));
+            service.CreateRecord(new DataStorage("Lucifer", "Morningstar", new DateTime(1951, 01, 22), 'A', 6666, 666666.666m));*/
 
             do
             {
@@ -183,7 +184,7 @@ namespace FileCabinetApp
 
                             foreach (var record in service.FindByFirstName(serchedField[1]))
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
+                                Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
                             }
 
                             Console.WriteLine();
@@ -200,7 +201,7 @@ namespace FileCabinetApp
 
                             foreach (var record in service.FindByLastName(serchedField[1]))
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
+                                Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
                             }
 
                             Console.WriteLine();
@@ -223,7 +224,7 @@ namespace FileCabinetApp
 
                             foreach (var record in service.FindByDateOfBirth(serchedField[1]))
                             {
-                                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f3}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
+                                Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
                             }
 
                             Console.WriteLine();
@@ -247,7 +248,7 @@ namespace FileCabinetApp
         {
             foreach (var record in service.GetRecords())
             {
-                Console.WriteLine("#{0}, {1}, {2}, {3}, {4}, {5}, {6:f2}", record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
+                Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
             }
 
             Console.WriteLine();

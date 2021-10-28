@@ -11,7 +11,7 @@
         </member>
         <member name="T:FileCabinetApp.ConsoleInput">
             <summary>
-            Class get data from console.
+            Class gets data from console.
             </summary>
         </member>
         <member name="T:FileCabinetApp.CustomValdationRules">
