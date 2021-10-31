@@ -12,7 +12,17 @@ namespace FileCabinetGenerator
         static void Main(string[] args)
         {
             int[] commandsIndex = AdditionalComandsMain(args);
-                           
+            int amount = int.Parse(args[commandsIndex[2] + 1]);
+            int firstID = int.Parse(args[commandsIndex[3] + 1]);
+            using (StreamWriter stream = new(args[commandsIndex[1] + 1], false, System.Text.Encoding.UTF8))
+            {
+                IFileCabinetRecordWriter formatWriter = SetWriter(stream, args[commandsIndex[0] + 1]);
+                for (int i = 1; i < amount; i++)
+                {
+                    formatWriter.Write(GetRandomRecordDefaultVal(firstID));
+                    firstID++;
+                }
+            }
         }
 
         private static int[] AdditionalComandsMain(string[] args)
