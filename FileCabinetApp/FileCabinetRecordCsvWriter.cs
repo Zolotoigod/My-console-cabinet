@@ -2,7 +2,7 @@
 
 namespace FileCabinetApp
 {
-    public class FileCabinetRecordCsvWriter
+    public class FileCabinetRecordCsvWriter : IFileCabinetRecordWriter
     {
         private readonly TextWriter writer;
 

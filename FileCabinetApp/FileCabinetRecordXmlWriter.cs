@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace FileCabinetApp
 {
-    public class FileCabinetRecordXmlWriter
+    public class FileCabinetRecordXmlWriter : IFileCabinetRecordWriter
     {
         private XmlWriter writer;
 
