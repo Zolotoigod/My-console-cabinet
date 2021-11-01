@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Globalization;
-using System.Xml;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.IO;
 using FileCabinetApp;
@@ -19,11 +18,23 @@ namespace FileCabinetGenerator
                 IFileCabinetRecordWriter formatWriter = SetWriter(stream, args[commandsIndex[0] + 1].ToUpperInvariant());
                 if (formatWriter != null)
                 {
-                    for (int i = 0; i < amount; i++)
+                    if (formatWriter is FileCabinetRecordXmlWriter && true)
                     {
-                        formatWriter.Write(GetRandomRecordDefaultVal(firstID));
-                        firstID++;
+                        XMLSerializ(stream, amount, firstID);
                     }
+                    else
+                    {
+                        formatWriter.WriteRootStart(formatWriter.GetRoot());
+
+                        for (int i = 0; i < amount; i++)
+                        {
+                            formatWriter.Write(GetRandomRecordDefaultVal(firstID));
+                            firstID++;
+                        }
+
+                        formatWriter.WriteRootEnd();
+                    }
+
                     Console.WriteLine($"{args[commandsIndex[2] + 1]} records were written to {args[commandsIndex[1] + 1]}");
                 }
                 else
@@ -92,5 +103,18 @@ namespace FileCabinetGenerator
             "XML" => new FileCabinetRecordXmlWriter(writer),
             _ => null
         };
+
+        private static void XMLSerializ(StreamWriter stream, int amount, int id)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<FileCabinetRecord>));
+            List<FileCabinetRecord> records = new List<FileCabinetRecord>();
+            for (int i = 0; i < amount; i++)
+            {
+                records.Add(GetRandomRecordDefaultVal(id));
+                id++;
+            }
+
+            serializer.Serialize(stream, records);
+        }
     }
 }

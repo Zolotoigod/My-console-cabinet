@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Xml.Serialization;
 
 namespace FileCabinetApp
 {
     /// <summary>
     /// Service record.
     /// </summary>
+    [Serializable]
+    [XmlRoot]
     public class FileCabinetRecord
     {
         public FileCabinetRecord()
@@ -30,6 +33,7 @@ namespace FileCabinetApp
         /// <value>
         /// Record ID.
         /// </value>
+        [XmlElement]
         public int Id { get; set; }
 
         /// <summary>
@@ -38,6 +42,7 @@ namespace FileCabinetApp
         /// <value>
         /// Record FirstName.
         /// </value>
+        [XmlElement]
         public string FirstName { get; set; }
 
         /// <summary>
@@ -46,6 +51,7 @@ namespace FileCabinetApp
         /// <value>
         /// Record LastName.
         /// </value>
+        [XmlElement]
         public string LastName { get; set; }
 
         /// <summary>
@@ -54,6 +60,7 @@ namespace FileCabinetApp
         /// <value>
         /// Record DateOfBirth.
         /// </value>
+        [XmlElement]
         public DateTime DateOfBirth { get; set; }
 
         /// <summary>
@@ -62,6 +69,7 @@ namespace FileCabinetApp
         /// <value>
         /// Record Personal Account Type.
         /// </value>
+        [XmlElement]
         public char Type { get; set; }
 
         /// <summary>
@@ -70,6 +78,7 @@ namespace FileCabinetApp
         /// <value>
         /// Record Personal Account Number.
         /// </value>
+        [XmlElement]
         public short Number { get; set; }
 
         /// <summary>
@@ -78,6 +87,7 @@ namespace FileCabinetApp
         /// <value>
         /// Record Personal Account Balance.
         /// </value>
+        [XmlElement]
         public decimal Balance { get; set; }
     }
 }

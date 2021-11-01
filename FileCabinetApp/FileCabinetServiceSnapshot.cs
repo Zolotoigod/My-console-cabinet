@@ -17,7 +17,7 @@ namespace FileCabinetApp
         public void SaveToCSV(TextWriter writer)
         {
             FileCabinetRecordCsvWriter newWriter = new (writer);
-            newWriter.WriteTitle(this.fileTitle);
+            newWriter.WriteRootStart(this.fileTitle);
             foreach (var record in this.records)
             {
                 newWriter.Write(record);
@@ -27,13 +27,13 @@ namespace FileCabinetApp
         public void SaveToXML(TextWriter writer)
         {
             FileCabinetRecordXmlWriter newWriter = new (writer);
-            newWriter.RootStart("records");
+            newWriter.WriteRootStart("records");
             foreach (var record in this.records)
             {
                 newWriter.Write(record);
             }
 
-            newWriter.RootEnd();
+            newWriter.WriteRootEnd();
         }
     }
 }
