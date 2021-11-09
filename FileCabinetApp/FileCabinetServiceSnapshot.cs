@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace FileCabinetApp
@@ -8,11 +9,21 @@ namespace FileCabinetApp
         private readonly FileCabinetRecord[] records;
         private readonly string fileTitle;
 
+        public FileCabinetServiceSnapshot(StreamReader reader, BaseValidationRules validationRules)
+        {
+            var list = this.LoadFromCsv(reader, validationRules);
+            this.records = list?.ToArray();
+            this.Records = list.AsReadOnly();
+        }
+
         public FileCabinetServiceSnapshot(List<FileCabinetRecord> list, string title)
         {
             this.records = list?.ToArray();
+            this.Records = list.AsReadOnly();
             this.fileTitle = title;
         }
+
+        public ReadOnlyCollection<FileCabinetRecord> Records { get; }
 
         public void SaveToCSV(TextWriter writer)
         {
@@ -34,6 +45,18 @@ namespace FileCabinetApp
             }
 
             newWriter.WriteRootEnd();
+        }
+
+        public List<FileCabinetRecord> LoadFromCsv(StreamReader reader, BaseValidationRules validationRules)
+        {
+            FileCabinetRecordCsvReader newReader = new (reader);
+            return newReader.ReadAll(validationRules);
+        }
+
+        public void LoadFromXml(StreamReader reader, BaseValidationRules validationRules)
+        {
+            FileCabinetRecordCsvReader newReader = new (reader);
+            newReader.ReadAll(validationRules);
         }
     }
 }

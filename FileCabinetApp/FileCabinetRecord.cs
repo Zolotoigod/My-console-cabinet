@@ -60,7 +60,7 @@ namespace FileCabinetApp
         /// <value>
         /// Record DateOfBirth.
         /// </value>
-        [XmlElement]
+        [XmlElement(DataType = "date")]
         public DateTime DateOfBirth { get; set; }
 
         /// <summary>
@@ -89,5 +89,10 @@ namespace FileCabinetApp
         /// </value>
         [XmlElement]
         public decimal Balance { get; set; }
+
+        public override string ToString()
+        {
+            return "Record";
+        }
     }
 }

@@ -42,5 +42,7 @@ namespace FileCabinetApp
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth);
 
         public FileCabinetServiceSnapshot MakeSnapshot();
+
+        public void Restore(FileCabinetServiceSnapshot snapshot);
     }
 }

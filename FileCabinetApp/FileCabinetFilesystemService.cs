@@ -152,6 +152,11 @@ namespace FileCabinetApp
             GC.SuppressFinalize(this);
         }
 
+        public void Restore(FileCabinetServiceSnapshot snapshot)
+        {
+            throw new NotImplementedException();
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

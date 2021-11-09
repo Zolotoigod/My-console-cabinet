@@ -84,14 +84,14 @@ namespace FileCabinetGenerator
         }
 
         private static FileCabinetRecord GetRandomRecordDefaultVal(int id)
-        {
+        {            
             FileCabinetRecord result = new ();
             Random joker = new Random();
             result.Id = id;
-            result.FirstName = ((FirstName)joker.Next(0, 9)).ToString();
-            result.LastName = ((LastName)joker.Next(0, 9)).ToString();
+            result.FirstName = ((FirstName)joker.Next(0, Enum.GetNames(typeof(FirstName)).Length)).ToString();
+            result.LastName = ((LastName)joker.Next(0, Enum.GetNames(typeof(LastName)).Length)).ToString();
             result.DateOfBirth = RandomDate(new DateTime(1950, 1, 1), DateTime.Today);
-            result.Type = ((Types)joker.Next(0, 2)).ToString()[0];
+            result.Type = ((Types)joker.Next(0, Enum.GetNames(typeof(Types)).Length)).ToString()[0];
             result.Number = (short)joker.Next(1, 9999);
             result.Balance = (decimal)(joker.NextDouble() * joker.Next(1, 1000000000));
             return result;

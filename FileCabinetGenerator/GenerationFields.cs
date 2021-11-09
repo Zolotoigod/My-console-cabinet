@@ -12,6 +12,10 @@
         Nik,
         David,
         Jon,
+        Archi,
+        Henata,
+        Hatsumoto,
+        Rokky,
     }
 
     public enum LastName

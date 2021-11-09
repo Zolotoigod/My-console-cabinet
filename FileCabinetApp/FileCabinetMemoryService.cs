@@ -15,11 +15,11 @@ namespace FileCabinetApp
         /// </summary>
         public static readonly string[] DateFormat = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy", "dd MM yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd,MM,yyyy" };
         private const string AvailableFields = "ID, F.tName, L.Name, D.OfBirth, Type, Number, Balance";
-        private readonly List<FileCabinetRecord> list = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
         private readonly BaseValidationRules validationRules;
+        private List<FileCabinetRecord> list = new ();
 
         public FileCabinetMemoryService(BaseValidationRules validationRules)
         {
@@ -132,6 +132,21 @@ namespace FileCabinetApp
             return new FileCabinetServiceSnapshot(this.list, AvailableFields);
         }
 
+        public void Restore(FileCabinetServiceSnapshot snapshot)
+        {
+            for (int i = 0; i < snapshot?.Records.Count; i++)
+            {
+                this.list.RemoveAll(match => match.Id == snapshot.Records[i].Id);
+            }
+
+            foreach (var record in snapshot.Records)
+            {
+                this.list.Add(record);
+            }
+
+            this.RestoreDictionary(this.list);
+        }
+
         public override string ToString()
         {
             return "Memory";
@@ -171,6 +186,18 @@ namespace FileCabinetApp
             else
             {
                 this.dateOfBirthDictionary.Add(dateOfBirth, new List<FileCabinetRecord> { record });
+            }
+        }
+
+        private void RestoreDictionary(List<FileCabinetRecord> list)
+        {
+            this.firstNameDictionary.Clear();
+            this.lastNameDictionary.Clear();
+            this.dateOfBirthDictionary.Clear();
+
+            foreach (var record in list)
+            {
+                this.UpdateDictionaries(record.FirstName, record.LastName, record.DateOfBirth, record);
             }
         }
     }
