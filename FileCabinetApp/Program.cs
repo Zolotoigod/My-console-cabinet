@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Xml;
 
 namespace FileCabinetApp
 {
@@ -382,18 +383,15 @@ namespace FileCabinetApp
 
         private static void CallXMLReader(string parameters)
         {
-            /*var newSnapshot = service.MakeSnapshot();
-            try
+            using (FileStream streamReader = new FileStream(parameters, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                StreamWriter writer = new (parameters, false, System.Text.Encoding.UTF8);
-                newSnapshot.SaveToXML(writer);
-                writer.Close();
-                Console.WriteLine($"All records are exported to file {parameters}.");
+                using (var xmlReader = XmlReader.Create(streamReader))
+                {
+                    var importSnapshot = new FileCabinetServiceSnapshot(xmlReader, validationRules);
+                    Console.WriteLine($"{importSnapshot.Records.Count} records were imported from {parameters}");
+                    service.Restore(importSnapshot);
+                }
             }
-            catch (DirectoryNotFoundException)
-            {
-                Console.WriteLine($"Export failed: can't open file {parameters}");
-            }*/
         }
 
         private static void AdditionalComandsMain(string[] args)

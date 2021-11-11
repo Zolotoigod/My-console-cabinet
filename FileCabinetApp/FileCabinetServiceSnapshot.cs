@@ -1,25 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Xml;
 
 namespace FileCabinetApp
 {
     public class FileCabinetServiceSnapshot
     {
-        private readonly FileCabinetRecord[] records;
         private readonly string fileTitle;
 
         public FileCabinetServiceSnapshot(StreamReader reader, BaseValidationRules validationRules)
         {
             var list = this.LoadFromCsv(reader, validationRules);
-            this.records = list?.ToArray();
+            this.Records = list.AsReadOnly();
+        }
+
+        public FileCabinetServiceSnapshot(XmlReader reader, BaseValidationRules validationRules)
+        {
+            var list = this.LoadFromXml(reader, validationRules);
             this.Records = list.AsReadOnly();
         }
 
         public FileCabinetServiceSnapshot(List<FileCabinetRecord> list, string title)
         {
-            this.records = list?.ToArray();
-            this.Records = list.AsReadOnly();
+            this.Records = list?.AsReadOnly();
             this.fileTitle = title;
         }
 
@@ -29,7 +33,7 @@ namespace FileCabinetApp
         {
             FileCabinetRecordCsvWriter newWriter = new (writer);
             newWriter.WriteRootStart(this.fileTitle);
-            foreach (var record in this.records)
+            foreach (var record in this.Records)
             {
                 newWriter.Write(record);
             }
@@ -39,7 +43,7 @@ namespace FileCabinetApp
         {
             FileCabinetRecordXmlWriter newWriter = new (writer);
             newWriter.WriteRootStart("records");
-            foreach (var record in this.records)
+            foreach (var record in this.Records)
             {
                 newWriter.Write(record);
             }
@@ -53,10 +57,10 @@ namespace FileCabinetApp
             return newReader.ReadAll(validationRules);
         }
 
-        public void LoadFromXml(StreamReader reader, BaseValidationRules validationRules)
+        public List<FileCabinetRecord> LoadFromXml(XmlReader reader, BaseValidationRules validationRules)
         {
-            FileCabinetRecordCsvReader newReader = new (reader);
-            newReader.ReadAll(validationRules);
+            FileCabinetRecordXmlReader newReader = new ();
+            return newReader.XmlDeSerialize(reader, validationRules);
         }
     }
 }
