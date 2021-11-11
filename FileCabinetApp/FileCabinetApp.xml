@@ -115,15 +115,6 @@
             <param name="dateOfBirth">Parametr for search.</param>
             <returns>list of FileCabinetRecord.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.UpdateDictionaries(System.String,System.String,System.DateTime,FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            Update dictionaries.
-            </summary>
-            <param name="firstName">set firstName.</param>
-            <param name="lastName">set lastName.</param>
-            <param name="dateOfBirth">set dateOfBirth.</param>
-            <param name="record">record for udate.</param>
-        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Service record.

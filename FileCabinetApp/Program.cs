@@ -129,9 +129,9 @@ namespace FileCabinetApp
 
         private static void Exit(string parameters)
         {
-            if (service is FileCabinetFilesystemService)
+            if (service is FileCabinetFileService)
             {
-                FileCabinetFilesystemService end = (FileCabinetFilesystemService)service;
+                FileCabinetFileService end = (FileCabinetFileService)service;
                 end.Dispose();
             }
 
@@ -468,7 +468,7 @@ namespace FileCabinetApp
 
                     case "file":
                         {
-                            service = new FileCabinetFilesystemService(validationRules);
+                            service = new FileCabinetFileService(validationRules);
                             break;
                         }
 

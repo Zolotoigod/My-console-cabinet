@@ -7,10 +7,11 @@ using System.Text;
 
 namespace FileCabinetApp
 {
-    public class FileCabinetFilesystemService : IFileCabinetService, IDisposable
+    public class FileCabinetFileService : IFileCabinetService, IDisposable
     {
+        private const string AvailableFields = "ID, F.tName, L.Name, D.OfBirth, Type, Number, Balance";
         private readonly BaseValidationRules validationRules;
-        private readonly FileStream streamDB;
+        private readonly FileStream fileStreamDb;
         private readonly int recordSize = sizeof(short) + sizeof(int) + 120 + 120 + (3 * sizeof(int)) + 2 + sizeof(short) + sizeof(decimal);
         private readonly UTF8Encoding coder = new ();
         private readonly short reservedField = 7;
@@ -18,9 +19,8 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<long>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<long>> dateOfBirthDictionary = new ();
         private readonly string filename = "cabinet-records.db";
-        private int lastRecordNumber;
 
-        public FileCabinetFilesystemService(BaseValidationRules validationRules)
+        public FileCabinetFileService(BaseValidationRules validationRules)
         {
             this.validationRules = validationRules;
             bool existNow = false;
@@ -29,15 +29,10 @@ namespace FileCabinetApp
                 existNow = true;
             }
 
-            this.streamDB = new FileStream(this.filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            this.fileStreamDb = new FileStream(this.filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             if (existNow)
             {
-                this.streamDB.Position = this.streamDB.Length - this.recordSize + 2;
-                using (BinaryReader reader = new (this.streamDB, Encoding.UTF8, true))
-                {
-                    this.lastRecordNumber = reader.ReadInt32();
-                }
-
+                this.fileStreamDb.Position = this.fileStreamDb.Length - this.recordSize + 2;
                 this.InitialDictionary();
             }
         }
@@ -45,17 +40,16 @@ namespace FileCabinetApp
         public int CreateRecord(DataStorage storage)
         {
             BaseValidationRules.ValidationNull(storage);
-            var record = new FileCabinetRecord(storage, this.validationRules, this.lastRecordNumber);
-            this.UpdateDictionary(storage, this.streamDB.Length);
-            this.WriteRecordToFile(record, this.streamDB.Length);
-            this.lastRecordNumber += 1;
+            var record = new FileCabinetRecord(storage, this.validationRules, this.GetStat());
+            this.UpdateDictionary(storage, this.fileStreamDb.Length);
+            this.WriteRecordToFile(record, this.fileStreamDb.Length);
             return record.Id;
         }
 
         public void EditRecord(int id, DataStorage storage)
         {
             long position = (this.recordSize * (id - 1)) + 6;
-            var record = new FileCabinetRecord(storage, this.validationRules, this.lastRecordNumber);
+            var record = new FileCabinetRecord(storage, this.validationRules, this.GetStat());
             this.firstNameDictionary.Remove(storage.FirstName);
             this.lastNameDictionary.Remove(storage.LastName);
             this.dateOfBirthDictionary.Remove(storage.DateOfBirth);
@@ -122,7 +116,7 @@ namespace FileCabinetApp
         {
             int startPosition = 0;
             List<FileCabinetRecord> records = new ();
-            for (int i = 1; i <= this.lastRecordNumber; i++)
+            for (int i = 1; i <= this.GetStat(); i++)
             {
                 records.Add(this.ReadRecordFormFile(startPosition));
                 startPosition += this.recordSize;
@@ -133,17 +127,17 @@ namespace FileCabinetApp
 
         public int GetStat()
         {
-            return this.lastRecordNumber;
+            return (int)(this.fileStreamDb.Length / this.recordSize);
         }
 
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
-            throw new NotImplementedException();
+            return new FileCabinetServiceSnapshot(this.GetRecords().ToList(), AvailableFields);
         }
 
         public override string ToString()
         {
-            return "Filesistem";
+            return "Filesystem";
         }
 
         public void Dispose()
@@ -154,14 +148,34 @@ namespace FileCabinetApp
 
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
-            throw new NotImplementedException();
+            List<FileCabinetRecord> list = this.GetRecords().ToList();
+            for (int i = 0; i < snapshot?.Records.Count; i++)
+            {
+                list.RemoveAll(match => match.Id == snapshot.Records[i].Id);
+            }
+
+            foreach (var record in snapshot.Records)
+            {
+                list.Add(record);
+            }
+
+            this.fileStreamDb.SetLength(0);
+
+            long position = 0;
+            foreach (var record in list)
+            {
+                this.WriteRecordToFile(record, position);
+                position += this.recordSize;
+            }
+
+            this.RestoreDictionary(list);
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                this.streamDB.Dispose();
+                this.fileStreamDb.Dispose();
             }
         }
 
@@ -175,9 +189,9 @@ namespace FileCabinetApp
 
         private FileCabinetRecord ReadRecordFormFile(long position)
         {
-            this.streamDB.Position = position;
+            this.fileStreamDb.Position = position;
             FileCabinetRecord readedRecord = new ();
-            using (BinaryReader reader = new (this.streamDB, Encoding.UTF8, true))
+            using (BinaryReader reader = new (this.fileStreamDb, Encoding.UTF8, true))
             {
                 reader.ReadInt16();
                 readedRecord.Id = reader.ReadInt32();
@@ -192,12 +206,12 @@ namespace FileCabinetApp
             return readedRecord;
         }
 
-        private void WriteRecordToFile(FileCabinetRecord record, long position, bool isCreate = true)
+        private void WriteRecordToFile(FileCabinetRecord record, long position, bool createRecord = true)
         {
-            this.streamDB.Position = position;
-            using (BinaryWriter writer = new (this.streamDB, Encoding.UTF8, true))
+            this.fileStreamDb.Position = position;
+            using (BinaryWriter writer = new (this.fileStreamDb, Encoding.UTF8, true))
             {
-                if (isCreate)
+                if (createRecord)
                 {
                     writer.Write(this.reservedField);
                     writer.Write(record.Id);
@@ -216,10 +230,10 @@ namespace FileCabinetApp
 
         private void InitialDictionary()
         {
-            for (long pos = 0; pos < this.streamDB.Length; pos += this.recordSize)
+            for (long pos = 0; pos < this.fileStreamDb.Length; pos += this.recordSize)
             {
-                this.streamDB.Position = pos + 6;
-                using (BinaryReader reader = new (this.streamDB, Encoding.UTF8, true))
+                this.fileStreamDb.Position = pos + 6;
+                using (BinaryReader reader = new (this.fileStreamDb, Encoding.UTF8, true))
                 {
                     string bufferS = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
                     DictionaryManager.NameDictUpdate(this.firstNameDictionary, bufferS, pos);
@@ -240,6 +254,22 @@ namespace FileCabinetApp
             DictionaryManager.NameDictUpdate(this.lastNameDictionary, starage.LastName, position);
 
             DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, starage.DateOfBirth, position);
+        }
+
+        private void RestoreDictionary(List<FileCabinetRecord> list)
+        {
+            this.firstNameDictionary.Clear();
+            this.lastNameDictionary.Clear();
+            this.dateOfBirthDictionary.Clear();
+
+            long position = 0;
+            foreach (var record in list)
+            {
+                DictionaryManager.NameDictUpdate(this.firstNameDictionary, record.FirstName, position);
+                DictionaryManager.NameDictUpdate(this.lastNameDictionary, record.LastName, position);
+                DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, position);
+                position += this.recordSize;
+            }
         }
     }
 }

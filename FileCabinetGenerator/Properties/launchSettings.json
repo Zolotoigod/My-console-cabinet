@@ -2,7 +2,7 @@
   "profiles": {
     "FileCabinetGenerator": {
       "commandName": "Project",
-      "commandLineArgs": "--t csv --o C:\\Users\\JA\\Desktop\\xmlSerialData.xml --a 30 --i 42  "
+      "commandLineArgs": "--t xml --o C:\\Users\\JA\\Desktop\\xmlSerialData.xml --a 30 --i 42  "
     }
   }
 }
