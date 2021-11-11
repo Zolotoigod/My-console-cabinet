@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace FileCabinetApp
 {
@@ -22,20 +23,11 @@ namespace FileCabinetApp
             this.Balance = input.ReadInput(DataConverter.BalanceConvert, validator.BalanceValidator);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DataStorage"/> class whith custom parametres.
-        /// </summary>
-        /// <param name="firstName">Get firstName.</param>
-        /// <param name="lastName">Get lastName.</param>
-        /// <param name="dateOfBirth">Get dateOfBirth.</param>
-        /// <param name="type">Get type.</param>
-        /// <param name="number">Get number.</param>
-        /// <param name="balance">Get balance.</param>
-        public DataStorage(string firstName, string lastName, DateTime dateOfBirth, char type, short number, decimal balance)
+        public DataStorage(string firstname, string lastname, DateTime date, char type, short number, decimal balance)
         {
-            this.FirstName = firstName;
-            this.LastName = lastName;
-            this.DateOfBirth = dateOfBirth;
+            this.FirstName = firstname;
+            this.LastName = lastname;
+            this.DateOfBirth = date;
             this.Type = type;
             this.Number = number;
             this.Balance = balance;

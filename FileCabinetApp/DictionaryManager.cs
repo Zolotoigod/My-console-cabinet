@@ -6,27 +6,27 @@ namespace FileCabinetApp
 {
     public static class DictionaryManager
     {
-        public static void NameDictUpdate(Dictionary<string, List<long>> dictionary, string key, long position)
+        public static void NameDictUpdate<T>(Dictionary<string, List<T>> dictionary, string key, T value)
         {
             if (dictionary.ContainsKey(key.ToUpperInvariant()))
             {
-                dictionary[key.ToUpperInvariant()].Add(position);
+                dictionary[key.ToUpperInvariant()].Add(value);
             }
             else
             {
-                dictionary.Add(key.ToUpperInvariant(), new List<long> { position });
+                dictionary.Add(key.ToUpperInvariant(), new List<T> { value });
             }
         }
 
-        public static void DateDictUpdate(Dictionary<DateTime, List<long>> dictionary, DateTime key, long position)
+        public static void DateDictUpdate<T>(Dictionary<DateTime, List<T>> dictionary, DateTime key, T value)
         {
             if (dictionary.ContainsKey(key))
             {
-                dictionary[key].Add(position);
+                dictionary[key].Add(value);
             }
             else
             {
-                dictionary.Add(key, new List<long> { position });
+                dictionary.Add(key, new List<T> { value });
             }
         }
     }

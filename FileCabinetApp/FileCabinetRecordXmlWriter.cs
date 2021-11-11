@@ -4,8 +4,9 @@ using System.Xml;
 
 namespace FileCabinetApp
 {
-    public class FileCabinetRecordXmlWriter
+    public class FileCabinetRecordXmlWriter : IFileCabinetRecordWriter
     {
+        private const string XMLRoot = "records";
         private XmlWriter writer;
 
         public FileCabinetRecordXmlWriter(TextWriter newText)
@@ -47,15 +48,20 @@ namespace FileCabinetApp
             this.writer.Flush();
         }
 
-        public void RootStart(string root)
+        public void WriteRootStart(string root)
         {
             this.writer.WriteStartElement(root);
         }
 
-        public void RootEnd()
+        public void WriteRootEnd()
         {
             this.writer.WriteEndElement();
             this.writer.Close();
+        }
+
+        public string GetRoot()
+        {
+            return XMLRoot;
         }
     }
 }

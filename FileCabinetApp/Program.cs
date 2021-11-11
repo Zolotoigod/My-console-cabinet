@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Xml;
 
 namespace FileCabinetApp
 {
@@ -36,6 +37,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
+            new Tuple<string, Action<string>>("import", Import),
         };
 
         private static IFileCabinetService service;
@@ -128,9 +130,9 @@ namespace FileCabinetApp
 
         private static void Exit(string parameters)
         {
-            if (service is FileCabinetFilesystemService)
+            if (service is FileCabinetFileService)
             {
-                FileCabinetFilesystemService end = (FileCabinetFilesystemService)service;
+                FileCabinetFileService end = (FileCabinetFileService)service;
                 end.Dispose();
             }
 
@@ -287,6 +289,39 @@ namespace FileCabinetApp
             }
         }
 
+        private static void Import(string parameters)
+        {
+            string[] importParams = parameters.Split(' ', 2);
+            if (importParams.Length == 2)
+            {
+                var index = Array.FindIndex(AvailableExportFormats, 0, AvailableExportFormats.Length, match => match.Equals(importParams[0], StringComparison.InvariantCultureIgnoreCase));
+                if (index < 0)
+                {
+                    importParams[1] = "Export format unsupported!";
+                }
+                else if (File.Exists(importParams[1]))
+                {
+                    var importFormat = ReaderFormatSwitch(index);
+                    importFormat(importParams[1]);
+                }
+                else
+                {
+                    Console.WriteLine($"Import error: file {importParams[1]} is not exist.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Import error: wrong parameters");
+            }
+        }
+
+        private static Action<string> ReaderFormatSwitch(int index) => index switch
+        {
+            0 => CallCSVReader,
+            1 => CallXMLReader,
+            _ => Console.WriteLine
+        };
+
         private static Action<string> WriterFormatSwitch(int index) => index switch
         {
             0 => CallCSVWriter,
@@ -330,6 +365,32 @@ namespace FileCabinetApp
             catch (DirectoryNotFoundException)
             {
                 Console.WriteLine($"Export failed: can't open file {parameters}");
+            }
+        }
+
+        private static void CallCSVReader(string parameters)
+        {
+            using (FileStream streamReader = new FileStream(parameters, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (var newStreamReader = new StreamReader(streamReader))
+                {
+                    var importSnapshot = new FileCabinetServiceSnapshot(newStreamReader, validationRules);
+                    Console.WriteLine($"{importSnapshot.Records.Count} records were imported from {parameters}");
+                    service.Restore(importSnapshot);
+                }
+            }
+        }
+
+        private static void CallXMLReader(string parameters)
+        {
+            using (FileStream streamReader = new FileStream(parameters, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (var xmlReader = XmlReader.Create(streamReader))
+                {
+                    var importSnapshot = new FileCabinetServiceSnapshot(xmlReader, validationRules);
+                    Console.WriteLine($"{importSnapshot.Records.Count} records were imported from {parameters}");
+                    service.Restore(importSnapshot);
+                }
             }
         }
 
@@ -405,7 +466,7 @@ namespace FileCabinetApp
 
                     case "file":
                         {
-                            service = new FileCabinetFilesystemService(validationRules);
+                            service = new FileCabinetFileService(validationRules);
                             break;
                         }
 

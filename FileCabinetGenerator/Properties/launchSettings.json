@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FileCabinetGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "--t xml --o C:\\Users\\JA\\Desktop\\xmlSerialData.xml --a 30 --i 2  "
+    }
+  }
+}

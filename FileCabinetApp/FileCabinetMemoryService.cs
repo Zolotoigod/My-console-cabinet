@@ -15,11 +15,11 @@ namespace FileCabinetApp
         /// </summary>
         public static readonly string[] DateFormat = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy", "dd MM yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd,MM,yyyy" };
         private const string AvailableFields = "ID, F.tName, L.Name, D.OfBirth, Type, Number, Balance";
-        private readonly List<FileCabinetRecord> list = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
         private readonly BaseValidationRules validationRules;
+        private List<FileCabinetRecord> list = new ();
 
         public FileCabinetMemoryService(BaseValidationRules validationRules)
         {
@@ -31,7 +31,9 @@ namespace FileCabinetApp
             BaseValidationRules.ValidationNull(storage);
             var record = new FileCabinetRecord(storage, this.validationRules, this.list.Count);
             this.list.Add(record);
-            this.UpdateDictionaries(storage.FirstName, storage.LastName, storage.DateOfBirth, record);
+            DictionaryManager.NameDictUpdate(this.firstNameDictionary, record.FirstName, record);
+            DictionaryManager.NameDictUpdate(this.lastNameDictionary, record.LastName, record);
+            DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, record);
             return record.Id;
         }
 
@@ -50,7 +52,9 @@ namespace FileCabinetApp
             record.Number = this.validationRules.NumberValidationRules(storage.Number) ? storage.Number : throw new ArgumentException("Number should be more than 0 end less than 9999");
             record.Balance = this.validationRules.BalanceValidationRules(storage.Balance) ? storage.Balance : throw new ArgumentException("Balance can't be less than zero");
 
-            this.UpdateDictionaries(storage.FirstName, storage.LastName, storage.DateOfBirth, record);
+            DictionaryManager.NameDictUpdate(this.firstNameDictionary, record.FirstName, record);
+            DictionaryManager.NameDictUpdate(this.lastNameDictionary, record.LastName, record);
+            DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, record);
         }
 
         /// <summary>
@@ -132,45 +136,37 @@ namespace FileCabinetApp
             return new FileCabinetServiceSnapshot(this.list, AvailableFields);
         }
 
+        public void Restore(FileCabinetServiceSnapshot snapshot)
+        {
+            for (int i = 0; i < snapshot?.Records.Count; i++)
+            {
+                this.list.RemoveAll(match => match.Id == snapshot.Records[i].Id);
+            }
+
+            foreach (var record in snapshot.Records)
+            {
+                this.list.Add(record);
+            }
+
+            this.RestoreDictionary(this.list);
+        }
+
         public override string ToString()
         {
             return "Memory";
         }
 
-        /// <summary>
-        /// Update dictionaries.
-        /// </summary>
-        /// <param name="firstName">set firstName.</param>
-        /// <param name="lastName">set lastName.</param>
-        /// <param name="dateOfBirth">set dateOfBirth.</param>
-        /// <param name="record">record for udate.</param>
-        private void UpdateDictionaries(string firstName, string lastName, DateTime dateOfBirth, FileCabinetRecord record)
+        private void RestoreDictionary(List<FileCabinetRecord> list)
         {
-            if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
-            {
-                this.firstNameDictionary[firstName.ToUpperInvariant()].Add(record);
-            }
-            else
-            {
-                this.firstNameDictionary.Add(firstName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
-            }
+            this.firstNameDictionary.Clear();
+            this.lastNameDictionary.Clear();
+            this.dateOfBirthDictionary.Clear();
 
-            if (this.lastNameDictionary.ContainsKey(lastName.ToUpperInvariant()))
+            foreach (var record in list)
             {
-                this.lastNameDictionary[lastName.ToUpperInvariant()].Add(record);
-            }
-            else
-            {
-                this.lastNameDictionary.Add(lastName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
-            }
-
-            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
-            {
-                this.dateOfBirthDictionary[dateOfBirth].Add(record);
-            }
-            else
-            {
-                this.dateOfBirthDictionary.Add(dateOfBirth, new List<FileCabinetRecord> { record });
+                DictionaryManager.NameDictUpdate(this.firstNameDictionary, record.FirstName, record);
+                DictionaryManager.NameDictUpdate(this.lastNameDictionary, record.LastName, record);
+                DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, record);
             }
         }
     }

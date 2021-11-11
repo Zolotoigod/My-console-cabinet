@@ -19,17 +19,6 @@
             Validator vith custom parameters.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.DataStorage.#ctor(System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.DataStorage"/> class whith custom parametres.
-            </summary>
-            <param name="firstName">Get firstName.</param>
-            <param name="lastName">Get lastName.</param>
-            <param name="dateOfBirth">Get dateOfBirth.</param>
-            <param name="type">Get type.</param>
-            <param name="number">Get number.</param>
-            <param name="balance">Get balance.</param>
-        </member>
         <member name="P:FileCabinetApp.DataStorage.FirstName">
             <summary>
             Gets or sets record FirstName.
@@ -125,15 +114,6 @@
             </summary>
             <param name="dateOfBirth">Parametr for search.</param>
             <returns>list of FileCabinetRecord.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.UpdateDictionaries(System.String,System.String,System.DateTime,FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            Update dictionaries.
-            </summary>
-            <param name="firstName">set firstName.</param>
-            <param name="lastName">set lastName.</param>
-            <param name="dateOfBirth">set dateOfBirth.</param>
-            <param name="record">record for udate.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
