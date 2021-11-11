@@ -34,7 +34,7 @@ namespace FileCabinetApp
                 }
                 else
                 {
-                    newRecord.Id = 0;
+                    newRecord.Id = -1;
                 }
 
                 newRecord.FirstName = validationRules.NameValidationRules(buffer[1]) ? buffer[1] : "#Incorrect data#";

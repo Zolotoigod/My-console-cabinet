@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 
+#pragma warning disable CA1805
+
 namespace FileCabinetApp
 {
     /// <summary>
@@ -25,6 +27,8 @@ namespace FileCabinetApp
         {
             this.validationRules = validationRules;
         }
+
+        int IFileCabinetService.DeletedRecords { get; set; }
 
         public int CreateRecord(DataStorage storage)
         {
@@ -149,6 +153,28 @@ namespace FileCabinetApp
             }
 
             this.RestoreDictionary(this.list);
+        }
+
+        public string Remove(int id)
+        {
+            if (this.list.RemoveAll(record => record.Id == id) > 0)
+            {
+                this.RestoreDictionary(this.list);
+                return $"Record #{id} is removed.";
+            }
+
+            return $"Record #{id} doesn't exists.";
+        }
+
+        public List<int> GetListId()
+        {
+            List<int> allId = new ();
+            foreach (var record in this.list)
+            {
+                allId.Add(record.Id);
+            }
+
+            return allId;
         }
 
         public override string ToString()

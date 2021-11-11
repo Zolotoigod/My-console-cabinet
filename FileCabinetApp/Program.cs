@@ -32,12 +32,14 @@ namespace FileCabinetApp
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
+            new Tuple<string, Action<string>>("stat", Stat),
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
+            new Tuple<string, Action<string>>("remove", Remove),
         };
 
         private static IFileCabinetService service;
@@ -140,6 +142,12 @@ namespace FileCabinetApp
             isRunning = false;
         }
 
+        private static void Stat(string parameters)
+        {
+            Console.WriteLine($"Total records - {service.GetStat()}");
+            Console.WriteLine($"Removed records - {service.DeletedRecords}\n");
+        }
+
         private static void Create(string parameters)
         {
             DataStorage record = new (validationRules);
@@ -149,9 +157,9 @@ namespace FileCabinetApp
 
         private static void Edit(string parameters)
         {
-            if (int.TryParse(parameters, out int id))
+            if (int.TryParse(parameters, out int id) && id > 0)
             {
-                if (id <= service.GetStat() && id > 0)
+                if (service.GetListId().Contains(id))
                 {
                     DataStorage record = new (validationRules);
                     service.EditRecord(id, record);
@@ -312,6 +320,18 @@ namespace FileCabinetApp
             else
             {
                 Console.WriteLine($"Import error: wrong parameters");
+            }
+        }
+
+        private static void Remove(string parameters)
+        {
+            if (int.TryParse(parameters, out int id))
+            {
+                Console.WriteLine(service.Remove(id));
+            }
+            else
+            {
+                Console.WriteLine("Incorrect Parameters");
             }
         }
 

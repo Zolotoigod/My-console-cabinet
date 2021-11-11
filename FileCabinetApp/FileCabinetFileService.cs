@@ -37,6 +37,8 @@ namespace FileCabinetApp
             }
         }
 
+        int IFileCabinetService.DeletedRecords { get; set; }
+
         public int CreateRecord(DataStorage storage)
         {
             BaseValidationRules.ValidationNull(storage);
@@ -169,6 +171,16 @@ namespace FileCabinetApp
             }
 
             this.RestoreDictionary(list);
+        }
+
+        public string Remove(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<int> GetListId()
+        {
+            throw new NotImplementedException();
         }
 
         protected virtual void Dispose(bool disposing)

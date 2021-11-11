@@ -1,9 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace FileCabinetApp
 {
     public interface IFileCabinetService
     {
+        public int DeletedRecords { get; protected set; }
+
         /// <summary>
         /// Create record in service.
         /// </summary>
@@ -44,5 +47,9 @@ namespace FileCabinetApp
         public FileCabinetServiceSnapshot MakeSnapshot();
 
         public void Restore(FileCabinetServiceSnapshot snapshot);
+
+        public string Remove(int id);
+
+        public List<int> GetListId();
     }
 }
