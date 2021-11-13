@@ -5,8 +5,6 @@ namespace FileCabinetApp
 {
     public interface IFileCabinetService
     {
-        public int DeletedRecords { get; protected set; }
-
         /// <summary>
         /// Create record in service.
         /// </summary>
@@ -32,6 +30,8 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>int count.</returns>
         public int GetStat();
+
+        public int GetDeletedRecords();
 
         /// <summary>
         /// Serch the record in service by firstname, use dictionary.

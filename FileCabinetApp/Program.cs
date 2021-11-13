@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Xml;
@@ -145,7 +146,7 @@ namespace FileCabinetApp
         private static void Stat(string parameters)
         {
             Console.WriteLine($"Total records - {service.GetStat()}");
-            Console.WriteLine($"Removed records - {service.DeletedRecords}\n");
+            Console.WriteLine($"Removed records - {service.GetDeletedRecords()}\n");
         }
 
         private static void Create(string parameters)
@@ -161,13 +162,12 @@ namespace FileCabinetApp
             {
                 if (service.GetListId().Contains(id))
                 {
-                    DataStorage record = new (validationRules);
-                    service.EditRecord(id, record);
-                    Console.WriteLine($"record #{id} is updated\n");
+                    service.EditRecord(id, new DataStorage(validationRules));
+                    Console.WriteLine($"Record #{id} is updated\n");
                 }
                 else
                 {
-                    Console.WriteLine($"#{parameters} record is not found\n");
+                    Console.WriteLine($"Record #{id} not found\n");
                 }
             }
             else
@@ -186,58 +186,19 @@ namespace FileCabinetApp
                 {
                     case "FIRSTNAME":
                         {
-                            if (service.FindByFirstName(serchedField[1]).Count == 0)
-                            {
-                                Console.WriteLine($"firstName {serchedField[1]} not found\n");
-                                break;
-                            }
-
-                            foreach (var record in service.FindByFirstName(serchedField[1]))
-                            {
-                                Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
-                            }
-
-                            Console.WriteLine();
+                            FindRecord(service.FindByFirstName(serchedField[1]), serchedField[1], "FirstName");
                             break;
                         }
 
                     case "LASTNAME":
                         {
-                            if (service.FindByLastName(serchedField[1]).Count == 0)
-                            {
-                                Console.WriteLine($"Lastname {serchedField[1]} not found\n");
-                                break;
-                            }
-
-                            foreach (var record in service.FindByLastName(serchedField[1]))
-                            {
-                                Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
-                            }
-
-                            Console.WriteLine();
+                            FindRecord(service.FindByLastName(serchedField[1]), serchedField[1], "LastName");
                             break;
                         }
 
                     case "DATEOFBIRTH":
                         {
-                            if (service.FindByDateOfBirth(serchedField[1]) == null)
-                            {
-                                Console.WriteLine("Incorrect date\n");
-                                break;
-                            }
-
-                            if (service.FindByDateOfBirth(serchedField[1]).Count == 0)
-                            {
-                                Console.WriteLine($"DateOfBirth {serchedField[1]} not found\n");
-                                break;
-                            }
-
-                            foreach (var record in service.FindByDateOfBirth(serchedField[1]))
-                            {
-                                Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
-                            }
-
-                            Console.WriteLine();
+                            FindRecord(service.FindByDateOfBirth(serchedField[1]), serchedField[1], "DateOfBirth");
                             break;
                         }
 
@@ -258,7 +219,10 @@ namespace FileCabinetApp
         {
             foreach (var record in service.GetRecords())
             {
-                Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
+                if (!(record == null))
+                {
+                    Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
+                }
             }
 
             Console.WriteLine();
@@ -355,6 +319,34 @@ namespace FileCabinetApp
             ConsoleKey.N => false,
             _ => false
         };
+
+        private static void FindRecord(ReadOnlyCollection<FileCabinetRecord> collection, string valueFind, string fildName)
+        {
+            if (collection == null)
+            {
+                Console.WriteLine("Incorrect date\n");
+                return;
+            }
+
+            if (collection.Count == 0)
+            {
+                Console.WriteLine($"{fildName} {valueFind} not found\n");
+                return;
+            }
+
+            foreach (var record in collection)
+            {
+                if (!(record == null))
+                {
+                    Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
+                }
+                else
+                {
+                    Console.WriteLine($"{fildName} {valueFind} not found\n");
+                    return;
+                }
+            }
+        }
 
         private static void CallCSVWriter(string parameters)
         {

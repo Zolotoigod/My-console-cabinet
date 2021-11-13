@@ -19,6 +19,8 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<long>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<long>> dateOfBirthDictionary = new ();
         private readonly string filename = "cabinet-records.db";
+        private readonly List<int> listId = new ();
+        private int deletedRecords;
 
         public FileCabinetFileService(BaseValidationRules validationRules)
         {
@@ -32,12 +34,10 @@ namespace FileCabinetApp
             this.fileStreamDb = new FileStream(this.filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             if (existNow)
             {
-                this.fileStreamDb.Position = this.fileStreamDb.Length - this.recordSize + 2;
                 this.InitialDictionary();
+                this.listId = this.InitialListID();
             }
         }
-
-        int IFileCabinetService.DeletedRecords { get; set; }
 
         public int CreateRecord(DataStorage storage)
         {
@@ -45,6 +45,7 @@ namespace FileCabinetApp
             var record = new FileCabinetRecord(storage, this.validationRules, this.GetStat());
             this.UpdateDictionary(storage, this.fileStreamDb.Length);
             this.WriteRecordToFile(record, this.fileStreamDb.Length);
+            this.listId.Add(record.Id);
             return record.Id;
         }
 
@@ -132,6 +133,11 @@ namespace FileCabinetApp
             return (int)(this.fileStreamDb.Length / this.recordSize);
         }
 
+        public int GetDeletedRecords()
+        {
+            return this.deletedRecords;
+        }
+
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(this.GetRecords().ToList(), AvailableFields);
@@ -151,6 +157,7 @@ namespace FileCabinetApp
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
             List<FileCabinetRecord> list = this.GetRecords().ToList();
+            this.listId.Clear();
             for (int i = 0; i < snapshot?.Records.Count; i++)
             {
                 list.RemoveAll(match => match.Id == snapshot.Records[i].Id);
@@ -167,6 +174,7 @@ namespace FileCabinetApp
             foreach (var record in list)
             {
                 this.WriteRecordToFile(record, position);
+                this.listId.Add(record.Id);
                 position += this.recordSize;
             }
 
@@ -175,12 +183,41 @@ namespace FileCabinetApp
 
         public string Remove(int id)
         {
-            throw new NotImplementedException();
+            if (!this.GetListId().Contains(id))
+            {
+                return $"Record #{id} doesn't exists";
+            }
+
+            long position = this.recordSize * (id - 1);
+            this.fileStreamDb.Position = position;
+            short isDeleted;
+            using (BinaryReader reder = new (this.fileStreamDb, Encoding.UTF8, true))
+            {
+                isDeleted = reder.ReadInt16();
+            }
+
+            this.fileStreamDb.Position = position;
+            if (isDeleted == 7)
+            {
+                isDeleted = 1;
+                using (BinaryWriter writer = new (this.fileStreamDb, Encoding.UTF8, true))
+                {
+                    writer.Write(isDeleted);
+                }
+
+                this.deletedRecords++;
+                this.listId.Remove(id);
+                return $"Record #{id} is deleted";
+            }
+            else
+            {
+                return $"Record #{id} doesn't exists";
+            }
         }
 
         public List<int> GetListId()
         {
-            throw new NotImplementedException();
+            return this.listId;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -205,14 +242,20 @@ namespace FileCabinetApp
             FileCabinetRecord readedRecord = new ();
             using (BinaryReader reader = new (this.fileStreamDb, Encoding.UTF8, true))
             {
-                reader.ReadInt16();
-                readedRecord.Id = reader.ReadInt32();
-                readedRecord.FirstName = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
-                readedRecord.LastName = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
-                readedRecord.DateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
-                readedRecord.Type = this.coder.GetChars(reader.ReadBytes(2))[0];
-                readedRecord.Number = reader.ReadInt16();
-                readedRecord.Balance = reader.ReadDecimal();
+                if (reader.ReadInt16() == 7)
+                {
+                    readedRecord.Id = reader.ReadInt32();
+                    readedRecord.FirstName = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
+                    readedRecord.LastName = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
+                    readedRecord.DateOfBirth = new DateTime(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                    readedRecord.Type = this.coder.GetChars(reader.ReadBytes(2))[0];
+                    readedRecord.Number = reader.ReadInt16();
+                    readedRecord.Balance = reader.ReadDecimal();
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             return readedRecord;
@@ -282,6 +325,27 @@ namespace FileCabinetApp
                 DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, position);
                 position += this.recordSize;
             }
+        }
+
+        private List<int> InitialListID()
+        {
+            List<int> listId = new ();
+            long currentIdPos = 0;
+            for (int i = 0; i < this.GetStat(); i++)
+            {
+                this.fileStreamDb.Position = currentIdPos;
+                using (BinaryReader reader = new (this.fileStreamDb, Encoding.UTF8, true))
+                {
+                    if (reader.ReadInt16() == 7)
+                    {
+                        listId.Add(reader.ReadInt32());
+                    }
+                }
+
+                currentIdPos += this.recordSize;
+            }
+
+            return listId;
         }
     }
 }

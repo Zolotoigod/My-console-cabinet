@@ -28,8 +28,6 @@ namespace FileCabinetApp
             this.validationRules = validationRules;
         }
 
-        int IFileCabinetService.DeletedRecords { get; set; }
-
         public int CreateRecord(DataStorage storage)
         {
             BaseValidationRules.ValidationNull(storage);
@@ -77,6 +75,22 @@ namespace FileCabinetApp
         public int GetStat()
         {
             return this.list.Count;
+        }
+
+        public List<int> GetListId()
+        {
+            List<int> allId = new ();
+            foreach (var record in this.list)
+            {
+                allId.Add(record.Id);
+            }
+
+            return allId;
+        }
+
+        public int GetDeletedRecords()
+        {
+            return 0;
         }
 
         /// <summary>
@@ -164,17 +178,6 @@ namespace FileCabinetApp
             }
 
             return $"Record #{id} doesn't exists.";
-        }
-
-        public List<int> GetListId()
-        {
-            List<int> allId = new ();
-            foreach (var record in this.list)
-            {
-                allId.Add(record.Id);
-            }
-
-            return allId;
         }
 
         public override string ToString()
