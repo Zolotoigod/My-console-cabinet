@@ -36,6 +36,7 @@ namespace FileCabinetApp
             {
                 this.InitialDictionary();
                 this.listId = this.InitialListID();
+                this.deletedRecords = this.GetDeletedCount();
             }
         }
 
@@ -185,7 +186,7 @@ namespace FileCabinetApp
         {
             if (!this.GetListId().Contains(id))
             {
-                return $"Record #{id} doesn't exists";
+                return $"Record #{id} doesn't exists\n";
             }
 
             long position = this.recordSize * (id - 1);
@@ -207,17 +208,49 @@ namespace FileCabinetApp
 
                 this.deletedRecords++;
                 this.listId.Remove(id);
-                return $"Record #{id} is deleted";
+                return $"Record #{id} is deleted\n";
             }
             else
             {
-                return $"Record #{id} doesn't exists";
+                return $"Record #{id} doesn't exists\n";
             }
         }
 
         public List<int> GetListId()
         {
             return this.listId;
+        }
+
+        public string Purge()
+        {
+            int purgedRecords = 0;
+            long posRead = 0;
+            long posWrite = posRead;
+            int recordCount = 0;
+            int nowRecordCount = this.GetStat();
+
+            do
+            {
+                var record = this.ReadRecordFormFile(posRead, true);
+                if (record.IsDeleted == 7)
+                {
+                    this.WriteRecordToFile(record, posWrite);
+                    posWrite += this.recordSize;
+                }
+                else
+                {
+                    purgedRecords++;
+                }
+
+                posRead += this.recordSize;
+                recordCount++;
+            }
+            while (recordCount < nowRecordCount);
+
+            this.fileStreamDb.SetLength(this.fileStreamDb.Length - (this.recordSize * purgedRecords));
+            this.deletedRecords -= purgedRecords;
+
+            return $"Data file processing is completed: {purgedRecords} of {nowRecordCount} records were purged.\n";
         }
 
         protected virtual void Dispose(bool disposing)
@@ -236,14 +269,16 @@ namespace FileCabinetApp
             return result;
         }
 
-        private FileCabinetRecord ReadRecordFormFile(long position)
+        private FileCabinetRecord ReadRecordFormFile(long position, bool readDeleted = false)
         {
             this.fileStreamDb.Position = position;
             FileCabinetRecord readedRecord = new ();
             using (BinaryReader reader = new (this.fileStreamDb, Encoding.UTF8, true))
             {
-                if (reader.ReadInt16() == 7)
+                short isDeleted = reader.ReadInt16();
+                if ((isDeleted == 7) || readDeleted)
                 {
+                    readedRecord.IsDeleted = isDeleted;
                     readedRecord.Id = reader.ReadInt32();
                     readedRecord.FirstName = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
                     readedRecord.LastName = string.Concat(this.coder.GetChars(reader.ReadBytes(120))).Trim();
@@ -346,6 +381,30 @@ namespace FileCabinetApp
             }
 
             return listId;
+        }
+
+        private int GetDeletedCount()
+        {
+            int deletedCount = 0;
+            int i = 0;
+            long pos = 0;
+            this.fileStreamDb.Position = pos;
+            while (i < this.GetStat())
+            {
+                using (BinaryReader reader = new (this.fileStreamDb, Encoding.UTF8, true))
+                {
+                    if (reader.ReadInt16() == 1)
+                    {
+                        deletedCount++;
+                    }
+                }
+
+                pos += this.recordSize;
+                this.fileStreamDb.Position = pos;
+                i++;
+            }
+
+            return deletedCount;
         }
     }
 }

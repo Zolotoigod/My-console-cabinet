@@ -27,6 +27,9 @@ namespace FileCabinetApp
             this.Balance = validationRules.BalanceValidationRules(storage.Balance) ? storage.Balance : throw new ArgumentException("Balance can't be less than zero");
         }
 
+        [XmlIgnore]
+        public short IsDeleted { get; set; }
+
         /// <summary>
         /// Gets or sets record ID.
         /// </summary>

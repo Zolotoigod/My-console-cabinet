@@ -41,6 +41,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
             new Tuple<string, Action<string>>("remove", Remove),
+            new Tuple<string, Action<string>>("purge", Purge),
         };
 
         private static IFileCabinetService service;
@@ -299,6 +300,18 @@ namespace FileCabinetApp
             }
         }
 
+        private static void Purge(string parameters)
+        {
+            if (service is FileCabinetFileService fileService)
+            {
+                Console.WriteLine(fileService.Purge());
+            }
+            else
+            {
+                Console.WriteLine("There is no FileStorage.");
+            }
+        }
+
         private static Action<string> ReaderFormatSwitch(int index) => index switch
         {
             0 => CallCSVReader,
@@ -339,6 +352,7 @@ namespace FileCabinetApp
                 if (!(record == null))
                 {
                     Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
+                    Console.WriteLine();
                 }
                 else
                 {
