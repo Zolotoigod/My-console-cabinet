@@ -5,23 +5,23 @@ namespace FileCabinetApp.CommandHandlers
 {
     public class Help : BaseCommandHandler
     {
-        public Help(BaseCommandHandler nexthandler, string mycommand)
-            : base(nexthandler, mycommand)
+        public Help(string mycommand)
+            : base(mycommand)
         {
         }
 
-        public override void Realize(string data)
+        protected override void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
         {
-            if (!string.IsNullOrEmpty(data))
+            if (!string.IsNullOrEmpty(parameters))
             {
-                var index = Array.FindIndex(HelpMessage.Messages, 0, HelpMessage.Messages.Length, i => string.Equals(i[HelpMessage.CommandHelpIndex], data, StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(HelpMessage.Messages, 0, HelpMessage.Messages.Length, i => string.Equals(i[HelpMessage.CommandHelpIndex], parameters, StringComparison.InvariantCultureIgnoreCase));
                 if (index >= 0)
                 {
                     Console.WriteLine(HelpMessage.Messages[index][HelpMessage.ExplanationHelpIndex]);
                 }
                 else
                 {
-                    Console.WriteLine($"There is no explanation for '{data}' command.");
+                    Console.WriteLine($"There is no explanation for '{parameters}' command.");
                 }
             }
             else

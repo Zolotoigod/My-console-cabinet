@@ -6,33 +6,38 @@ namespace FileCabinetApp.CommandHandlers
     {
         private BaseCommandHandler nextHandler;
 
-        protected BaseCommandHandler(BaseCommandHandler nexthandler, string mycommand)
+        protected BaseCommandHandler(string mycommand)
         {
-            this.nextHandler = nexthandler;
             this.MyCommand = mycommand;
         }
 
         public string MyCommand { get; }
 
-        public abstract void Realize(string data);
-
-        public void HandleCommand(string command, string data)
+        public bool HandleCommand(IFileCabinetService service, BaseValidationRules validationRules, string command, string data)
         {
-            if (command == this.MyCommand)
+            if (this.MyCommand.Equals(command, StringComparison.InvariantCultureIgnoreCase))
             {
-                this.Realize(data);
+                this.Realize(service, validationRules, data);
+                return true;
             }
             else
             {
-                if (!(this.nextHandler is null))
+                if (this.nextHandler is null)
                 {
-                    this.nextHandler.HandleCommand(command, data);
+                    return false;
                 }
                 else
                 {
-                    throw new InvalidOperationException("Next handler is not found");
+                    return this.nextHandler.HandleCommand(service, validationRules, command, data);
                 }
             }
         }
+
+        public void SetNext(BaseCommandHandler nexthandler)
+        {
+            this.nextHandler = nexthandler;
+        }
+
+        protected abstract void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters);
     }
 }

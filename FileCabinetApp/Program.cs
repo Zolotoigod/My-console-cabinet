@@ -14,36 +14,8 @@ namespace FileCabinetApp
     {
         private const string DeveloperName = "Vladislav Shalkevich";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
-        private const int CommandHelpIndex = 0;
-        private const int DescriptionHelpIndex = 1;
-        private const int ExplanationHelpIndex = 2;
-        private const string ConsleFormat = "#{0}, {1}, {2}, {3}, {4}, {5}, {6:f2}";
-        private static readonly string[] AvailableExportFormats = { "csv", "xml" };
-        private static readonly string[][] HelpMessages = new string[][]
-        {
-            new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
-            new string[] { "create", "creates a record", "The 'create' command creates a record." },
-            new string[] { "edit", "edits the record by id", "The 'edit' edits the record by id." },
-            new string[] { "find", "searches a record by field", "The 'find' searches a record by field." },
-            new string[] { "list", "prints all of records", "The 'list' command prints all of records." },
-            new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
-        };
 
-        private static readonly Tuple<string, Action<string>>[] Comands = new Tuple<string, Action<string>>[]
-        {
-            new Tuple<string, Action<string>>("help", PrintHelp),
-            new Tuple<string, Action<string>>("exit", Exit),
-            new Tuple<string, Action<string>>("stat", Stat),
-            new Tuple<string, Action<string>>("create", Create),
-            new Tuple<string, Action<string>>("list", List),
-            new Tuple<string, Action<string>>("edit", Edit),
-            new Tuple<string, Action<string>>("find", Find),
-            new Tuple<string, Action<string>>("export", Export),
-            new Tuple<string, Action<string>>("import", Import),
-            new Tuple<string, Action<string>>("remove", Remove),
-            new Tuple<string, Action<string>>("purge", Purge),
-        };
-
+        private static readonly BaseCommandHandler RootHandler = Creator.CrateCommandChain();
         private static IFileCabinetService service;
         private static BaseValidationRules validationRules;
         private static bool isRunning = true;
@@ -63,8 +35,6 @@ namespace FileCabinetApp
             Console.WriteLine(HintMessage);
             Console.WriteLine();
 
-            BaseCommandHandler firstHandler = new Help(null, "help");
-
             // Add eny test objekt
             /*service.CreateRecord(new DataStorage("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
             service.CreateRecord(new DataStorage("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
@@ -79,6 +49,7 @@ namespace FileCabinetApp
                 var inputs = Console.ReadLine().Split(' ', 2);
                 const int commandIndex = 0;
                 var command = inputs[commandIndex];
+                var parameters = inputs.Length > 1 ? inputs[1] : string.Empty;
 
                 if (string.IsNullOrEmpty(command))
                 {
@@ -86,16 +57,12 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                firstHandler.HandleCommand(command, string.Empty);
-
-                var index = Array.FindIndex(Comands, 0, Comands.Length, i => i.Item1.Equals(command, StringComparison.InvariantCultureIgnoreCase));
-                if (index >= 0)
+                if (command.Equals("exit", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    const int parametersIndex = 1;
-                    var parameters = inputs.Length > 1 ? inputs[parametersIndex] : string.Empty;
-                    Comands[index].Item2(parameters);
+                    Exit();
                 }
-                else
+
+                if (RootHandler.HandleCommand(service, validationRules, command, parameters))
                 {
                     PrintMissedCommandInfo(command);
                 }
@@ -109,319 +76,15 @@ namespace FileCabinetApp
             Console.WriteLine();
         }
 
-        private static void PrintHelp(string parameters)
+        private static void Exit()
         {
-            if (!string.IsNullOrEmpty(parameters))
+            if (service is FileCabinetFileService end)
             {
-                var index = Array.FindIndex(HelpMessages, 0, HelpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.InvariantCultureIgnoreCase));
-                if (index >= 0)
-                {
-                    Console.WriteLine(HelpMessages[index][Program.ExplanationHelpIndex]);
-                }
-                else
-                {
-                    Console.WriteLine($"There is no explanation for '{parameters}' command.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Available commands:");
-
-                foreach (var helpMessage in HelpMessages)
-                {
-                    Console.WriteLine("\t{0}\t- {1}", helpMessage[Program.CommandHelpIndex], helpMessage[Program.DescriptionHelpIndex]);
-                }
-            }
-
-            Console.WriteLine();
-        }
-
-        private static void Exit(string parameters)
-        {
-            if (service is FileCabinetFileService)
-            {
-                FileCabinetFileService end = (FileCabinetFileService)service;
                 end.Dispose();
             }
 
             Console.WriteLine("Exiting an application...");
             isRunning = false;
-        }
-
-        private static void Stat(string parameters)
-        {
-            Console.WriteLine($"Total records - {service.GetStat()}");
-            Console.WriteLine($"Removed records - {service.GetDeletedRecords()}\n");
-        }
-
-        private static void Create(string parameters)
-        {
-            DataStorage record = new (validationRules);
-            int id = service.CreateRecord(record);
-            Console.WriteLine($"Record #{id} is created\n");
-        }
-
-        private static void Edit(string parameters)
-        {
-            if (int.TryParse(parameters, out int id) && id > 0)
-            {
-                if (service.GetListId().Contains(id))
-                {
-                    service.EditRecord(id, new DataStorage(validationRules));
-                    Console.WriteLine($"Record #{id} is updated\n");
-                }
-                else
-                {
-                    Console.WriteLine($"Record #{id} not found\n");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Incorrect id\n");
-            }
-        }
-
-        private static void Find(string parameters)
-        {
-            string[] serchedField = parameters.Split(' ', 2);
-            if (serchedField.Length == 2)
-            {
-                serchedField[0] = serchedField[0].ToUpperInvariant();
-                switch (serchedField[0])
-                {
-                    case "FIRSTNAME":
-                        {
-                            FindRecord(service.FindByFirstName(serchedField[1]), serchedField[1], "FirstName");
-                            break;
-                        }
-
-                    case "LASTNAME":
-                        {
-                            FindRecord(service.FindByLastName(serchedField[1]), serchedField[1], "LastName");
-                            break;
-                        }
-
-                    case "DATEOFBIRTH":
-                        {
-                            FindRecord(service.FindByDateOfBirth(serchedField[1]), serchedField[1], "DateOfBirth");
-                            break;
-                        }
-
-                    default:
-                        {
-                            Console.WriteLine("Unknown field\n");
-                            break;
-                        }
-                }
-            }
-            else
-            {
-                Console.WriteLine("Incorrect find parameters\n");
-            }
-        }
-
-        private static void List(string parameters)
-        {
-            foreach (var record in service.GetRecords())
-            {
-                if (!(record == null))
-                {
-                    Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
-                }
-            }
-
-            Console.WriteLine();
-        }
-
-        private static void Export(string parameters)
-        {
-            string[] exportParams = parameters.Split(' ', 2);
-            var index = Array.FindIndex(AvailableExportFormats, 0, AvailableExportFormats.Length, match => match.Equals(exportParams[0], StringComparison.InvariantCultureIgnoreCase));
-            if (index < 0)
-            {
-                exportParams[1] = "Export format unsupported!";
-            }
-
-            var exportFormat = WriterFormatSwitch(index);
-
-            if (File.Exists(exportParams[1]))
-            {
-                ConsoleKey key;
-                do
-                {
-                    Console.WriteLine($"File is exist - rewrite {exportParams[1]} [Y / N]> ");
-                    key = Console.ReadKey().Key;
-                    Console.WriteLine();
-                }
-                while (!(((int)key) == 89 || (int)key == 78));
-
-                if (KeySwitch(key))
-                {
-                    exportFormat(exportParams[1]);
-                }
-            }
-            else
-            {
-                exportFormat(exportParams[1]);
-            }
-        }
-
-        private static void Import(string parameters)
-        {
-            string[] importParams = parameters.Split(' ', 2);
-            if (importParams.Length == 2)
-            {
-                var index = Array.FindIndex(AvailableExportFormats, 0, AvailableExportFormats.Length, match => match.Equals(importParams[0], StringComparison.InvariantCultureIgnoreCase));
-                if (index < 0)
-                {
-                    importParams[1] = "Export format unsupported!";
-                }
-                else if (File.Exists(importParams[1]))
-                {
-                    var importFormat = ReaderFormatSwitch(index);
-                    importFormat(importParams[1]);
-                }
-                else
-                {
-                    Console.WriteLine($"Import error: file {importParams[1]} is not exist.");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Import error: wrong parameters");
-            }
-        }
-
-        private static void Remove(string parameters)
-        {
-            if (int.TryParse(parameters, out int id))
-            {
-                Console.WriteLine(service.Remove(id));
-            }
-            else
-            {
-                Console.WriteLine("Incorrect Parameters");
-            }
-        }
-
-        private static void Purge(string parameters)
-        {
-            if (service is FileCabinetFileService fileService)
-            {
-                Console.WriteLine(fileService.Purge());
-            }
-            else
-            {
-                Console.WriteLine("There is no FileStorage.");
-            }
-        }
-
-        private static Action<string> ReaderFormatSwitch(int index) => index switch
-        {
-            0 => CallCSVReader,
-            1 => CallXMLReader,
-            _ => Console.WriteLine
-        };
-
-        private static Action<string> WriterFormatSwitch(int index) => index switch
-        {
-            0 => CallCSVWriter,
-            1 => CallXMLWriter,
-            _ => Console.WriteLine
-        };
-
-        private static bool KeySwitch(ConsoleKey key) => key switch
-        {
-            ConsoleKey.Y => true,
-            ConsoleKey.N => false,
-            _ => false
-        };
-
-        private static void FindRecord(ReadOnlyCollection<FileCabinetRecord> collection, string valueFind, string fildName)
-        {
-            if (collection == null)
-            {
-                Console.WriteLine("Incorrect date\n");
-                return;
-            }
-
-            if (collection.Count == 0)
-            {
-                Console.WriteLine($"{fildName} {valueFind} not found\n");
-                return;
-            }
-
-            foreach (var record in collection)
-            {
-                if (!(record == null))
-                {
-                    Console.WriteLine(ConsleFormat, record.Id, record.FirstName, record.LastName, record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture), record.Type, record.Number, record.Balance);
-                    Console.WriteLine();
-                }
-                else
-                {
-                    Console.WriteLine($"{fildName} {valueFind} not found\n");
-                    return;
-                }
-            }
-        }
-
-        private static void CallCSVWriter(string parameters)
-        {
-            var newSnapshot = service.MakeSnapshot();
-            try
-            {
-                StreamWriter writer = new (parameters, false, System.Text.Encoding.UTF8);
-                newSnapshot.SaveToCSV(writer);
-                writer.Close();
-                Console.WriteLine($"All records are exported to file {parameters}.");
-            }
-            catch (DirectoryNotFoundException)
-            {
-                Console.WriteLine($"Export failed: can't open file {parameters}");
-            }
-        }
-
-        private static void CallXMLWriter(string parameters)
-        {
-            var newSnapshot = service.MakeSnapshot();
-            try
-            {
-                StreamWriter writer = new (parameters, false, System.Text.Encoding.UTF8);
-                newSnapshot.SaveToXML(writer);
-                writer.Close();
-                Console.WriteLine($"All records are exported to file {parameters}.");
-            }
-            catch (DirectoryNotFoundException)
-            {
-                Console.WriteLine($"Export failed: can't open file {parameters}");
-            }
-        }
-
-        private static void CallCSVReader(string parameters)
-        {
-            using (FileStream streamReader = new FileStream(parameters, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                using (var newStreamReader = new StreamReader(streamReader))
-                {
-                    var importSnapshot = new FileCabinetServiceSnapshot(newStreamReader, validationRules);
-                    Console.WriteLine($"{importSnapshot.Records.Count} records were imported from {parameters}");
-                    service.Restore(importSnapshot);
-                }
-            }
-        }
-
-        private static void CallXMLReader(string parameters)
-        {
-            using (FileStream streamReader = new FileStream(parameters, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                using (var xmlReader = XmlReader.Create(streamReader))
-                {
-                    var importSnapshot = new FileCabinetServiceSnapshot(xmlReader, validationRules);
-                    Console.WriteLine($"{importSnapshot.Records.Count} records were imported from {parameters}");
-                    service.Restore(importSnapshot);
-                }
-            }
         }
 
         private static void AdditionalComandsMain(string[] args)

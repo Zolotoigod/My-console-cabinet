@@ -6,6 +6,6 @@ namespace FileCabinetApp
     {
         public string MyCommand { get; }
 
-        public void HandleCommand(string command, string data);
+        public bool HandleCommand(IFileCabinetService service, BaseValidationRules validationRules, string command, string data);
     }
 }
