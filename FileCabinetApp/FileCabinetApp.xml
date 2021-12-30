@@ -4,19 +4,9 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
-        <member name="T:FileCabinetApp.BaseValidationRules">
-            <summary>
-            Inteface for difine basic validation rules.
-            </summary>
-        </member>
         <member name="T:FileCabinetApp.ConsoleInput">
             <summary>
             Class gets data from console.
-            </summary>
-        </member>
-        <member name="T:FileCabinetApp.CustomValdationRules">
-            <summary>
-            Validator vith custom parameters.
             </summary>
         </member>
         <member name="P:FileCabinetApp.DataStorage.FirstName">
@@ -66,54 +56,6 @@
             <value>
             Record Personal Account Balance.
             </value>
-        </member>
-        <member name="T:FileCabinetApp.DefaultValidateRules">
-            <summary>
-            Validator vith default parameters.
-            </summary>
-        </member>
-        <member name="T:FileCabinetApp.FileCabinetMemoryService">
-            <summary>
-            Service.
-            </summary>
-        </member>
-        <member name="F:FileCabinetApp.FileCabinetMemoryService.DateFormat">
-            <summary>
-            The field sets the available dateformat.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetRecords">
-            <summary>
-            Return all record in servise.
-            </summary>
-            <returns>Array of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetStat">
-            <summary>
-            Metod returned count of records.
-            </summary>
-            <returns>int count.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByFirstName(System.String)">
-            <summary>
-            Serch the record in service by firstname, use dictionary.
-            </summary>
-            <param name="firstName">Parametr for search.</param>
-            <returns>list of FileCabinetRecord.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByLastName(System.String)">
-            <summary>
-            Serch the record in service by Lastname, use dictionary.
-            </summary>
-            <param name="lastName">Parametr for search.</param>
-            <returns>list of FileCabinetRecord.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByDateOfBirth(System.String)">
-            <summary>
-            Serch the record in service by DateOfBirth, use dictionary.
-            </summary>
-            <param name="dateOfBirth">Parametr for search.</param>
-            <returns>list of FileCabinetRecord.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -176,6 +118,65 @@
             Record Personal Account Balance.
             </value>
         </member>
+        <member name="T:FileCabinetApp.IInput">
+            <summary>
+            Inteface for define the basiс input rules.
+            </summary>
+        </member>
+        <member name="T:FileCabinetApp.Program">
+            <summary>
+            Client for File-Cabinet-Service.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Program.Main(System.String[])">
+            <summary>
+            Main Client metod.
+            </summary>
+            <param name="args">input data.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetMemoryService">
+            <summary>
+            Service.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.FileCabinetMemoryService.DateFormat">
+            <summary>
+            The field sets the available dateformat.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetRecords">
+            <summary>
+            Return all record in servise.
+            </summary>
+            <returns>Array of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetStat">
+            <summary>
+            Metod returned count of records.
+            </summary>
+            <returns>int count.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByFirstName(System.String)">
+            <summary>
+            Serch the record in service by firstname, use dictionary.
+            </summary>
+            <param name="firstName">Parametr for search.</param>
+            <returns>list of FileCabinetRecord.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByLastName(System.String)">
+            <summary>
+            Serch the record in service by Lastname, use dictionary.
+            </summary>
+            <param name="lastName">Parametr for search.</param>
+            <returns>list of FileCabinetRecord.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByDateOfBirth(System.String)">
+            <summary>
+            Serch the record in service by DateOfBirth, use dictionary.
+            </summary>
+            <param name="dateOfBirth">Parametr for search.</param>
+            <returns>list of FileCabinetRecord.</returns>
+        </member>
         <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.DataStorage)">
             <summary>
             Create record in service.
@@ -209,21 +210,20 @@
             <param name="firstName">Parametr for search.</param>
             <returns>list of FileCabinetRecord.</returns>
         </member>
-        <member name="T:FileCabinetApp.IInput">
+        <member name="T:FileCabinetApp.BaseValidationRules">
             <summary>
-            Inteface for define the basiс input rules.
+            Inteface for difine basic validation rules.
             </summary>
         </member>
-        <member name="T:FileCabinetApp.Program">
+        <member name="T:FileCabinetApp.CustomValdationRules">
             <summary>
-            Client for File-Cabinet-Service.
+            Validator vith custom parameters.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.Program.Main(System.String[])">
+        <member name="T:FileCabinetApp.DefaultValidateRules">
             <summary>
-            Main Client metod.
+            Validator vith default parameters.
             </summary>
-            <param name="args">input data.</param>
         </member>
     </members>
 </doc>

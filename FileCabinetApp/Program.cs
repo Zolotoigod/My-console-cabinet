@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Xml;
+using FileCabinetApp.CommandHandlers;
 
 namespace FileCabinetApp
 {
@@ -18,7 +19,6 @@ namespace FileCabinetApp
         private const int ExplanationHelpIndex = 2;
         private const string ConsleFormat = "#{0}, {1}, {2}, {3}, {4}, {5}, {6:f2}";
         private static readonly string[] AvailableExportFormats = { "csv", "xml" };
-
         private static readonly string[][] HelpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
@@ -63,6 +63,8 @@ namespace FileCabinetApp
             Console.WriteLine(HintMessage);
             Console.WriteLine();
 
+            BaseCommandHandler firstHandler = new Help(null, "help");
+
             // Add eny test objekt
             /*service.CreateRecord(new DataStorage("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
             service.CreateRecord(new DataStorage("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
@@ -83,6 +85,8 @@ namespace FileCabinetApp
                     Console.WriteLine(Program.HintMessage);
                     continue;
                 }
+
+                firstHandler.HandleCommand(command, string.Empty);
 
                 var index = Array.FindIndex(Comands, 0, Comands.Length, i => i.Item1.Equals(command, StringComparison.InvariantCultureIgnoreCase));
                 if (index >= 0)
