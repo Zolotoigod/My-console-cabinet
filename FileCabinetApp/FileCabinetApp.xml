@@ -134,6 +134,11 @@
             </summary>
             <param name="args">input data.</param>
         </member>
+        <member name="T:FileCabinetApp.ProgramSetup">
+            <summary>
+            Setup the program options base of command line`s arguments.
+            </summary>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
             Service.
