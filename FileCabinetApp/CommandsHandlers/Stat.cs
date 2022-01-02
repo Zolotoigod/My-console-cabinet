@@ -2,22 +2,17 @@
 
 namespace FileCabinetApp.CommandHandlers
 {
-    public class Stat : BaseCommandHandler
+    public class Stat : ServiceCommandHandler
     {
-        public Stat(string mycommand)
-            : base(mycommand)
+        public Stat(IFileCabinetService service, string mycommand)
+            : base(service, mycommand)
         {
         }
 
-        protected override void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        protected override void Realize(BaseValidationRules validationRules, string parameters)
         {
-            if (service is null)
-            {
-                throw new ArgumentNullException(nameof(service));
-            }
-
-            Console.WriteLine($"Total records - {service.GetStat()}");
-            Console.WriteLine($"Removed records - {service.GetDeletedRecords()}\n");
+            Console.WriteLine($"Total records - {this.Service.GetStat()}");
+            Console.WriteLine($"Removed records - {this.Service.GetDeletedRecords()}\n");
         }
     }
 }

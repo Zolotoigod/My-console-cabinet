@@ -10,7 +10,7 @@ namespace FileCabinetApp.CommandHandlers
         {
         }
 
-        protected override void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        protected override void Realize(BaseValidationRules validationRules, string parameters)
         {
             if (!string.IsNullOrEmpty(parameters))
             {

@@ -2,25 +2,20 @@
 
 namespace FileCabinetApp.CommandHandlers
 {
-    public class Edit : BaseCommandHandler
+    public class Edit : ServiceCommandHandler
     {
-        public Edit(string mycommand)
-            : base(mycommand)
+        public Edit(IFileCabinetService service, string mycommand)
+            : base(service, mycommand)
         {
         }
 
-        protected override void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        protected override void Realize(BaseValidationRules validationRules, string parameters)
         {
-            if (service is null)
-            {
-                throw new ArgumentNullException(nameof(service));
-            }
-
             if (int.TryParse(parameters, out int id) && id > 0)
             {
-                if (service.GetListId().Contains(id))
+                if (this.Service.GetListId().Contains(id))
                 {
-                    service.EditRecord(id, new DataStorage(validationRules));
+                    this.Service.EditRecord(id, new DataStorage(validationRules));
                     Console.WriteLine($"Record #{id} is updated\n");
                 }
                 else

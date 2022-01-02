@@ -9,10 +9,8 @@ namespace FileCabinetApp
 {
     public class FileCabinetFileService : IFileCabinetService, IDisposable
     {
-        private const string AvailableFields = "ID, F.tName, L.Name, D.OfBirth, Type, Number, Balance";
         private readonly BaseValidationRules validationRules;
         private readonly FileStream fileStreamDb;
-        private readonly int recordSize = sizeof(short) + sizeof(int) + 120 + 120 + (3 * sizeof(int)) + 2 + sizeof(short) + sizeof(decimal);
         private readonly UTF8Encoding coder = new ();
         private readonly short reservedField = 7;
         private readonly Dictionary<string, List<long>> firstNameDictionary = new ();
@@ -52,7 +50,7 @@ namespace FileCabinetApp
 
         public void EditRecord(int id, DataStorage storage)
         {
-            long position = (this.recordSize * (id - 1)) + 6;
+            long position = (Defines.RecordSize * (id - 1)) + 6;
             var record = new FileCabinetRecord(storage, this.validationRules, this.GetStat());
             this.firstNameDictionary.Remove(storage.FirstName);
             this.lastNameDictionary.Remove(storage.LastName);
@@ -123,7 +121,7 @@ namespace FileCabinetApp
             for (int i = 1; i <= this.GetStat(); i++)
             {
                 records.Add(this.ReadRecordFormFile(startPosition));
-                startPosition += this.recordSize;
+                startPosition += Defines.RecordSize;
             }
 
             return records.AsReadOnly();
@@ -131,7 +129,7 @@ namespace FileCabinetApp
 
         public int GetStat()
         {
-            return (int)(this.fileStreamDb.Length / this.recordSize);
+            return (int)(this.fileStreamDb.Length / Defines.RecordSize);
         }
 
         public int GetDeletedRecords()
@@ -141,7 +139,7 @@ namespace FileCabinetApp
 
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceSnapshot(this.GetRecords().ToList(), AvailableFields);
+            return new FileCabinetServiceSnapshot(this.GetRecords().ToList(), Defines.AvailableFields);
         }
 
         public override string ToString()
@@ -176,7 +174,7 @@ namespace FileCabinetApp
             {
                 this.WriteRecordToFile(record, position);
                 this.listId.Add(record.Id);
-                position += this.recordSize;
+                position += Defines.RecordSize;
             }
 
             this.RestoreDictionary(list);
@@ -189,7 +187,7 @@ namespace FileCabinetApp
                 return $"Record #{id} doesn't exists\n";
             }
 
-            long position = this.recordSize * (id - 1);
+            long position = Defines.RecordSize * (id - 1);
             this.fileStreamDb.Position = position;
             short isDeleted;
             using (BinaryReader reder = new (this.fileStreamDb, Encoding.UTF8, true))
@@ -235,19 +233,19 @@ namespace FileCabinetApp
                 if (record.IsDeleted == 7)
                 {
                     this.WriteRecordToFile(record, posWrite);
-                    posWrite += this.recordSize;
+                    posWrite += Defines.RecordSize;
                 }
                 else
                 {
                     purgedRecords++;
                 }
 
-                posRead += this.recordSize;
+                posRead += Defines.RecordSize;
                 recordCount++;
             }
             while (recordCount < nowRecordCount);
 
-            this.fileStreamDb.SetLength(this.fileStreamDb.Length - (this.recordSize * purgedRecords));
+            this.fileStreamDb.SetLength(this.fileStreamDb.Length - (Defines.RecordSize * purgedRecords));
             this.deletedRecords -= purgedRecords;
 
             return $"Data file processing is completed: {purgedRecords} of {nowRecordCount} records were purged.\n";
@@ -320,7 +318,7 @@ namespace FileCabinetApp
 
         private void InitialDictionary()
         {
-            for (long pos = 0; pos < this.fileStreamDb.Length; pos += this.recordSize)
+            for (long pos = 0; pos < this.fileStreamDb.Length; pos += Defines.RecordSize)
             {
                 this.fileStreamDb.Position = pos + 6;
                 using (BinaryReader reader = new (this.fileStreamDb, Encoding.UTF8, true))
@@ -358,7 +356,7 @@ namespace FileCabinetApp
                 DictionaryManager.NameDictUpdate(this.firstNameDictionary, record.FirstName, position);
                 DictionaryManager.NameDictUpdate(this.lastNameDictionary, record.LastName, position);
                 DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, position);
-                position += this.recordSize;
+                position += Defines.RecordSize;
             }
         }
 
@@ -377,7 +375,7 @@ namespace FileCabinetApp
                     }
                 }
 
-                currentIdPos += this.recordSize;
+                currentIdPos += Defines.RecordSize;
             }
 
             return listId;
@@ -399,7 +397,7 @@ namespace FileCabinetApp
                     }
                 }
 
-                pos += this.recordSize;
+                pos += Defines.RecordSize;
                 this.fileStreamDb.Position = pos;
                 i++;
             }

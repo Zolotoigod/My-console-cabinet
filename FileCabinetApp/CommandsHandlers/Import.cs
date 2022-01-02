@@ -4,20 +4,15 @@ using System.Xml;
 
 namespace FileCabinetApp.CommandHandlers
 {
-    public class Import : BaseCommandHandler
+    public class Import : ServiceCommandHandler
     {
-        public Import(string mycommand)
-            : base(mycommand)
+        public Import(IFileCabinetService service, string mycommand)
+            : base(service, mycommand)
         {
         }
 
-        protected override void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        protected override void Realize(BaseValidationRules validationRules, string parameters)
         {
-            if (service is null)
-            {
-                throw new ArgumentNullException(nameof(service));
-            }
-
             string[] importParams = parameters?.Split(' ', 2);
             if (importParams.Length == 2)
             {
@@ -26,7 +21,7 @@ namespace FileCabinetApp.CommandHandlers
                 if (File.Exists(importParams[1]))
                 {
                     var importFormat = ReaderFormatSwitch(index);
-                    importFormat(service, validationRules, importParams[1]);
+                    importFormat(this.Service, validationRules, importParams[1]);
                 }
                 else
                 {

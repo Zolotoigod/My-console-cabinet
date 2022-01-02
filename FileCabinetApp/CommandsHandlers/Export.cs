@@ -3,20 +3,15 @@ using System.IO;
 
 namespace FileCabinetApp.CommandHandlers
 {
-    public class Export : BaseCommandHandler
+    public class Export : ServiceCommandHandler
     {
-        public Export(string mycommand)
-            : base(mycommand)
+        public Export(IFileCabinetService service, string mycommand)
+            : base(service, mycommand)
         {
         }
 
-        protected override void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        protected override void Realize(BaseValidationRules validationRules, string parameters)
         {
-            if (service is null)
-            {
-                throw new ArgumentNullException(nameof(service));
-            }
-
             string[] exportParams = parameters?.Split(' ', 2);
             var index = Array.FindIndex(Defines.AvailableExportFormats, 0, Defines.AvailableExportFormats.Length, match => match.Equals(exportParams[0], StringComparison.InvariantCultureIgnoreCase));
 
@@ -35,12 +30,12 @@ namespace FileCabinetApp.CommandHandlers
 
                 if (KeySwitch(key))
                 {
-                    exportFormat(service, exportParams[1]);
+                    exportFormat(this.Service, exportParams[1]);
                 }
             }
             else
             {
-                exportFormat(service, exportParams[1]);
+                exportFormat(this.Service, exportParams[1]);
             }
         }
 

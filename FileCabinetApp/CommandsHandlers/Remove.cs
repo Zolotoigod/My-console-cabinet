@@ -2,23 +2,18 @@
 
 namespace FileCabinetApp.CommandHandlers
 {
-    public class Remove : BaseCommandHandler
+    public class Remove : ServiceCommandHandler
     {
-        public Remove(string mycommand)
-            : base(mycommand)
+        public Remove(IFileCabinetService service, string mycommand)
+            : base(service, mycommand)
         {
         }
 
-        protected override void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        protected override void Realize(BaseValidationRules validationRules, string parameters)
         {
-            if (service is null)
-            {
-                throw new ArgumentNullException(nameof(service));
-            }
-
             if (int.TryParse(parameters, out int id))
             {
-                Console.WriteLine(service.Remove(id));
+                Console.WriteLine(this.Service.Remove(id));
             }
             else
             {

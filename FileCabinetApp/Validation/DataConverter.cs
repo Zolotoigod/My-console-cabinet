@@ -17,7 +17,7 @@ namespace FileCabinetApp
         public static Tuple<bool, string, DateTime> DateConvert(string input)
         {
             Tuple<bool, string, DateTime> result = new (
-                    DateTime.TryParseExact(input, FileCabinetMemoryService.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth),
+                    DateTime.TryParseExact(input, Defines.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth),
                     $"Correct date format (month.day.year)",
                     dateOfBirth);
             return result;
@@ -29,7 +29,7 @@ namespace FileCabinetApp
             Tuple<bool, string, char> result = new (
                     input.Length == 1,
                     $"Accont type should be char",
-                    input[0]);
+                    char.ToUpperInvariant(input[0]));
             return result;
         }
 

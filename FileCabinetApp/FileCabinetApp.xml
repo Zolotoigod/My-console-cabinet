@@ -144,7 +144,7 @@
             Service.
             </summary>
         </member>
-        <member name="F:FileCabinetApp.FileCabinetMemoryService.DateFormat">
+        <member name="F:FileCabinetApp.FileCabinetMemoryService.firstNameDictionary">
             <summary>
             The field sets the available dateformat.
             </summary>

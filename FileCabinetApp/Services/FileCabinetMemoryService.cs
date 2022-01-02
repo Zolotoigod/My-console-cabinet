@@ -15,8 +15,6 @@ namespace FileCabinetApp
         /// <summary>
         /// The field sets the available dateformat.
         /// </summary>
-        public static readonly string[] DateFormat = { "MM dd yyyy", "MM/dd/yyyy", "MM.dd.yyyy", "MM,dd,yyyy", "dd MM yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd,MM,yyyy" };
-        private const string AvailableFields = "ID, F.tName, L.Name, D.OfBirth, Type, Number, Balance";
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
@@ -134,7 +132,7 @@ namespace FileCabinetApp
         /// <returns>list of FileCabinetRecord.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
-            if (!DateTime.TryParseExact(dateOfBirth, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime resultDate))
+            if (!DateTime.TryParseExact(dateOfBirth, Defines.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime resultDate))
             {
                 return null;
             }
@@ -151,7 +149,7 @@ namespace FileCabinetApp
 
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceSnapshot(this.list, AvailableFields);
+            return new FileCabinetServiceSnapshot(this.list, Defines.AvailableFields);
         }
 
         public void Restore(FileCabinetServiceSnapshot snapshot)

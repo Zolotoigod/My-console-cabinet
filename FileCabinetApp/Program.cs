@@ -1,5 +1,6 @@
 ﻿using System;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.DTO;
 
 namespace FileCabinetApp
 {
@@ -11,9 +12,9 @@ namespace FileCabinetApp
         private const string DeveloperName = "Vladislav Shalkevich";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
 
-        private static readonly ICommandHandler RootHandler = Creator.CrateCommandChain();
+        private static ICommandHandler rootHandler;
         private static IFileCabinetService service;
-        private static BaseValidationRules validationRules;
+        private static BaseValidationRules validator;
         private static bool isRunning = true;
 
         /// <summary>
@@ -25,7 +26,8 @@ namespace FileCabinetApp
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
             if (args != null)
             {
-                ProgramSetup.SetOptions(out service, out validationRules, args);
+                ProgramSetup.SetOptions(out service, out validator, args);
+                rootHandler = Creator.CrateCommandChain(service);
             }
 
             Console.WriteLine(HintMessage);
@@ -58,7 +60,7 @@ namespace FileCabinetApp
                     Exit();
                 }
 
-                if (!RootHandler.HandleCommand(service, validationRules, command, parameters))
+                if (!rootHandler.HandleCommand(validator, new AppCommandRequest(command, parameters)))
                 {
                     PrintMissedCommandInfo(command);
                 }

@@ -1,30 +1,18 @@
 ﻿using System;
-using System.Globalization;
 using FileCabinetApp.Writers;
 
 namespace FileCabinetApp.CommandHandlers
 {
-    public class List : BaseCommandHandler
+    public class List : ServiceCommandHandler
     {
-        public List(string mycommand)
-            : base(mycommand)
+        public List(IFileCabinetService service, string mycommand)
+            : base(service, mycommand)
         {
         }
 
-        protected override void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        protected override void Realize(BaseValidationRules validationRules, string parameters)
         {
-            if (service is null)
-            {
-                throw new ArgumentNullException(nameof(service));
-            }
-
-            foreach (var record in service.GetRecords())
-            {
-                if (!(record == null))
-                {
-                    DefaultPrint.PrintRecocrd(record);
-                }
-            }
+            DefaultPrint.PrintRecocrd(this.Service.GetRecords());
 
             Console.WriteLine();
         }

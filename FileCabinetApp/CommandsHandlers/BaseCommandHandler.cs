@@ -1,10 +1,11 @@
 ﻿using System;
+using FileCabinetApp.DTO;
 
 namespace FileCabinetApp.CommandHandlers
 {
     public abstract class BaseCommandHandler : ICommandHandler
     {
-        private BaseCommandHandler nextHandler;
+        private ICommandHandler nextHandler;
 
         protected BaseCommandHandler(string mycommand)
         {
@@ -13,11 +14,11 @@ namespace FileCabinetApp.CommandHandlers
 
         public string MyCommand { get; }
 
-        public bool HandleCommand(IFileCabinetService service, BaseValidationRules validationRules, string command, string data)
+        public bool HandleCommand(BaseValidationRules validationRules, AppCommandRequest request)
         {
-            if (this.MyCommand.Equals(command, StringComparison.InvariantCultureIgnoreCase))
+            if (this.MyCommand.Equals(request?.Command, StringComparison.InvariantCultureIgnoreCase))
             {
-                this.Realize(service, validationRules, data);
+                this.Realize(validationRules, request.Parametres);
                 return true;
             }
             else
@@ -28,16 +29,16 @@ namespace FileCabinetApp.CommandHandlers
                 }
                 else
                 {
-                    return this.nextHandler.HandleCommand(service, validationRules, command, data);
+                    return this.nextHandler.HandleCommand(validationRules, request);
                 }
             }
         }
 
-        public void SetNext(BaseCommandHandler nexthandler)
+        public void SetNext(ICommandHandler nexthandler)
         {
             this.nextHandler = nexthandler;
         }
 
-        protected abstract void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters);
+        protected abstract void Realize(BaseValidationRules validationRules, string parameters);
     }
 }

@@ -2,22 +2,17 @@
 
 namespace FileCabinetApp.CommandHandlers
 {
-    public class Create : BaseCommandHandler
+    public class Create : ServiceCommandHandler
     {
-        public Create(string mycommand)
-            : base(mycommand)
+        public Create(IFileCabinetService service, string mycommand)
+            : base(service, mycommand)
         {
         }
 
-        protected override void Realize(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        protected override void Realize(BaseValidationRules validationRules, string parameters)
         {
-            if (service is null)
-            {
-                throw new ArgumentNullException(nameof(service));
-            }
-
             DataStorage record = new (validationRules);
-            int id = service.CreateRecord(record);
+            int id = this.Service.CreateRecord(record);
             Console.WriteLine($"Record #{id} is created\n");
         }
     }
