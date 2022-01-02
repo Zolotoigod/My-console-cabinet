@@ -11,7 +11,7 @@ namespace FileCabinetApp
         private const string DeveloperName = "Vladislav Shalkevich";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
 
-        private static readonly BaseCommandHandler RootHandler = Creator.CrateCommandChain();
+        private static readonly ICommandHandler RootHandler = Creator.CrateCommandChain();
         private static IFileCabinetService service;
         private static BaseValidationRules validationRules;
         private static bool isRunning = true;

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using FileCabinetApp.CommandHandlers;
 
 namespace FileCabinetApp
 {
@@ -7,5 +7,7 @@ namespace FileCabinetApp
         public string MyCommand { get; }
 
         public bool HandleCommand(IFileCabinetService service, BaseValidationRules validationRules, string command, string data);
+
+        public void SetNext(BaseCommandHandler nexthandler);
     }
 }

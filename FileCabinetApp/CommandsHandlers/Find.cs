@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
+using FileCabinetApp.Writers;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -73,16 +73,7 @@ namespace FileCabinetApp.CommandHandlers
             {
                 if (!(record == null))
                 {
-                    Console.WriteLine(
-                        Defines.ConsoleFormat,
-                        record.Id,
-                        record.FirstName,
-                        record.LastName,
-                        record.DateOfBirth.ToString("yyyy MMM dd", CultureInfo.InvariantCulture),
-                        record.Type,
-                        record.Number,
-                        record.Balance);
-                    Console.WriteLine();
+                    DefaultPrint.PrintRecocrd(record);
                 }
                 else
                 {
