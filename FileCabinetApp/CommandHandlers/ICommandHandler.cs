@@ -7,7 +7,7 @@ namespace FileCabinetApp
     {
         public string MyCommand { get; }
 
-        public bool HandleCommand(BaseValidationRules validationRules, AppCommandRequest request);
+        public void HandleCommand(BaseValidationRules validationRules, AppCommandRequest request);
 
         public void SetNext(ICommandHandler nexthandler);
     }

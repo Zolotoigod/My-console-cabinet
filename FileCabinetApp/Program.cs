@@ -27,14 +27,14 @@ namespace FileCabinetApp
             if (args != null)
             {
                 ProgramSetup.SetOptions(out service, out validator, args);
-                rootHandler = Creator.CrateCommandChain(service);
+                rootHandler = Creator.CrateCommandChain(service, Exit);
             }
 
             Console.WriteLine(HintMessage);
             Console.WriteLine();
 
             // Add eny test objekt
-            /*service.CreateRecord(new DataStorage("vlad", "shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
+            /*service.CreateRecord(new DataStorage("Vlad", "Shalkevich", new DateTime(1995, 09, 30), 'C', 7970, 1000m));
             service.CreateRecord(new DataStorage("Vladimir", "Putin", new DateTime(1986, 10, 08), 'B', 1111, 42m));
             service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'B', 3434, 3.14m));
             service.CreateRecord(new DataStorage("Isaaak", "Newton", new DateTime(1996, 05, 26), 'B', 3434, 3.14m));
@@ -55,23 +55,9 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                if (command.Equals("exit", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    Exit();
-                }
-
-                if (!rootHandler.HandleCommand(validator, new AppCommandRequest(command, parameters)))
-                {
-                    PrintMissedCommandInfo(command);
-                }
+                rootHandler.HandleCommand(validator, new AppCommandRequest(command, parameters));
             }
             while (isRunning);
-        }
-
-        private static void PrintMissedCommandInfo(string command)
-        {
-            Console.WriteLine($"There is no '{command}' command.");
-            Console.WriteLine();
         }
 
         private static void Exit()

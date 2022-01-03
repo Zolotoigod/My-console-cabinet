@@ -14,22 +14,21 @@ namespace FileCabinetApp.CommandHandlers
 
         public string MyCommand { get; }
 
-        public bool HandleCommand(BaseValidationRules validationRules, AppCommandRequest request)
+        public void HandleCommand(BaseValidationRules validationRules, AppCommandRequest request)
         {
             if (this.MyCommand.Equals(request?.Command, StringComparison.InvariantCultureIgnoreCase))
             {
                 this.Realize(validationRules, request.Parametres);
-                return true;
             }
             else
             {
                 if (this.nextHandler is null)
                 {
-                    return false;
+                    PrintMissedCommandInfo(request.Command);
                 }
                 else
                 {
-                    return this.nextHandler.HandleCommand(validationRules, request);
+                    this.nextHandler.HandleCommand(validationRules, request);
                 }
             }
         }
@@ -40,5 +39,11 @@ namespace FileCabinetApp.CommandHandlers
         }
 
         protected abstract void Realize(BaseValidationRules validationRules, string parameters);
+
+        private static void PrintMissedCommandInfo(string command)
+        {
+            Console.WriteLine($"There is no '{command}' command.");
+            Console.WriteLine();
+        }
     }
 }

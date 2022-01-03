@@ -1,8 +1,10 @@
-﻿namespace FileCabinetApp.CommandHandlers
+﻿using System;
+
+namespace FileCabinetApp.CommandHandlers
 {
     public static class Creator
     {
-        public static BaseCommandHandler CrateCommandChain(IFileCabinetService service)
+        public static BaseCommandHandler CrateCommandChain(IFileCabinetService service, Action exit)
         {
             HandlersFabric creator = new HandlersFabric();
             creator.SetRoot(new Help("help"));
@@ -14,7 +16,8 @@
                    .AddNextHandler(new List(service, "list"))
                    .AddNextHandler(new Stat(service, "stat"))
                    .AddNextHandler(new Remove(service, "remove"))
-                   .AddNextHandler(new Purge(service, "purge"));
+                   .AddNextHandler(new Purge(service, "purge"))
+                   .AddNextHandler(new ExitHandler(exit, "exit"));
 
             return creator.GetRoot();
         }
