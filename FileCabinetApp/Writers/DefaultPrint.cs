@@ -6,25 +6,24 @@ namespace FileCabinetApp.Writers
 {
     public static class DefaultPrint
     {
-        public static void PrintRecocrd(IEnumerable<FileCabinetRecord> collection, string valueFind = null, string fildName = null)
+        public static void PrintRecocrd(IEnumerable<FileCabinetRecord> collection)
         {
             if (collection == null)
             {
-                Console.WriteLine("Incorrect date\n");
+                Console.WriteLine("There is no data for you(\n");
                 return;
             }
 
+            byte swither = 0;
             foreach (var record in collection)
             {
-                if (!(record == null))
-                {
-                    PrintRecord(record);
-                }
-                else
-                {
-                    Console.WriteLine($"{fildName} {valueFind} not found\n");
-                    return;
-                }
+                PrintRecord(record);
+                swither++;
+            }
+
+            if (swither == 0)
+            {
+                Console.WriteLine("There is no data for you(\n");
             }
         }
 

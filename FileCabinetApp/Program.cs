@@ -27,7 +27,7 @@ namespace FileCabinetApp
             if (args != null)
             {
                 ProgramSetup.SetOptions(out service, out validator, args);
-                rootHandler = Creator.CrateCommandChain(service, Exit);
+                rootHandler = HandlerFabric.CrateCommandChain(service, Exit);
             }
 
             Console.WriteLine(HintMessage);

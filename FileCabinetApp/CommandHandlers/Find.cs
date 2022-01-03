@@ -1,13 +1,16 @@
 ﻿using System;
-using FileCabinetApp.Writers;
+using System.Collections.Generic;
 
 namespace FileCabinetApp.CommandHandlers
 {
     public class Find : ServiceCommandHandler
     {
-        public Find(IFileCabinetService service, string mycommand)
+        private Action<IEnumerable<FileCabinetRecord>> printer;
+
+        public Find(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> printer, string mycommand)
             : base(service, mycommand)
         {
+            this.printer = printer;
         }
 
         protected override void Realize(BaseValidationRules validationRules, string parameters)
@@ -20,25 +23,25 @@ namespace FileCabinetApp.CommandHandlers
                 {
                     case "firstname":
                         {
-                            DefaultPrint.PrintRecocrd(this.Service.FindByFirstName(serchedField[1]), serchedField[1], "FirstName");
+                            this.printer(this.Service.FindByFirstName(serchedField[1]));
                             break;
                         }
 
                     case "lastname":
                         {
-                            DefaultPrint.PrintRecocrd(this.Service.FindByLastName(serchedField[1]), serchedField[1], "LastName");
+                            this.printer(this.Service.FindByLastName(serchedField[1]));
                             break;
                         }
 
                     case "dateofbirth":
                         {
-                            DefaultPrint.PrintRecocrd(this.Service.FindByDateOfBirth(serchedField[1]), serchedField[1], "DateOfBirth");
+                            this.printer(this.Service.FindByDateOfBirth(serchedField[1]));
                             break;
                         }
 
                     default:
                         {
-                            Console.WriteLine("Unknown field\n");
+                            Console.WriteLine($"I can`t search by field '{serchedField[0]}'\n");
                             break;
                         }
                 }

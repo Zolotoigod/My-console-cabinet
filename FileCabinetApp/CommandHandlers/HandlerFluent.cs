@@ -1,18 +1,18 @@
 ﻿namespace FileCabinetApp.CommandHandlers
 {
-    public class HandlersFabric
+    public class HandlerFluent
     {
         private BaseCommandHandler root;
         private BaseCommandHandler current;
 
-        public HandlersFabric AddNextHandler(BaseCommandHandler handler)
+        public HandlerFluent AddNextHandler(BaseCommandHandler handler)
         {
             this.current.SetNext(handler);
             this.current = handler;
             return this;
         }
 
-        public HandlersFabric SetRoot(BaseCommandHandler handler)
+        public HandlerFluent SetRoot(BaseCommandHandler handler)
         {
             this.root = handler;
             this.current = handler;
