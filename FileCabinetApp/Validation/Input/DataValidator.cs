@@ -2,6 +2,8 @@
 using FileCabinetApp.Validation;
 using FileCabinetApp.Validation.Input;
 
+#pragma warning disable SA1118
+
 namespace FileCabinetApp
 {
     public class DataValidator
@@ -34,7 +36,8 @@ namespace FileCabinetApp
         {
             Tuple<bool, string> result = new (
                 this.validators.FirstName.IsValid(input),
-                "FirstName should be geat then 2 less than 60 letters, shouldn't include digits and punctuation");
+                $"FirstName should be great than {this.validators.Parameters.MinFirstNameLength} and" +
+                $" less than {this.validators.Parameters.MaxFirstNameLength} letters, shouldn't include digits and punctuation");
             return result;
         }
 
@@ -42,7 +45,8 @@ namespace FileCabinetApp
         {
             Tuple<bool, string> result = new (
                 this.validators.LastName.IsValid(input),
-                "LastName should be geat then 2 less than 60 letters, shouldn't include digits and punctuation");
+                $"LastName should be great than {this.validators.Parameters.MinLastNameLength} and" +
+                $" less than {this.validators.Parameters.MaxLastNameLength} letters, shouldn't include digits and punctuation");
             return result;
         }
 
@@ -50,7 +54,8 @@ namespace FileCabinetApp
         {
             Tuple<bool, string> result = new (
                 this.validators.DateOfBirth.IsValid(input),
-                $"Date should be grate then 01.01.1950 an less then {DateTime.Today}");
+                $"Date should be great than {this.validators.Parameters.DateOfBirthFrom} and" +
+                $" less than {this.validators.Parameters.DateOfBirthTo}");
             return result;
         }
 
@@ -58,7 +63,7 @@ namespace FileCabinetApp
         {
             Tuple<bool, string> result = new (
                 this.validators.Type.IsValid(input),
-                "Type may be 'A', 'B' or 'C' only");
+                $"Type may be {string.Join(", ", this.validators.Parameters.Types)} only");
             return result;
         }
 
@@ -66,7 +71,7 @@ namespace FileCabinetApp
         {
             Tuple<bool, string> result = new (
                 this.validators.Number.IsValid(input),
-                "Number should be great than 0 and less than 9999");
+                $"Number should be great than 0 and less than {this.validators.Parameters.NumberMax}");
             return result;
         }
 

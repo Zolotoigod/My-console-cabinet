@@ -6,6 +6,7 @@ namespace FileCabinetApp.Validation.Input
     {
         public ValidatorLibrary(ValidationParameters validationData)
         {
+            this.Parameters = validationData;
             this.FirstName = new FirstNameValidator(validationData.MinFirstNameLength, validationData.MaxFirstNameLength);
             this.LastName = new LastNameValidator(validationData.MinLastNameLength, validationData.MaxLastNameLength);
             this.DateOfBirth = new DateOfBirthValidator(validationData.DateOfBirthFrom, validationData.DateOfBirthTo);
@@ -13,6 +14,8 @@ namespace FileCabinetApp.Validation.Input
             this.Number = new NumberValidator(validationData.NumberMax);
             this.Balance = new BalanceValidator();
         }
+
+        public ValidationParameters Parameters { get; }
 
         public FirstNameValidator FirstName { get; }
 

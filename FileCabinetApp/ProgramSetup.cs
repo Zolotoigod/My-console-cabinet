@@ -37,7 +37,9 @@ namespace FileCabinetApp
                 service = new FileCabinetMemoryService(serviceIndex);
             }
 
-            Console.WriteLine($"Using {validator} validation rules");
+            string rules = serviceIndex == 1 ? "custom" : "default";
+
+            Console.WriteLine($"Using {rules} validation rules");
             Console.WriteLine($"Using {service} storage");
         }
 

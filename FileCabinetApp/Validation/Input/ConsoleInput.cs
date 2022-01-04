@@ -19,7 +19,7 @@ namespace FileCabinetApp
 
                 if (!conversionResult.Item1)
                 {
-                    Console.WriteLine($"Conversion failed: {conversionResult.Item2}.\nPlease, repeat your input:\n> ");
+                    Console.Write($"Conversion failed: {conversionResult.Item2}.\nPlease, repeat your input:\n> ");
                     continue;
                 }
 
@@ -28,7 +28,7 @@ namespace FileCabinetApp
                 var validationResult = validator(value);
                 if (!validationResult.Item1)
                 {
-                    Console.WriteLine($"Validation failed: {validationResult.Item2}.\nPlease, repeat your input:\n> ");
+                    Console.Write($"Validation failed: {validationResult.Item2}.\nPlease, repeat your input:\n> ");
                     continue;
                 }
 

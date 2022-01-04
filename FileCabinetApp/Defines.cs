@@ -4,7 +4,7 @@
     {
         public const string AvailableFields = "ID, F.tName, L.Name, D.OfBirth, Type, Number, Balance";
 
-        public const string DefaultConsoleFormat = "#{0}, {1}, {2}, {3}, {4}, {5}, {6:f2}";
+        public const string DefaultConsoleFormat = "#{0}, {1}, {2}, {3}, {4}, {5:0000}, {6:f2}";
 
         public static readonly string[] AvailableExportFormats = { "csv", "xml" };
 
