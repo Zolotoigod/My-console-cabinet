@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using FileCabinetApp.DTO;
+using Newtonsoft.Json;
 
 namespace FileCabinetApp.Validation
 {
@@ -36,6 +39,20 @@ namespace FileCabinetApp.Validation
                 NumberMax = 10000,
                 BalanceMax = decimal.MaxValue,
             };
+        }
+
+        public static ValidationParameters ReadConfigParams()
+        {
+            ConfigParamsAdapter its;
+            using (FileStream stream = new FileStream("../../../validation-rules.json", FileMode.Open, FileAccess.Read))
+            {
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    its = JsonConvert.DeserializeObject<ConfigParamsAdapter>(reader.ReadToEnd());
+                }
+            }
+
+            return new ValidationParameters();
         }
     }
 }

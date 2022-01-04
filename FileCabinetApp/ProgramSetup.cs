@@ -25,7 +25,7 @@ namespace FileCabinetApp
             }
             else
             {
-                validator = new ValidatorLibrary(ParametersCreater.GetDefaultParams());
+                validator = new ValidatorLibrary(ParametersCreater.ReadConfigParams());
             }
 
             if (storageIndex >= 0)
