@@ -1,4 +1,5 @@
 ﻿using System;
+using FileCabinetApp.Validation.Service;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -12,7 +13,7 @@ namespace FileCabinetApp.CommandHandlers
             this.isRuning = isRun;
         }
 
-        protected override void Realize(BaseValidationRules validationRules, string parameters)
+        protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             this.isRuning.Invoke();
         }

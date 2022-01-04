@@ -9,7 +9,7 @@ namespace FileCabinetApp.CommandHandlers
         {
         }
 
-        protected override void Realize(BaseValidationRules validationRules, string parameters)
+        protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             if (int.TryParse(parameters, out int id))
             {

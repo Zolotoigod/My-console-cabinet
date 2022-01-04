@@ -10,14 +10,14 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="storeage">Record push in service.</param>
         /// <returns>Record ID.</returns>
-        public int CreateRecord(DataStorage storeage);
+        public int CreateRecord(InputDataPack storeage);
 
         /// <summary>
         /// Edit record in service by id.
         /// </summary>
         /// <param name="id"> id of record.</param>
         /// <param name="storage">New record data.</param>
-        public void EditRecord(int id, DataStorage storage);
+        public void EditRecord(int id, InputDataPack storage);
 
         /// <summary>
         /// Return all record in servise.

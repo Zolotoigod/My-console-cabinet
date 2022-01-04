@@ -4,59 +4,6 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
-        <member name="T:FileCabinetApp.ConsoleInput">
-            <summary>
-            Class gets data from console.
-            </summary>
-        </member>
-        <member name="P:FileCabinetApp.DataStorage.FirstName">
-            <summary>
-            Gets or sets record FirstName.
-            </summary>
-            <value>
-            Record FirstName.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DataStorage.LastName">
-            <summary>
-            Gets or sets record LastName.
-            </summary>
-            <value>
-            Record LastName.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DataStorage.DateOfBirth">
-            <summary>
-            Gets or sets record DateOfBirth.
-            </summary>
-            <value>
-            Record DateOfBirth.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DataStorage.Type">
-            <summary>
-            Gets or sets record Personal Account Type.
-            </summary>
-            <value>
-            Record Personal Account Type.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DataStorage.Number">
-            <summary>
-            Gets or sets record Personal Account Number.
-            </summary>
-            <value>
-            Record Personal Account Number.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DataStorage.Balance">
-            <summary>
-            Gets or sets record Personal Account Balance.
-            </summary>
-            <value>
-            Record Personal Account Balance.
-            </value>
-        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Service record.
@@ -118,10 +65,53 @@
             Record Personal Account Balance.
             </value>
         </member>
-        <member name="T:FileCabinetApp.IInput">
+        <member name="P:FileCabinetApp.InputDataPack.FirstName">
             <summary>
-            Inteface for define the basiс input rules.
+            Gets or sets record FirstName.
             </summary>
+            <value>
+            Record FirstName.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.InputDataPack.LastName">
+            <summary>
+            Gets or sets record LastName.
+            </summary>
+            <value>
+            Record LastName.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.InputDataPack.DateOfBirth">
+            <summary>
+            Gets or sets record DateOfBirth.
+            </summary>
+            <value>
+            Record DateOfBirth.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.InputDataPack.Type">
+            <summary>
+            Gets or sets record Personal Account Type.
+            </summary>
+            <value>
+            Record Personal Account Type.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.InputDataPack.Number">
+            <summary>
+            Gets or sets record Personal Account Number.
+            </summary>
+            <value>
+            Record Personal Account Number.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.InputDataPack.Balance">
+            <summary>
+            Gets or sets record Personal Account Balance.
+            </summary>
+            <value>
+            Record Personal Account Balance.
+            </value>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
@@ -182,14 +172,14 @@
             <param name="dateOfBirth">Parametr for search.</param>
             <returns>list of FileCabinetRecord.</returns>
         </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.DataStorage)">
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.InputDataPack)">
             <summary>
             Create record in service.
             </summary>
             <param name="storeage">Record push in service.</param>
             <returns>Record ID.</returns>
         </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.DataStorage)">
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.InputDataPack)">
             <summary>
             Edit record in service by id.
             </summary>
@@ -228,6 +218,16 @@
         <member name="T:FileCabinetApp.DefaultValidateRules">
             <summary>
             Validator vith default parameters.
+            </summary>
+        </member>
+        <member name="T:FileCabinetApp.ConsoleInput">
+            <summary>
+            Class gets data from console.
+            </summary>
+        </member>
+        <member name="T:FileCabinetApp.IInput">
+            <summary>
+            Inteface for define the basiс input rules.
             </summary>
         </member>
     </members>

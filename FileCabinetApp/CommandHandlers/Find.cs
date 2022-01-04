@@ -13,7 +13,7 @@ namespace FileCabinetApp.CommandHandlers
             this.printer = printer;
         }
 
-        protected override void Realize(BaseValidationRules validationRules, string parameters)
+        protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             string[] serchedField = parameters?.Split(' ', 2);
             if (serchedField.Length == 2)

@@ -15,7 +15,7 @@ namespace FileCabinetApp
             this.reader = streamReader;
         }
 
-        public List<FileCabinetRecord> ReadAll(BaseValidationRules validationRules)
+        public List<FileCabinetRecord> ReadAll(DataValidator validator)
         {
             List<FileCabinetRecord> result = new ();
             string[] buffer;
@@ -27,15 +27,14 @@ namespace FileCabinetApp
             while (!this.reader.EndOfStream)
             {
                 FileCabinetRecord newRecord = new FileCabinetRecord();
-                var validator = new DataValidator(validationRules);
                 buffer = this.reader.ReadLine().Split(", ");
 
                 newRecord.Id = int.TryParse(buffer[0], out int newId) ? newId : -1;
 
-                newRecord.FirstName = validator.NameValidator(buffer[1]).Item1 ?
+                newRecord.FirstName = validator.FirstNameValidator(buffer[1]).Item1 ?
                     DataConverter.NameConvert(buffer[1]).Item3 : "#Incorrect data#";
 
-                newRecord.LastName = validator.NameValidator(buffer[2]).Item1 ?
+                newRecord.LastName = validator.FirstNameValidator(buffer[2]).Item1 ?
                     DataConverter.NameConvert(buffer[2]).Item3 : "#Incorrect data#";
 
                 newRecord.DateOfBirth = validator.DateValidator(DataConverter.DateConvert(buffer[3]).Item3).Item1 ?

@@ -1,4 +1,6 @@
 ﻿using System;
+using FileCabinetApp.Validation;
+using FileCabinetApp.Validation.Input;
 
 namespace FileCabinetApp
 {
@@ -7,7 +9,7 @@ namespace FileCabinetApp
     /// </summary>
     public static class ProgramSetup
     {
-        public static void SetOptions(out IFileCabinetService service, out BaseValidationRules validationRules, string[] args)
+        public static void SetOptions(out IFileCabinetService service, out ValidatorLibrary validator, string[] args)
         {
             if (args is null)
             {
@@ -16,29 +18,30 @@ namespace FileCabinetApp
 
             int validationIndex = Array.FindIndex(args, 0, args.Length, match => match.Equals("--validation_rules", StringComparison.InvariantCultureIgnoreCase) || match.Equals("--v", StringComparison.InvariantCultureIgnoreCase));
             int storageIndex = Array.FindIndex(args, 0, args.Length, match => match.Equals("--storage", StringComparison.InvariantCultureIgnoreCase) || match.Equals("--s", StringComparison.InvariantCultureIgnoreCase));
+            int serviceIndex = 0;
             if (validationIndex >= 0)
             {
-                SetValidator(args, validationIndex, out validationRules);
+                SetValidator(args, validationIndex, out validator, ref serviceIndex);
             }
             else
             {
-                validationRules = new DefaultValidateRules();
+                validator = new ValidatorLibrary(ParametersCreater.GetDefaultParams());
             }
 
             if (storageIndex >= 0)
             {
-                SetStorage(args, storageIndex, validationRules, out service);
+                SetStorage(args, storageIndex, serviceIndex, out service);
             }
             else
             {
-                service = new FileCabinetMemoryService(validationRules);
+                service = new FileCabinetMemoryService(serviceIndex);
             }
 
-            Console.WriteLine($"Using {validationRules} validation rules");
+            Console.WriteLine($"Using {validator} validation rules");
             Console.WriteLine($"Using {service} storage");
         }
 
-        private static void SetValidator(string[] args, int validationIndex, out BaseValidationRules validationRules)
+        private static void SetValidator(string[] args, int validationIndex, out ValidatorLibrary validator, ref int serviceIndex)
         {
             if (!string.IsNullOrWhiteSpace(args[validationIndex + 1]))
             {
@@ -46,19 +49,20 @@ namespace FileCabinetApp
                 {
                     case "default":
                         {
-                            validationRules = new DefaultValidateRules();
+                            validator = new ValidatorLibrary(ParametersCreater.GetDefaultParams());
                             break;
                         }
 
                     case "custom":
                         {
-                            validationRules = new CustomValdationRules();
+                            validator = new ValidatorLibrary(ParametersCreater.GetCustomParams());
+                            serviceIndex = 1;
                             break;
                         }
 
                     default:
                         {
-                            validationRules = new DefaultValidateRules();
+                            validator = new ValidatorLibrary(ParametersCreater.GetDefaultParams());
                             Console.WriteLine($"Validator {args[validationIndex + 1]} unsupported");
                             break;
                         }
@@ -66,11 +70,11 @@ namespace FileCabinetApp
             }
             else
             {
-                validationRules = new DefaultValidateRules();
+                validator = new ValidatorLibrary(ParametersCreater.GetDefaultParams());
             }
         }
 
-        private static void SetStorage(string[] args, int storageIndex, BaseValidationRules validationRules, out IFileCabinetService service)
+        private static void SetStorage(string[] args, int storageIndex, int indexValidator, out IFileCabinetService service)
         {
             if (!string.IsNullOrWhiteSpace(args[storageIndex + 1]))
             {
@@ -78,19 +82,19 @@ namespace FileCabinetApp
                 {
                     case "memory":
                         {
-                            service = new FileCabinetMemoryService(validationRules);
+                            service = new FileCabinetMemoryService(indexValidator);
                             break;
                         }
 
                     case "file":
                         {
-                            service = new FileCabinetFileService(validationRules);
+                            service = new FileCabinetFileService(indexValidator);
                             break;
                         }
 
                     default:
                         {
-                            service = new FileCabinetMemoryService(validationRules);
+                            service = new FileCabinetMemoryService(indexValidator);
                             Console.WriteLine($"Service storage {args[storageIndex + 1]} unsupported");
                             break;
                         }
@@ -98,7 +102,7 @@ namespace FileCabinetApp
             }
             else
             {
-                service = new FileCabinetMemoryService(validationRules);
+                service = new FileCabinetMemoryService(indexValidator);
             }
         }
     }

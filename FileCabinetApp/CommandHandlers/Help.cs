@@ -1,5 +1,6 @@
 ﻿using System;
 using FileCabinetApp.DTO;
+using FileCabinetApp.Validation.Service;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -10,7 +11,7 @@ namespace FileCabinetApp.CommandHandlers
         {
         }
 
-        protected override void Realize(BaseValidationRules validationRules, string parameters)
+        protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             if (!string.IsNullOrEmpty(parameters))
             {

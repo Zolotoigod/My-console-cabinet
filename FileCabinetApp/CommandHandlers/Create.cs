@@ -9,9 +9,9 @@ namespace FileCabinetApp.CommandHandlers
         {
         }
 
-        protected override void Realize(BaseValidationRules validationRules, string parameters)
+        protected override void Realize(DataValidator validator, IInput input,  string parameters)
         {
-            DataStorage record = new (validationRules);
+            InputDataPack record = new (validator, input);
             int id = this.Service.CreateRecord(record);
             Console.WriteLine($"Record #{id} is created\n");
         }

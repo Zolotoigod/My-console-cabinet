@@ -9,7 +9,7 @@ namespace FileCabinetApp.CommandHandlers
         {
         }
 
-        protected override void Realize(BaseValidationRules validationRules, string parameters)
+        protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             Console.WriteLine($"Total records - {this.Service.GetStat()}");
             Console.WriteLine($"Removed records - {this.Service.GetDeletedRecords()}\n");

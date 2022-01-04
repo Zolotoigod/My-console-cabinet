@@ -7,7 +7,7 @@ namespace FileCabinetApp
     /// </summary>
     public abstract class BaseValidationRules
     {
-        public static void ValidationNull(DataStorage data)
+        public static void ValidationNull(InputDataPack data)
         {
             if (data == null)
             {

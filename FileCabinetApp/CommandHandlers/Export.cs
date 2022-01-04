@@ -10,7 +10,7 @@ namespace FileCabinetApp.CommandHandlers
         {
         }
 
-        protected override void Realize(BaseValidationRules validationRules, string parameters)
+        protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             string[] exportParams = parameters?.Split(' ', 2);
             var index = Array.FindIndex(Defines.AvailableExportFormats, 0, Defines.AvailableExportFormats.Length, match => match.Equals(exportParams[0], StringComparison.InvariantCultureIgnoreCase));

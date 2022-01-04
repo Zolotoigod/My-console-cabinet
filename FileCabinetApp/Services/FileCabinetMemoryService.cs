@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using FileCabinetApp.Validation.Service;
 
 #pragma warning disable CA1805
 
@@ -18,43 +19,46 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
-        private readonly BaseValidationRules validationRules;
+        private readonly IRecordValidator validator;
         private List<FileCabinetRecord> list = new ();
 
-        public FileCabinetMemoryService(BaseValidationRules validationRules)
+        public FileCabinetMemoryService(int validatorIndex)
         {
-            this.validationRules = validationRules;
+            if (validatorIndex == 1)
+            {
+                this.validator = new ValidatorBuilder().CreateCustom();
+            }
+            else
+            {
+                this.validator = new ValidatorBuilder().CreateDefault();
+            }
         }
 
-        public int CreateRecord(DataStorage storage)
+        public int CreateRecord(InputDataPack dataPack)
         {
-            BaseValidationRules.ValidationNull(storage);
-            var record = new FileCabinetRecord(storage, this.validationRules, this.list.Count);
+            this.validator.Validate(dataPack);
+            var record = new FileCabinetRecord(dataPack, this.list.Count);
             this.list.Add(record);
-            DictionaryManager.NameDictUpdate(this.firstNameDictionary, record.FirstName, record);
-            DictionaryManager.NameDictUpdate(this.lastNameDictionary, record.LastName, record);
-            DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, record);
+            this.UpdateDictionarey(record);
             return record.Id;
         }
 
-        public void EditRecord(int id, DataStorage storage)
+        public void EditRecord(int id, InputDataPack dataPack)
         {
             var record = this.list[id - 1];
-            BaseValidationRules.ValidationNull(storage);
+            this.validator.Validate(dataPack);
             this.firstNameDictionary.Remove(record.FirstName.ToUpperInvariant());
             this.lastNameDictionary.Remove(record.LastName.ToUpperInvariant());
             this.dateOfBirthDictionary.Remove(record.DateOfBirth);
 
-            record.FirstName = this.validationRules.NameValidationRules(storage.FirstName) ? storage?.FirstName : throw new ArgumentException("incorrect FirstName");
-            record.LastName = this.validationRules.NameValidationRules(storage.LastName) ? storage.LastName : throw new ArgumentException("incorrect FirstName");
-            record.DateOfBirth = this.validationRules.DateValidationRules(storage.DateOfBirth) ? storage.DateOfBirth : throw new ArgumentException("Year of birth should be more than 1950 end less than current date");
-            record.Type = this.validationRules.TypeValidationRules(storage.Type) ? storage.Type : throw new ArgumentException("Type can be A, B, C only");
-            record.Number = this.validationRules.NumberValidationRules(storage.Number) ? storage.Number : throw new ArgumentException("Number should be more than 0 end less than 9999");
-            record.Balance = this.validationRules.BalanceValidationRules(storage.Balance) ? storage.Balance : throw new ArgumentException("Balance can't be less than zero");
+            record.FirstName = dataPack?.FirstName;
+            record.LastName = dataPack.LastName;
+            record.DateOfBirth = dataPack.DateOfBirth;
+            record.Type = dataPack.Type;
+            record.Number = dataPack.Number;
+            record.Balance = dataPack.Balance;
 
-            DictionaryManager.NameDictUpdate(this.firstNameDictionary, record.FirstName, record);
-            DictionaryManager.NameDictUpdate(this.lastNameDictionary, record.LastName, record);
-            DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, record);
+            this.UpdateDictionarey(record);
         }
 
         /// <summary>
@@ -195,6 +199,13 @@ namespace FileCabinetApp
                 DictionaryManager.NameDictUpdate(this.lastNameDictionary, record.LastName, record);
                 DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, record);
             }
+        }
+
+        private void UpdateDictionarey(FileCabinetRecord record)
+        {
+            DictionaryManager.NameDictUpdate(this.firstNameDictionary, record.FirstName, record);
+            DictionaryManager.NameDictUpdate(this.lastNameDictionary, record.LastName, record);
+            DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, record);
         }
     }
 }

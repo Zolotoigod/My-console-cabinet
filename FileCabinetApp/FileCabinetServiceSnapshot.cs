@@ -9,15 +9,15 @@ namespace FileCabinetApp
     {
         private readonly string fileTitle;
 
-        public FileCabinetServiceSnapshot(StreamReader reader, BaseValidationRules validationRules)
+        public FileCabinetServiceSnapshot(StreamReader reader, DataValidator validator)
         {
-            var list = this.LoadFromCsv(reader, validationRules);
+            var list = this.LoadFromCsv(reader, validator);
             this.Records = list.AsReadOnly();
         }
 
-        public FileCabinetServiceSnapshot(XmlReader reader, BaseValidationRules validationRules)
+        public FileCabinetServiceSnapshot(XmlReader reader, DataValidator validator)
         {
-            var list = this.LoadFromXml(reader, validationRules);
+            var list = this.LoadFromXml(reader, validator);
             this.Records = list.AsReadOnly();
         }
 
@@ -51,16 +51,16 @@ namespace FileCabinetApp
             newWriter.WriteRootEnd();
         }
 
-        public List<FileCabinetRecord> LoadFromCsv(StreamReader reader, BaseValidationRules validationRules)
+        public List<FileCabinetRecord> LoadFromCsv(StreamReader reader, DataValidator validator)
         {
             FileCabinetRecordCsvReader newReader = new (reader);
-            return newReader.ReadAll(validationRules);
+            return newReader.ReadAll(validator);
         }
 
-        public List<FileCabinetRecord> LoadFromXml(XmlReader reader, BaseValidationRules validationRules)
+        public List<FileCabinetRecord> LoadFromXml(XmlReader reader, DataValidator validator)
         {
             FileCabinetRecordXmlReader newReader = new ();
-            return newReader.XmlDeSerialize(reader, validationRules);
+            return newReader.XmlDeSerialize(reader, validator);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using FileCabinetApp.Validation.Service;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -9,13 +10,13 @@ namespace FileCabinetApp.CommandHandlers
         {
         }
 
-        protected override void Realize(BaseValidationRules validationRules, string parameters)
+        protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             if (int.TryParse(parameters, out int id) && id > 0)
             {
                 if (this.Service.GetListId().Contains(id))
                 {
-                    this.Service.EditRecord(id, new DataStorage(validationRules));
+                    this.Service.EditRecord(id, new InputDataPack(validator, input));
                     Console.WriteLine($"Record #{id} is updated\n");
                 }
                 else

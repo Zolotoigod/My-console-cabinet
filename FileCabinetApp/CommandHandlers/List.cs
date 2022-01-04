@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FileCabinetApp.Writers;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -14,7 +13,7 @@ namespace FileCabinetApp.CommandHandlers
             this.printer = printer;
         }
 
-        protected override void Realize(BaseValidationRules validationRules, string parameters)
+        protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             this.printer(this.Service.GetRecords());
 

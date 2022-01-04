@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
+using FileCabinetApp.Validation.Service;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -11,7 +12,7 @@ namespace FileCabinetApp.CommandHandlers
         {
         }
 
-        protected override void Realize(BaseValidationRules validationRules, string parameters)
+        protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             string[] importParams = parameters?.Split(' ', 2);
             if (importParams.Length == 2)
@@ -21,7 +22,7 @@ namespace FileCabinetApp.CommandHandlers
                 if (File.Exists(importParams[1]))
                 {
                     var importFormat = ReaderFormatSwitch(index);
-                    importFormat(this.Service, validationRules, importParams[1]);
+                    importFormat(this.Service, validator, importParams[1]);
                 }
                 else
                 {
@@ -34,40 +35,40 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static Action<IFileCabinetService, BaseValidationRules, string> ReaderFormatSwitch(int index) => index switch
+        private static Action<IFileCabinetService, DataValidator, string> ReaderFormatSwitch(int index) => index switch
         {
             0 => CallCSVReader,
             1 => CallXMLReader,
             _ => UnsupportedFormat,
         };
 
-        private static void CallCSVReader(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        private static void CallCSVReader(IFileCabinetService service, DataValidator validator, string parameters)
         {
             using (FileStream streamReader = new FileStream(parameters, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 using (var newStreamReader = new StreamReader(streamReader))
                 {
-                    var importSnapshot = new FileCabinetServiceSnapshot(newStreamReader, validationRules);
+                    var importSnapshot = new FileCabinetServiceSnapshot(newStreamReader, validator);
                     Console.WriteLine($"{importSnapshot.Records.Count} records were imported from {parameters}");
                     service.Restore(importSnapshot);
                 }
             }
         }
 
-        private static void CallXMLReader(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        private static void CallXMLReader(IFileCabinetService service, DataValidator validator, string parameters)
         {
             using (FileStream streamReader = new FileStream(parameters, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 using (var xmlReader = XmlReader.Create(streamReader))
                 {
-                    var importSnapshot = new FileCabinetServiceSnapshot(xmlReader, validationRules);
+                    var importSnapshot = new FileCabinetServiceSnapshot(xmlReader, validator);
                     Console.WriteLine($"{importSnapshot.Records.Count} records were imported from {parameters}");
                     service.Restore(importSnapshot);
                 }
             }
         }
 
-        private static void UnsupportedFormat(IFileCabinetService service, BaseValidationRules validationRules, string parameters)
+        private static void UnsupportedFormat(IFileCabinetService service, DataValidator validator, string parameters)
         {
             Console.WriteLine($"Import format {parameters} unsupported now!(");
         }

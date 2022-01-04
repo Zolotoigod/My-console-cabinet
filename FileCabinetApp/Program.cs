@@ -1,6 +1,7 @@
 ﻿using System;
 using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.DTO;
+using FileCabinetApp.Validation.Input;
 
 namespace FileCabinetApp
 {
@@ -14,7 +15,7 @@ namespace FileCabinetApp
 
         private static ICommandHandler rootHandler;
         private static IFileCabinetService service;
-        private static BaseValidationRules validator;
+        private static ValidatorLibrary validators;
         private static bool isRunning = true;
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace FileCabinetApp
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
             if (args != null)
             {
-                ProgramSetup.SetOptions(out service, out validator, args);
+                ProgramSetup.SetOptions(out service, out validators, args);
                 rootHandler = HandlerFabric.CrateCommandChain(service, Exit);
             }
 
@@ -55,7 +56,7 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                rootHandler.HandleCommand(validator, new AppCommandRequest(command, parameters));
+                rootHandler.HandleCommand(new DataValidator(validators), new ConsoleInput(), new AppCommandRequest(command, parameters));
             }
             while (isRunning);
         }

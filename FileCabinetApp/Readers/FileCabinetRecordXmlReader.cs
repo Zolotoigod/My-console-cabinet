@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -17,13 +16,13 @@ namespace FileCabinetApp
             this.serializer = new XmlSerializer(typeof(List<FileCabinetRecord>));
         }
 
-        public List<FileCabinetRecord> XmlDeSerialize(XmlReader reader, BaseValidationRules validationRules)
+        public List<FileCabinetRecord> XmlDeSerialize(XmlReader reader, DataValidator validator)
         {
             if (this.serializer.Deserialize(reader) is List<FileCabinetRecord> records)
             {
                 foreach (var record in records)
                 {
-                    this.ValidateRecord(record, validationRules);
+                    this.ValidateRecord(record, validator);
                 }
 
                 return records;
@@ -32,34 +31,34 @@ namespace FileCabinetApp
             return null;
         }
 
-        private FileCabinetRecord ValidateRecord(FileCabinetRecord record, BaseValidationRules validationRules)
+        private FileCabinetRecord ValidateRecord(FileCabinetRecord record, DataValidator validator)
         {
-            if (!validationRules.NameValidationRules(record.FirstName))
+            if (!validator.FirstNameValidator(record.FirstName).Item1)
             {
                 record.FirstName = "#DataError#";
             }
 
-            if (!validationRules.NameValidationRules(record.LastName))
+            if (!validator.LastNameValidator(record.LastName).Item1)
             {
                 record.LastName = "#DataError#";
             }
 
-            if (!validationRules.DateValidationRules(record.DateOfBirth))
+            if (!validator.DateValidator(record.DateOfBirth).Item1)
             {
                 record.DateOfBirth = default(DateTime);
             }
 
-            if (!validationRules.TypeValidationRules(record.Type))
+            if (!validator.TypeValidator(record.Type).Item1)
             {
                 record.Type = default(char);
             }
 
-            if (!validationRules.NumberValidationRules(record.Number))
+            if (!validator.NumberValidator(record.Number).Item1)
             {
                 record.Number = -1;
             }
 
-            if (!validationRules.BalanceValidationRules(record.Balance))
+            if (!validator.BalanceValidator(record.Balance).Item1)
             {
                 record.Balance = default(decimal);
             }

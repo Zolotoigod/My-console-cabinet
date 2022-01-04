@@ -4,12 +4,13 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FileCabinetApp.Validation.Service;
 
 namespace FileCabinetApp
 {
     public class FileCabinetFileService : IFileCabinetService, IDisposable
     {
-        private readonly BaseValidationRules validationRules;
+        private readonly IRecordValidator validator;
         private readonly FileStream fileStreamDb;
         private readonly UTF8Encoding coder = new ();
         private readonly short reservedField = 7;
@@ -20,9 +21,17 @@ namespace FileCabinetApp
         private readonly List<int> listId = new ();
         private int deletedRecords;
 
-        public FileCabinetFileService(BaseValidationRules validationRules)
+        public FileCabinetFileService(int validatorIndex)
         {
-            this.validationRules = validationRules;
+            if (validatorIndex == 1)
+            {
+                this.validator = new ValidatorBuilder().CreateCustom();
+            }
+            else
+            {
+                this.validator = new ValidatorBuilder().CreateDefault();
+            }
+
             bool existNow = false;
             if (File.Exists(this.filename))
             {
@@ -38,24 +47,25 @@ namespace FileCabinetApp
             }
         }
 
-        public int CreateRecord(DataStorage storage)
+        public int CreateRecord(InputDataPack dataPack)
         {
-            BaseValidationRules.ValidationNull(storage);
-            var record = new FileCabinetRecord(storage, this.validationRules, this.GetStat());
-            this.UpdateDictionary(storage, this.fileStreamDb.Length);
+            this.validator.Validate(dataPack);
+            var record = new FileCabinetRecord(dataPack, this.GetStat());
+            this.UpdateDictionary(dataPack, this.fileStreamDb.Length);
             this.WriteRecordToFile(record, this.fileStreamDb.Length);
             this.listId.Add(record.Id);
             return record.Id;
         }
 
-        public void EditRecord(int id, DataStorage storage)
+        public void EditRecord(int id, InputDataPack dataPack)
         {
             long position = (Defines.RecordSize * (id - 1)) + 6;
-            var record = new FileCabinetRecord(storage, this.validationRules, this.GetStat());
-            this.firstNameDictionary.Remove(storage.FirstName);
-            this.lastNameDictionary.Remove(storage.LastName);
-            this.dateOfBirthDictionary.Remove(storage.DateOfBirth);
-            this.UpdateDictionary(storage, position - 6);
+            this.validator.Validate(dataPack);
+            var record = new FileCabinetRecord(dataPack, this.GetStat());
+            this.firstNameDictionary.Remove(dataPack.FirstName);
+            this.lastNameDictionary.Remove(dataPack.LastName);
+            this.dateOfBirthDictionary.Remove(dataPack.DateOfBirth);
+            this.UpdateDictionary(dataPack, position - 6);
             this.WriteRecordToFile(record, position, false);
         }
 
@@ -335,7 +345,7 @@ namespace FileCabinetApp
             }
         }
 
-        private void UpdateDictionary(DataStorage starage, long position)
+        private void UpdateDictionary(InputDataPack starage, long position)
         {
             DictionaryManager.NameDictUpdate(this.firstNameDictionary, starage.FirstName, position);
 

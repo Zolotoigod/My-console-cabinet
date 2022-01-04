@@ -1,5 +1,4 @@
-﻿using FileCabinetApp.CommandHandlers;
-using FileCabinetApp.DTO;
+﻿using FileCabinetApp.DTO;
 
 namespace FileCabinetApp
 {
@@ -7,7 +6,7 @@ namespace FileCabinetApp
     {
         public string MyCommand { get; }
 
-        public void HandleCommand(BaseValidationRules validationRules, AppCommandRequest request);
+        public void HandleCommand(DataValidator validator, IInput input, AppCommandRequest request);
 
         public void SetNext(ICommandHandler nexthandler);
     }

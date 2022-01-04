@@ -1,18 +1,17 @@
 ﻿using System;
-using System.IO;
+
+#pragma warning disable CA1062
 
 namespace FileCabinetApp
 {
-    public class DataStorage
+    public class InputDataPack
     {
-        public DataStorage(BaseValidationRules validationRules)
+        public InputDataPack(DataValidator validator, IInput input)
         {
-            IInput input = new ConsoleInput();
-            DataValidator validator = new (validationRules);
             Console.Write("FirstName: ");
-            this.FirstName = input.ReadInput(DataConverter.NameConvert, validator.NameValidator);
+            this.FirstName = input.ReadInput(DataConverter.NameConvert, validator.FirstNameValidator);
             Console.Write("LastName: ");
-            this.LastName = input.ReadInput(DataConverter.NameConvert, validator.NameValidator);
+            this.LastName = input.ReadInput(DataConverter.NameConvert, validator.FirstNameValidator);
             Console.Write("Date of birth (month.day.year): ");
             this.DateOfBirth = input.ReadInput(DataConverter.DateConvert, validator.DateValidator);
             Console.Write("Personal account type (A, B, C): ");
@@ -23,7 +22,7 @@ namespace FileCabinetApp
             this.Balance = input.ReadInput(DataConverter.BalanceConvert, validator.BalanceValidator);
         }
 
-        public DataStorage(string firstname, string lastname, DateTime date, char type, short number, decimal balance)
+        public InputDataPack(string firstname, string lastname, DateTime date, char type, short number, decimal balance)
         {
             this.FirstName = firstname;
             this.LastName = lastname;
