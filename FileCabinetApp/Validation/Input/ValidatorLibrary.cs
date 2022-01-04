@@ -12,7 +12,7 @@ namespace FileCabinetApp.Validation.Input
             this.DateOfBirth = new DateOfBirthValidator(validationData.DateOfBirthFrom, validationData.DateOfBirthTo);
             this.Type = new TypeValidator(validationData.Types);
             this.Number = new NumberValidator(validationData.NumberMax);
-            this.Balance = new BalanceValidator();
+            this.Balance = new BalanceValidator(validationData.BalanceMax);
         }
 
         public ValidationParameters Parameters { get; }

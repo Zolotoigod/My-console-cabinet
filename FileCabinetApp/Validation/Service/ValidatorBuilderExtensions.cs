@@ -17,7 +17,7 @@ namespace FileCabinetApp.Validation.Service
                    .ValidateDateOfBirth(validationData.DateOfBirthFrom, validationData.DateOfBirthTo)
                    .ValidateType(validationData.Types)
                    .ValidateNumber(validationData.NumberMax)
-                   .ValidateBalance()
+                   .ValidateBalance(validationData.BalanceMax)
                    .Create();
         }
 
@@ -34,7 +34,7 @@ namespace FileCabinetApp.Validation.Service
                    .ValidateDateOfBirth(validationData.DateOfBirthFrom, validationData.DateOfBirthTo)
                    .ValidateType(validationData.Types)
                    .ValidateNumber(validationData.NumberMax)
-                   .ValidateBalance()
+                   .ValidateBalance(validationData.BalanceMax)
                    .Create();
         }
     }

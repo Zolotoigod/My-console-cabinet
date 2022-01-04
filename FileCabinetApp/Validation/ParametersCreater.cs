@@ -15,9 +15,10 @@ namespace FileCabinetApp.Validation
                 MaxLastNameLength = 120,
                 MinLastNameLength = 2,
                 DateOfBirthFrom = new DateTime(1950, 1, 1),
+                Types = new ReadOnlyCollection<char>(new List<char>() { 'A', 'B', 'C' }),
                 DateOfBirthTo = DateTime.Now,
                 NumberMax = 10000,
-                Types = new ReadOnlyCollection<char>(new List<char>() { 'A', 'B', 'C' }),
+                BalanceMax = decimal.MaxValue,
             };
         }
 
@@ -30,9 +31,10 @@ namespace FileCabinetApp.Validation
                 MaxLastNameLength = 60,
                 MinLastNameLength = 2,
                 DateOfBirthFrom = new DateTime(1930, 1, 1),
+                Types = new ReadOnlyCollection<char>(new List<char>() { 'A', 'B', 'C', 'D' }),
                 DateOfBirthTo = DateTime.Now,
                 NumberMax = 10000,
-                Types = new ReadOnlyCollection<char>(new List<char>() { 'A', 'B', 'C', 'D' }),
+                BalanceMax = decimal.MaxValue,
             };
         }
     }

@@ -205,21 +205,6 @@
             <param name="firstName">Parametr for search.</param>
             <returns>list of FileCabinetRecord.</returns>
         </member>
-        <member name="T:FileCabinetApp.BaseValidationRules">
-            <summary>
-            Inteface for difine basic validation rules.
-            </summary>
-        </member>
-        <member name="T:FileCabinetApp.CustomValdationRules">
-            <summary>
-            Validator vith custom parameters.
-            </summary>
-        </member>
-        <member name="T:FileCabinetApp.DefaultValidateRules">
-            <summary>
-            Validator vith default parameters.
-            </summary>
-        </member>
         <member name="T:FileCabinetApp.ConsoleInput">
             <summary>
             Class gets data from console.

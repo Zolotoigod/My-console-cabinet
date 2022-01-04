@@ -20,5 +20,7 @@ namespace FileCabinetApp
         public ReadOnlyCollection<char> Types { get; set; }
 
         public short NumberMax { get; set; }
+
+        public decimal BalanceMax { get; set; }
     }
 }

@@ -38,9 +38,9 @@ namespace FileCabinetApp.Validation.Service
             return this;
         }
 
-        public ValidatorBuilder ValidateBalance()
+        public ValidatorBuilder ValidateBalance(decimal max)
         {
-            this.validators.Add(new BalanceValidator());
+            this.validators.Add(new BalanceValidator(max));
             return this;
         }
 
