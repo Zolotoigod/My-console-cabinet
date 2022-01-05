@@ -24,14 +24,7 @@ namespace FileCabinetApp
 
         public FileCabinetMemoryService(int validatorIndex)
         {
-            if (validatorIndex == 1)
-            {
-                this.validator = new ValidatorBuilder().CreateCustom();
-            }
-            else
-            {
-                this.validator = new ValidatorBuilder().CreateDefault();
-            }
+            this.validator = Defines.GetValidator(validatorIndex);
         }
 
         public int CreateRecord(InputDataPack dataPack)

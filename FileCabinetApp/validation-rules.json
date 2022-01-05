@@ -1,8 +1,16 @@
 {
-	"default": {
-		"firstName": {
-			"min": 2,
-			"max": 60
-		}
-	}
+  "MaxFirstNameLength": 42,
+  "MinFirstNameLength": 2,
+  "MaxLastNameLength": 42,
+  "MinLastNameLength": 2,
+  "DateOfBirthFrom": "1950-01-01T00:00:00",
+  "DateOfBirthTo": "2022-01-05T00:00:00",
+  "Types": [
+    "A",
+    "B",
+    "C",
+	"D"
+  ],
+  "NumberMax": 10000,
+  "BalanceMax": 79228162514264337593543950335
 }

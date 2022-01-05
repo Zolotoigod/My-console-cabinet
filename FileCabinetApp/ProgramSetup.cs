@@ -25,7 +25,7 @@ namespace FileCabinetApp
             }
             else
             {
-                validator = new ValidatorLibrary(ParametersCreater.ReadConfigParams());
+                validator = new ValidatorLibrary(ParametersCreater.ReadConfigParams(Defines.ConfigPath));
             }
 
             if (storageIndex >= 0)
@@ -37,7 +37,7 @@ namespace FileCabinetApp
                 service = new FileCabinetMemoryService(serviceIndex);
             }
 
-            string rules = serviceIndex == 1 ? "custom" : "default";
+            string rules = SwitchText(serviceIndex);
 
             Console.WriteLine($"Using {rules} validation rules");
             Console.WriteLine($"Using {service} storage");
@@ -59,6 +59,13 @@ namespace FileCabinetApp
                         {
                             validator = new ValidatorLibrary(ParametersCreater.GetCustomParams());
                             serviceIndex = 1;
+                            break;
+                        }
+
+                    case "config":
+                        {
+                            validator = new ValidatorLibrary(ParametersCreater.ReadConfigParams(Defines.ConfigPath));
+                            serviceIndex = 2;
                             break;
                         }
 
@@ -107,5 +114,12 @@ namespace FileCabinetApp
                 service = new FileCabinetMemoryService(indexValidator);
             }
         }
+
+        private static string SwitchText(int index) => index switch
+        {
+            1 => "Custom",
+            2 => "Config",
+            _ => "Default",
+        };
     }
 }

@@ -17,28 +17,19 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<long>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<long>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<long>> dateOfBirthDictionary = new ();
-        private readonly string filename = "cabinet-records.db";
         private readonly List<int> listId = new ();
         private int deletedRecords;
 
         public FileCabinetFileService(int validatorIndex)
         {
-            if (validatorIndex == 1)
-            {
-                this.validator = new ValidatorBuilder().CreateCustom();
-            }
-            else
-            {
-                this.validator = new ValidatorBuilder().CreateDefault();
-            }
-
+            this.validator = Defines.GetValidator(validatorIndex);
             bool existNow = false;
-            if (File.Exists(this.filename))
+            if (File.Exists(Defines.DBPath))
             {
                 existNow = true;
             }
 
-            this.fileStreamDb = new FileStream(this.filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            this.fileStreamDb = new FileStream(Defines.DBPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             if (existNow)
             {
                 this.InitialDictionary();
@@ -51,7 +42,7 @@ namespace FileCabinetApp
         {
             this.validator.Validate(dataPack);
             var record = new FileCabinetRecord(dataPack, this.GetStat());
-            this.UpdateDictionary(dataPack, this.fileStreamDb.Length);
+            this.UpdateDictionary(record, this.fileStreamDb.Length);
             this.WriteRecordToFile(record, this.fileStreamDb.Length);
             this.listId.Add(record.Id);
             return record.Id;
@@ -65,7 +56,7 @@ namespace FileCabinetApp
             this.firstNameDictionary.Remove(dataPack.FirstName);
             this.lastNameDictionary.Remove(dataPack.LastName);
             this.dateOfBirthDictionary.Remove(dataPack.DateOfBirth);
-            this.UpdateDictionary(dataPack, position - 6);
+            this.UpdateDictionary(record, position - 6);
             this.WriteRecordToFile(record, position, false);
         }
 
@@ -345,13 +336,11 @@ namespace FileCabinetApp
             }
         }
 
-        private void UpdateDictionary(InputDataPack starage, long position)
+        private void UpdateDictionary(FileCabinetRecord record, long position)
         {
-            DictionaryManager.NameDictUpdate(this.firstNameDictionary, starage.FirstName, position);
-
-            DictionaryManager.NameDictUpdate(this.lastNameDictionary, starage.LastName, position);
-
-            DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, starage.DateOfBirth, position);
+            DictionaryManager.NameDictUpdate(this.firstNameDictionary, record.FirstName, position);
+            DictionaryManager.NameDictUpdate(this.lastNameDictionary, record.LastName, position);
+            DictionaryManager.DateDictUpdate(this.dateOfBirthDictionary, record.DateOfBirth, position);
         }
 
         private void RestoreDictionary(List<FileCabinetRecord> list)

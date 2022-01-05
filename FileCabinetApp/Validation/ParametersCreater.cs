@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text.Json;
 using FileCabinetApp.DTO;
 using Newtonsoft.Json;
 
@@ -41,18 +42,10 @@ namespace FileCabinetApp.Validation
             };
         }
 
-        public static ValidationParameters ReadConfigParams()
+        public static ValidationParameters ReadConfigParams(string path)
         {
-            ConfigParamsAdapter its;
-            using (FileStream stream = new FileStream("../../../validation-rules.json", FileMode.Open, FileAccess.Read))
-            {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    its = JsonConvert.DeserializeObject<ConfigParamsAdapter>(reader.ReadToEnd());
-                }
-            }
-
-            return new ValidationParameters();
+            return JsonConvert.DeserializeObject<ValidationParameters>(
+                File.ReadAllText(path));
         }
     }
 }
