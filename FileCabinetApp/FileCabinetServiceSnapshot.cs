@@ -33,22 +33,13 @@ namespace FileCabinetApp
         {
             FileCabinetRecordCsvWriter newWriter = new (writer);
             newWriter.WriteRootStart(this.fileTitle);
-            foreach (var record in this.Records)
-            {
-                newWriter.Write(record);
-            }
+            newWriter.Write(this.Records);
         }
 
         public void SaveToXML(TextWriter writer)
         {
             FileCabinetRecordXmlWriter newWriter = new (writer);
-            newWriter.WriteRootStart("records");
-            foreach (var record in this.Records)
-            {
-                newWriter.Write(record);
-            }
-
-            newWriter.WriteRootEnd();
+            newWriter.Write(this.Records);
         }
 
         public List<FileCabinetRecord> LoadFromCsv(StreamReader reader, DataValidator validator)

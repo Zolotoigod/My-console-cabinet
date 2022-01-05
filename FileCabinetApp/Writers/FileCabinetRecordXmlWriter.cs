@@ -1,6 +1,8 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace FileCabinetApp
 {
@@ -15,37 +17,10 @@ namespace FileCabinetApp
             this.writer.WriteStartDocument();
         }
 
-        public void Write(FileCabinetRecord record)
+        public void Write(ReadOnlyCollection<FileCabinetRecord> records)
         {
-            this.writer.WriteStartElement("record");
-
-            this.writer.WriteStartAttribute("id");
-            this.writer.WriteValue(record?.Id);
-            this.writer.WriteEndAttribute();
-
-            this.writer.WriteStartElement("name");
-            this.writer.WriteAttributeString("last", record?.LastName);
-            this.writer.WriteAttributeString("first", record?.FirstName);
-            this.writer.WriteEndElement();
-
-            this.writer.WriteStartElement("DateOfBirth");
-            this.writer.WriteValue(record.DateOfBirth.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
-            this.writer.WriteEndElement();
-
-            this.writer.WriteStartElement("AccountType");
-            this.writer.WriteCharEntity(record.Type);
-            this.writer.WriteEndElement();
-
-            this.writer.WriteStartElement("AccountNumber");
-            this.writer.WriteValue(record.Number);
-            this.writer.WriteEndElement();
-
-            this.writer.WriteStartElement("AccountBalance");
-            this.writer.WriteValue(record.Balance);
-            this.writer.WriteEndElement();
-
-            this.writer.WriteEndElement();
-            this.writer.Flush();
+            XmlSerializer serializer = new XmlSerializer(typeof(List<FileCabinetRecord>));
+            serializer.Serialize(this.writer, new List<FileCabinetRecord>(records));
         }
 
         public void WriteRootStart(string root)

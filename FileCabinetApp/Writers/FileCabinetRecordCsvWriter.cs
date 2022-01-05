@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System.Collections.ObjectModel;
+using System.IO;
+
+#pragma warning disable CA1062
 
 namespace FileCabinetApp
 {
@@ -21,15 +24,32 @@ namespace FileCabinetApp
         {
         }
 
-        public void Write(FileCabinetRecord record)
+        public void Write(ReadOnlyCollection<FileCabinetRecord> records)
         {
-            this.writer.WriteLine("{0:000}, {1}, {2}, {3:dd.MM.yyyy}, {4}, {5:0000}, {6:N2}", record?.Id, record?.FirstName, record?.LastName, record.DateOfBirth, record?.Type, record.Number, record.Balance);
-            this.writer.Flush();
+            foreach (var record in records)
+            {
+                this.WriteRecord(record);
+            }
         }
 
         public string GetRoot()
         {
             return CSVTitle;
+        }
+
+        private void WriteRecord(FileCabinetRecord record)
+        {
+            this.writer.WriteLine(
+                "{0:000}, {1}, {2}, {3:dd.MM.yyyy}, {4}, {5:0000}, {6:N2}",
+                record?.Id,
+                record?.FirstName,
+                record?.LastName,
+                record.DateOfBirth,
+                record?.Type,
+                record.Number,
+                record.Balance);
+
+            this.writer.Flush();
         }
     }
 }

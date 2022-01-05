@@ -53,7 +53,7 @@ namespace FileCabinetApp
             long position = (Defines.RecordSize * (id - 1)) + 6;
             this.validator.Validate(dataPack);
             var record = new FileCabinetRecord(dataPack, this.GetStat());
-            this.firstNameDictionary.Remove(dataPack.FirstName);
+            this.firstNameDictionary.Remove(dataPack?.FirstName);
             this.lastNameDictionary.Remove(dataPack.LastName);
             this.dateOfBirthDictionary.Remove(dataPack.DateOfBirth);
             this.UpdateDictionary(record, position - 6);

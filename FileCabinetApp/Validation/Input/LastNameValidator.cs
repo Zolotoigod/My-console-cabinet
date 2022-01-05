@@ -13,7 +13,7 @@
 
         public bool IsValid(string data)
         {
-            return data?.Length > this.maxLength && data.Length < this.minLength;
+            return data?.Length < this.maxLength && data.Length > this.minLength;
         }
     }
 }

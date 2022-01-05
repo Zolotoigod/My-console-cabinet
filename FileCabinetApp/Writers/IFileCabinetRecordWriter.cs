@@ -1,8 +1,10 @@
-﻿namespace FileCabinetApp
+﻿using System.Collections.ObjectModel;
+
+namespace FileCabinetApp
 {
     public interface IFileCabinetRecordWriter
     {
-        public void Write(FileCabinetRecord record);
+        public void Write(ReadOnlyCollection<FileCabinetRecord> records);
 
         public void WriteRootEnd();
 

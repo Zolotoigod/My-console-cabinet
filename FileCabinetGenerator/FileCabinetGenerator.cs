@@ -18,21 +18,9 @@ namespace FileCabinetGenerator
                 IFileCabinetRecordWriter formatWriter = SetWriter(stream, args[commandsIndex[0] + 1].ToUpperInvariant());
                 if (formatWriter != null)
                 {
-                    if (formatWriter is FileCabinetRecordXmlWriter && true)
+                    if (formatWriter is FileCabinetRecordXmlWriter)
                     {
                         XMLSerializ(stream, amount, firstID);
-                    }
-                    else
-                    {
-                        formatWriter.WriteRootStart(formatWriter.GetRoot());
-
-                        for (int i = 0; i < amount; i++)
-                        {
-                            formatWriter.Write(GetRandomRecordDefaultVal(firstID));
-                            firstID++;
-                        }
-
-                        formatWriter.WriteRootEnd();
                     }
 
                     Console.WriteLine($"{args[commandsIndex[2] + 1]} records were written to {args[commandsIndex[1] + 1]}");

@@ -1,6 +1,10 @@
 ﻿using System;
+using FileCabinetApp.TimeMetr;
 using FileCabinetApp.Validation;
 using FileCabinetApp.Validation.Input;
+
+#pragma warning disable SA1117
+#pragma warning disable CA2000
 
 namespace FileCabinetApp
 {
@@ -16,8 +20,17 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(args));
             }
 
-            int validationIndex = Array.FindIndex(args, 0, args.Length, match => match.Equals("--validation_rules", StringComparison.InvariantCultureIgnoreCase) || match.Equals("--v", StringComparison.InvariantCultureIgnoreCase));
-            int storageIndex = Array.FindIndex(args, 0, args.Length, match => match.Equals("--storage", StringComparison.InvariantCultureIgnoreCase) || match.Equals("--s", StringComparison.InvariantCultureIgnoreCase));
+            int validationIndex = Array.FindIndex(args, 0, args.Length,
+                match => match.Equals("--validation_rules", StringComparison.InvariantCultureIgnoreCase)
+                || match.Equals("--v", StringComparison.InvariantCultureIgnoreCase));
+
+            int storageIndex = Array.FindIndex(args, 0, args.Length,
+                match => match.Equals("--storage", StringComparison.InvariantCultureIgnoreCase)
+                || match.Equals("--s", StringComparison.InvariantCultureIgnoreCase));
+
+            int metrIndex = Array.FindIndex(args, 0, args.Length,
+                match => match.Equals("use-stopwatch", StringComparison.InvariantCultureIgnoreCase));
+
             int serviceIndex = 0;
             if (validationIndex >= 0)
             {
@@ -30,11 +43,11 @@ namespace FileCabinetApp
 
             if (storageIndex >= 0)
             {
-                SetStorage(args, storageIndex, serviceIndex, out service);
+                SetStorage(args, storageIndex, serviceIndex, metrIndex, out service);
             }
             else
             {
-                service = new FileCabinetMemoryService(serviceIndex);
+                service = SetTimer(new FileCabinetMemoryService(serviceIndex), metrIndex);
             }
 
             string rules = SwitchText(serviceIndex);
@@ -83,7 +96,7 @@ namespace FileCabinetApp
             }
         }
 
-        private static void SetStorage(string[] args, int storageIndex, int indexValidator, out IFileCabinetService service)
+        private static void SetStorage(string[] args, int storageIndex, int indexValidator, int timerIndex, out IFileCabinetService service)
         {
             if (!string.IsNullOrWhiteSpace(args[storageIndex + 1]))
             {
@@ -91,19 +104,19 @@ namespace FileCabinetApp
                 {
                     case "memory":
                         {
-                            service = new FileCabinetMemoryService(indexValidator);
+                            service = SetTimer(new FileCabinetMemoryService(indexValidator), timerIndex);
                             break;
                         }
 
                     case "file":
                         {
-                            service = new FileCabinetFileService(indexValidator);
+                            service = SetTimer(new FileCabinetFileService(indexValidator), timerIndex);
                             break;
                         }
 
                     default:
                         {
-                            service = new FileCabinetMemoryService(indexValidator);
+                            service = SetTimer(new FileCabinetMemoryService(indexValidator), timerIndex);
                             Console.WriteLine($"Service storage {args[storageIndex + 1]} unsupported");
                             break;
                         }
@@ -111,7 +124,7 @@ namespace FileCabinetApp
             }
             else
             {
-                service = new FileCabinetMemoryService(indexValidator);
+                service = SetTimer(new FileCabinetMemoryService(indexValidator), timerIndex);
             }
         }
 
@@ -121,5 +134,17 @@ namespace FileCabinetApp
             2 => "Config",
             _ => "Default",
         };
+
+        private static IFileCabinetService SetTimer(IFileCabinetService service, int index)
+        {
+            if (index > 0)
+            {
+                return new ServiceMeter(service);
+            }
+            else
+            {
+                return service;
+            }
+        }
     }
 }
