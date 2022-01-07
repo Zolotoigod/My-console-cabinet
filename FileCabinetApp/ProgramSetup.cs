@@ -31,6 +31,9 @@ namespace FileCabinetApp
             int metrIndex = Array.FindIndex(args, 0, args.Length,
                 match => match.Equals("use-stopwatch", StringComparison.InvariantCultureIgnoreCase));
 
+            int loggerIndex = Array.FindIndex(args, 0, args.Length,
+                match => match.Equals("use-logger", StringComparison.InvariantCultureIgnoreCase));
+
             int serviceIndex = 0;
             if (validationIndex >= 0)
             {
@@ -43,11 +46,11 @@ namespace FileCabinetApp
 
             if (storageIndex >= 0)
             {
-                SetStorage(args, storageIndex, serviceIndex, metrIndex, out service);
+                SetStorage(args, storageIndex, serviceIndex, metrIndex, loggerIndex, out service);
             }
             else
             {
-                service = SetTimer(new FileCabinetMemoryService(serviceIndex), metrIndex);
+                service = SetLogger(SetTimer(new FileCabinetMemoryService(serviceIndex), metrIndex), loggerIndex);
             }
 
             string rules = SwitchText(serviceIndex);
@@ -96,7 +99,7 @@ namespace FileCabinetApp
             }
         }
 
-        private static void SetStorage(string[] args, int storageIndex, int indexValidator, int timerIndex, out IFileCabinetService service)
+        private static void SetStorage(string[] args, int storageIndex, int indexValidator, int timerIndex, int loggerIndex, out IFileCabinetService service)
         {
             if (!string.IsNullOrWhiteSpace(args[storageIndex + 1]))
             {
@@ -104,19 +107,19 @@ namespace FileCabinetApp
                 {
                     case "memory":
                         {
-                            service = SetTimer(new FileCabinetMemoryService(indexValidator), timerIndex);
+                            service = SetLogger(SetTimer(new FileCabinetMemoryService(indexValidator), timerIndex), loggerIndex);
                             break;
                         }
 
                     case "file":
                         {
-                            service = SetTimer(new FileCabinetFileService(indexValidator), timerIndex);
+                            service = SetLogger(SetTimer(new FileCabinetFileService(indexValidator), timerIndex), loggerIndex);
                             break;
                         }
 
                     default:
                         {
-                            service = SetTimer(new FileCabinetMemoryService(indexValidator), timerIndex);
+                            service = SetLogger(SetTimer(new FileCabinetMemoryService(indexValidator), timerIndex), loggerIndex);
                             Console.WriteLine($"Service storage {args[storageIndex + 1]} unsupported");
                             break;
                         }
@@ -124,7 +127,7 @@ namespace FileCabinetApp
             }
             else
             {
-                service = SetTimer(new FileCabinetMemoryService(indexValidator), timerIndex);
+                service = SetLogger(SetTimer(new FileCabinetMemoryService(indexValidator), timerIndex), loggerIndex);
             }
         }
 
@@ -140,6 +143,18 @@ namespace FileCabinetApp
             if (index > 0)
             {
                 return new ServiceMeter(service);
+            }
+            else
+            {
+                return service;
+            }
+        }
+
+        private static IFileCabinetService SetLogger(IFileCabinetService service, int index)
+        {
+            if (index > 0)
+            {
+                return new ServiceLogger(service);
             }
             else
             {

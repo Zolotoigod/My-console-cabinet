@@ -8,11 +8,13 @@ namespace FileCabinetApp.Decorations
     {
         public static void PrintLogCreate(StreamWriter writer, InputDataPack storage, int id)
         {
+            string metodName = "Create()";
             string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
-            string logAction = $"Calling Create() with" + PrintRecordInfo(storage);
-            string logReturn = $"Create() returned '{id}'";
+            string logAction = $"Calling {metodName} with" + PrintRecordInfo(storage);
+            string logReturn = $"{metodName} returned '{id}'";
             writer?.WriteLine(string.Join(" - ", logDate, logAction));
             writer?.WriteLine(logReturn);
+            writer?.Flush();
         }
 
         public static void PrintLogEdit(StreamWriter writer, InputDataPack storage, int id)
@@ -20,33 +22,41 @@ namespace FileCabinetApp.Decorations
             string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
             string logAction = $"Calling Edit() record #{id} with" + PrintRecordInfo(storage);
             writer?.WriteLine(string.Join(" - ", logDate, logAction));
+            writer?.WriteLine($"Record #{id} is updated");
+            writer?.Flush();
         }
 
         public static void PrintLogFind(StreamWriter writer, string data, int count)
         {
+            string metodName = "Find()";
             string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
-            string logAction = $"Calling Find() with '{data}'";
+            string logAction = $"Calling {metodName} with '{data}'";
             writer?.WriteLine(string.Join(" - ", logDate, logAction));
-            string logReturn = $"Find() returned {count} matching records";
+            string logReturn = $"{metodName} returned {count} matching records";
             writer?.WriteLine(logReturn);
+            writer?.Flush();
         }
 
         public static void PrintLogRemove(StreamWriter writer, int id, string message)
         {
+            string metodName = "Remove()";
             string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
-            string logAction = $"Calling Remove() with '{id}'";
+            string logAction = $"Calling {metodName} with '{id}'";
             writer?.WriteLine(string.Join(" - ", logDate, logAction));
-            string logReturn = $"Remove() returned '{message}'";
+            string logReturn = $"{metodName} returned '{message}'";
             writer?.WriteLine(logReturn);
+            writer?.Flush();
         }
 
         public static void PrintLogGetRecord(StreamWriter writer, int count)
         {
+            string metodName = "List()";
             string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
-            string logAction = $"Calling List()";
+            string logAction = $"Calling {metodName}";
             writer?.WriteLine(string.Join(" - ", logDate, logAction));
-            string logReturn = $"Find() returned {count} records";
+            string logReturn = $"{metodName} returned {count} records";
             writer?.WriteLine(logReturn);
+            writer?.Flush();
         }
 
         private static string PrintRecordInfo(InputDataPack storage)

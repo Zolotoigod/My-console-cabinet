@@ -17,7 +17,7 @@ namespace FileCabinetApp.Decorations
                 Defines.LoggerPath,
                 FileMode.OpenOrCreate,
                 FileAccess.Write,
-                FileShare.None));
+                FileShare.None), System.Text.Encoding.UTF8);
 
             this.service = service;
         }
@@ -44,14 +44,14 @@ namespace FileCabinetApp.Decorations
 
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            ReadOnlyCollection<FileCabinetRecord> collection = this.service.FindByDateOfBirth(firstName);
+            ReadOnlyCollection<FileCabinetRecord> collection = this.service.FindByFirstName(firstName);
             LoggerPrinter.PrintLogFind(this.writer, firstName, collection.Count);
             return collection;
         }
 
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            ReadOnlyCollection<FileCabinetRecord> collection = this.service.FindByDateOfBirth(lastName);
+            ReadOnlyCollection<FileCabinetRecord> collection = this.service.FindByLastName(lastName);
             LoggerPrinter.PrintLogFind(this.writer, lastName, collection.Count);
             return collection;
         }
@@ -107,6 +107,11 @@ namespace FileCabinetApp.Decorations
             }
 
             this.writer.Dispose();
+        }
+
+        public override string ToString()
+        {
+            return $"{this.service}<Write Log to file {Defines.LoggerPath}>";
         }
     }
 }
