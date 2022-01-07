@@ -4,6 +4,10 @@ namespace FileCabinetApp
 {
     public static class Defines
     {
+        public const string LoggerDateFormat = "MM/dd/yyyy HH:mm";
+
+        public const string LoggerPath = "../../../ServiceLog.txt";
+
         public const string DBPath = "cabinet-records.db";
 
         public const string ConfigPath = "../../../validation-rules.json";

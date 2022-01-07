@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace FileCabinetApp.TimeMetr
+namespace FileCabinetApp.Decorations
 {
     public sealed class ServiceMeter : IFileCabinetService, IDisposable
     {
@@ -79,7 +79,11 @@ namespace FileCabinetApp.TimeMetr
 
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            return this.service.GetRecords();
+            this.timer.Restart();
+            ReadOnlyCollection<FileCabinetRecord> collection = this.service.GetRecords();
+            this.timer.Stop();
+            Console.WriteLine($"Method execution duration is {this.timer.ElapsedTicks}");
+            return collection;
         }
 
         public int GetStat()
