@@ -29,5 +29,13 @@ namespace FileCabinetApp
                 dictionary.Add(key, new List<T> { value });
             }
         }
+
+        public static void IdDictUpdate(Dictionary<int, long> dictionary, int key, long value)
+        {
+            if (!dictionary.ContainsKey(key))
+            {
+                dictionary.Add(key, value);
+            }
+        }
     }
 }

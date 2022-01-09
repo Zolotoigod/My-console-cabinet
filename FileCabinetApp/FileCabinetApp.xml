@@ -4,6 +4,12 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="M:FileCabinetApp.Decorations.ServiceLogger.GetRecords">
+            <summary>
+            Fix log value.
+            </summary>
+            <returns>All service records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Service record.
@@ -185,6 +191,7 @@
             </summary>
             <param name="id"> id of record.</param>
             <param name="storage">New record data.</param>
+            <returns>Message about execute.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.GetRecords">
             <summary>

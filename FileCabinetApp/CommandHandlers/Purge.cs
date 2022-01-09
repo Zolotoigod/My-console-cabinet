@@ -11,14 +11,7 @@ namespace FileCabinetApp.CommandHandlers
 
         protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
-            if (this.Service is FileCabinetFileService fileService)
-            {
-                Console.WriteLine(fileService.Purge());
-            }
-            else
-            {
-                Console.WriteLine("There is no FileStorage.");
-            }
+            Console.WriteLine(this.Service.Purge());
         }
     }
 }

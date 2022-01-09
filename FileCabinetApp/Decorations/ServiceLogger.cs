@@ -25,34 +25,35 @@ namespace FileCabinetApp.Decorations
         public int CreateRecord(InputDataPack storage)
         {
             int id = this.service.CreateRecord(storage);
-            LoggerPrinter.PrintLogCreate(this.writer, storage, id);
+            LoggerPrinter.PrintLogInfo(this.writer, "Edit()", $"{id}", storage);
             return id;
         }
 
-        public void EditRecord(int id, InputDataPack storage)
+        public string EditRecord(int id, InputDataPack storage)
         {
-            this.service.EditRecord(id, storage);
-            LoggerPrinter.PrintLogEdit(this.writer, storage, id);
+            string message = this.service.EditRecord(id, storage);
+            LoggerPrinter.PrintLogInfo(this.writer, "Edit()", message, storage, id);
+            return message;
         }
 
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
-            ReadOnlyCollection<FileCabinetRecord> collection = this.service.FindByDateOfBirth(dateOfBirth);
-            LoggerPrinter.PrintLogFind(this.writer, dateOfBirth, collection.Count);
+            IEnumerable<FileCabinetRecord> collection = Defines.ReturnCollection(this.service.FindByDateOfBirth(dateOfBirth));
+            LoggerPrinter.PrintLogInfo(this.writer, "Find()", "collection of matching records", dateOfBirth);
             return collection;
         }
 
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            ReadOnlyCollection<FileCabinetRecord> collection = this.service.FindByFirstName(firstName);
-            LoggerPrinter.PrintLogFind(this.writer, firstName, collection.Count);
+            IEnumerable<FileCabinetRecord> collection = Defines.ReturnCollection(this.service.FindByFirstName(firstName));
+            LoggerPrinter.PrintLogInfo(this.writer, "Find()", "collection of matching records", firstName);
             return collection;
         }
 
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            ReadOnlyCollection<FileCabinetRecord> collection = this.service.FindByLastName(lastName);
-            LoggerPrinter.PrintLogFind(this.writer, lastName, collection.Count);
+            IEnumerable<FileCabinetRecord> collection = Defines.ReturnCollection(this.service.FindByLastName(lastName));
+            LoggerPrinter.PrintLogInfo(this.writer, "Find()", "collection of matching records", lastName);
             return collection;
         }
 
@@ -66,10 +67,14 @@ namespace FileCabinetApp.Decorations
             return new List<int>();
         }
 
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        /// <summary>
+        /// Fix log value.
+        /// </summary>
+        /// <returns>All service records.</returns>
+        public IEnumerable<FileCabinetRecord> GetRecords()
         {
-            ReadOnlyCollection<FileCabinetRecord> collection = this.service.GetRecords();
-            LoggerPrinter.PrintLogGetRecord(this.writer, collection.Count);
+            IEnumerable<FileCabinetRecord> collection = Defines.ReturnCollection(this.service.GetRecords());
+            LoggerPrinter.PrintLogInfo(this.writer, "List()", "collection of all records");
             return collection;
         }
 
@@ -86,13 +91,20 @@ namespace FileCabinetApp.Decorations
         public string Remove(int id)
         {
             string message = this.service.Remove(id);
-            LoggerPrinter.PrintLogRemove(this.writer, id, message);
+            LoggerPrinter.PrintLogInfo(this.writer, "Remove()", message, id);
             return message;
         }
 
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
             this.service.Restore(snapshot);
+        }
+
+        public string Purge()
+        {
+            string message = this.service.Purge();
+            LoggerPrinter.PrintLogInfo(this.writer, "Purge()", message);
+            return message;
         }
 
         public void Dispose()

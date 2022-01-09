@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace FileCabinetApp.Decorations
@@ -32,36 +31,37 @@ namespace FileCabinetApp.Decorations
             }
         }
 
-        public void EditRecord(int id, InputDataPack storage)
+        public string EditRecord(int id, InputDataPack storage)
         {
             this.timer.Restart();
-            this.service.EditRecord(id, storage);
+            string message = this.service.EditRecord(id, storage);
             this.timer.Stop();
             Console.WriteLine($"Method execution duration is {this.timer.ElapsedTicks}");
+            return message;
         }
 
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
             this.timer.Restart();
-            ReadOnlyCollection<FileCabinetRecord> result = this.service.FindByDateOfBirth(dateOfBirth);
-            this.timer.Stop();
-            Console.WriteLine($"Method execution duration is {this.timer.ElapsedTicks}");
-            return result;
-        }
-
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            this.timer.Restart();
-            ReadOnlyCollection<FileCabinetRecord> result = this.service.FindByFirstName(firstName);
+            IEnumerable<FileCabinetRecord> result = Defines.ReturnCollection(this.service.FindByDateOfBirth(dateOfBirth));
             this.timer.Stop();
             Console.WriteLine($"Method execution duration is {this.timer.ElapsedTicks}");
             return result;
         }
 
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             this.timer.Restart();
-            ReadOnlyCollection<FileCabinetRecord> result = this.service.FindByLastName(lastName);
+            IEnumerable<FileCabinetRecord> result = Defines.ReturnCollection(this.service.FindByFirstName(firstName));
+            this.timer.Stop();
+            Console.WriteLine($"Method execution duration is {this.timer.ElapsedTicks}");
+            return result;
+        }
+
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
+        {
+            this.timer.Restart();
+            IEnumerable<FileCabinetRecord> result = Defines.ReturnCollection(this.service.FindByLastName(lastName));
             this.timer.Stop();
             Console.WriteLine($"Method execution duration is {this.timer.ElapsedTicks}");
             return result;
@@ -72,15 +72,10 @@ namespace FileCabinetApp.Decorations
             return this.service.GetDeletedRecords();
         }
 
-        public List<int> GetListId()
-        {
-            return this.service.GetListId();
-        }
-
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public IEnumerable<FileCabinetRecord> GetRecords()
         {
             this.timer.Restart();
-            ReadOnlyCollection<FileCabinetRecord> collection = this.service.GetRecords();
+            IEnumerable<FileCabinetRecord> collection = Defines.ReturnCollection(this.service.GetRecords());
             this.timer.Stop();
             Console.WriteLine($"Method execution duration is {this.timer.ElapsedTicks}");
             return collection;
@@ -108,6 +103,15 @@ namespace FileCabinetApp.Decorations
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
             this.service.Restore(snapshot);
+        }
+
+        public string Purge()
+        {
+            this.timer.Restart();
+            string message = this.service.Purge();
+            this.timer.Stop();
+            Console.WriteLine($"Method execution duration is {this.timer.ElapsedTicks}");
+            return message;
         }
 
         public override string ToString()

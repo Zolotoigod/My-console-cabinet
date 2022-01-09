@@ -17,13 +17,14 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="id"> id of record.</param>
         /// <param name="storage">New record data.</param>
-        public void EditRecord(int id, InputDataPack storage);
+        /// <returns>Message about execute.</returns>
+        public string EditRecord(int id, InputDataPack storage);
 
         /// <summary>
         /// Return all record in servise.
         /// </summary>
         /// <returns>Array of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords();
+        public IEnumerable<FileCabinetRecord> GetRecords();
 
         /// <summary>
         /// Metod returned count of records.
@@ -38,11 +39,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">Parametr for search.</param>
         /// <returns>list of FileCabinetRecord.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName);
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName);
 
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName);
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName);
 
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth);
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth);
 
         public FileCabinetServiceSnapshot MakeSnapshot();
 
@@ -50,6 +51,6 @@ namespace FileCabinetApp
 
         public string Remove(int id);
 
-        public List<int> GetListId();
+        public string Purge();
     }
 }

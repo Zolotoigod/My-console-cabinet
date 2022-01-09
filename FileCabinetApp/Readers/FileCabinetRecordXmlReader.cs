@@ -22,9 +22,13 @@ namespace FileCabinetApp
             {
                 foreach (var record in records)
                 {
-                    this.ValidateRecord(record, validator);
+                    if (!(record is null))
+                    {
+                        this.ValidateRecord(record, validator);
+                    }
                 }
 
+                records.RemoveAll(match => match == null);
                 return records;
             }
 
@@ -33,34 +37,37 @@ namespace FileCabinetApp
 
         private FileCabinetRecord ValidateRecord(FileCabinetRecord record, DataValidator validator)
         {
-            if (!validator.FirstNameValidator(record.FirstName).Item1)
+            if (!(record is null))
             {
-                record.FirstName = "#DataError#";
-            }
+                if (!validator.FirstNameValidator(record.FirstName).Item1)
+                {
+                    record.FirstName = "#DataError#";
+                }
 
-            if (!validator.LastNameValidator(record.LastName).Item1)
-            {
-                record.LastName = "#DataError#";
-            }
+                if (!validator.LastNameValidator(record.LastName).Item1)
+                {
+                    record.LastName = "#DataError#";
+                }
 
-            if (!validator.DateValidator(record.DateOfBirth).Item1)
-            {
-                record.DateOfBirth = default(DateTime);
-            }
+                if (!validator.DateValidator(record.DateOfBirth).Item1)
+                {
+                    record.DateOfBirth = default(DateTime);
+                }
 
-            if (!validator.TypeValidator(record.Type).Item1)
-            {
-                record.Type = default(char);
-            }
+                if (!validator.TypeValidator(record.Type).Item1)
+                {
+                    record.Type = default(char);
+                }
 
-            if (!validator.NumberValidator(record.Number).Item1)
-            {
-                record.Number = -1;
-            }
+                if (!validator.NumberValidator(record.Number).Item1)
+                {
+                    record.Number = -1;
+                }
 
-            if (!validator.BalanceValidator(record.Balance).Item1)
-            {
-                record.Balance = default(decimal);
+                if (!validator.BalanceValidator(record.Balance).Item1)
+                {
+                    record.Balance = default(decimal);
+                }
             }
 
             return record;

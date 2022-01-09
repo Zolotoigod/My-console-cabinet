@@ -1,4 +1,7 @@
-﻿using FileCabinetApp.Validation.Service;
+﻿using System.Collections.Generic;
+using FileCabinetApp.Validation.Service;
+
+#pragma warning disable CA1062
 
 namespace FileCabinetApp
 {
@@ -28,5 +31,13 @@ namespace FileCabinetApp
             2 => new ValidatorBuilder().ReadConfig(),
             _ => new ValidatorBuilder().CreateDefault(),
         };
+
+        public static IEnumerable<FileCabinetRecord> ReturnCollection(IEnumerable<FileCabinetRecord> collection)
+        {
+            foreach (var record in collection)
+            {
+                yield return record;
+            }
+        }
     }
 }

@@ -6,55 +6,32 @@ namespace FileCabinetApp.Decorations
 {
     public static class LoggerPrinter
     {
-        public static void PrintLogCreate(StreamWriter writer, InputDataPack storage, int id)
+        public static void PrintLogInfo(StreamWriter writer, string metodName, string metodMessage)
         {
-            string metodName = "Create()";
-            string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
-            string logAction = $"Calling {metodName} with" + PrintRecordInfo(storage);
-            string logReturn = $"{metodName} returned '{id}'";
-            writer?.WriteLine(string.Join(" - ", logDate, logAction));
-            writer?.WriteLine(logReturn);
-            writer?.Flush();
-        }
-
-        public static void PrintLogEdit(StreamWriter writer, InputDataPack storage, int id)
-        {
-            string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
-            string logAction = $"Calling Edit() record #{id} with" + PrintRecordInfo(storage);
-            writer?.WriteLine(string.Join(" - ", logDate, logAction));
-            writer?.WriteLine($"Record #{id} is updated");
-            writer?.Flush();
-        }
-
-        public static void PrintLogFind(StreamWriter writer, string data, int count)
-        {
-            string metodName = "Find()";
-            string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
-            string logAction = $"Calling {metodName} with '{data}'";
-            writer?.WriteLine(string.Join(" - ", logDate, logAction));
-            string logReturn = $"{metodName} returned {count} matching records";
-            writer?.WriteLine(logReturn);
-            writer?.Flush();
-        }
-
-        public static void PrintLogRemove(StreamWriter writer, int id, string message)
-        {
-            string metodName = "Remove()";
-            string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
-            string logAction = $"Calling {metodName} with '{id}'";
-            writer?.WriteLine(string.Join(" - ", logDate, logAction));
-            string logReturn = $"{metodName} returned '{message}'";
-            writer?.WriteLine(logReturn);
-            writer?.Flush();
-        }
-
-        public static void PrintLogGetRecord(StreamWriter writer, int count)
-        {
-            string metodName = "List()";
             string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
             string logAction = $"Calling {metodName}";
             writer?.WriteLine(string.Join(" - ", logDate, logAction));
-            string logReturn = $"{metodName} returned {count} records";
+            string logReturn = $"{metodName} returned {metodMessage}";
+            writer?.WriteLine(logReturn);
+            writer?.Flush();
+        }
+
+        public static void PrintLogInfo<T>(StreamWriter writer, string metodName, string metodMessage, T parameters)
+        {
+            string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
+            string logAction = $"Calling {metodName} whit '{parameters}'";
+            writer?.WriteLine(string.Join(" - ", logDate, logAction));
+            string logReturn = $"{metodName} returned {metodMessage}";
+            writer?.WriteLine(logReturn);
+            writer?.Flush();
+        }
+
+        public static void PrintLogInfo<T>(StreamWriter writer, string metodName, string metodMessage, InputDataPack storage, T parameters)
+        {
+            string logDate = DateTime.Now.ToString(Defines.LoggerDateFormat, CultureInfo.InvariantCulture);
+            string logAction = $"Calling {metodName} record #{parameters} with" + PrintRecordInfo(storage);
+            writer?.WriteLine(string.Join(" - ", logDate, logAction));
+            string logReturn = $"{metodName} returned {metodMessage}";
             writer?.WriteLine(logReturn);
             writer?.Flush();
         }

@@ -14,15 +14,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             if (int.TryParse(parameters, out int id) && id > 0)
             {
-                if (this.Service.GetListId().Contains(id))
-                {
-                    this.Service.EditRecord(id, new InputDataPack(validator, input));
-                    Console.WriteLine($"Record #{id} is updated\n");
-                }
-                else
-                {
-                    Console.WriteLine($"Record #{id} not found\n");
-                }
+                Console.WriteLine(this.Service.EditRecord(id, new InputDataPack(validator, input)));
             }
             else
             {
