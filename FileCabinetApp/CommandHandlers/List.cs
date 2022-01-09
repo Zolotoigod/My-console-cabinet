@@ -16,8 +16,6 @@ namespace FileCabinetApp.CommandHandlers
         protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             this.printer(this.Service.GetRecords());
-
-            Console.WriteLine();
         }
     }
 }

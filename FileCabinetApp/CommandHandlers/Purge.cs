@@ -12,6 +12,7 @@ namespace FileCabinetApp.CommandHandlers
         protected override void Realize(DataValidator validator, IInput input, string parameters)
         {
             Console.WriteLine(this.Service.Purge());
+            Console.WriteLine();
         }
     }
 }
