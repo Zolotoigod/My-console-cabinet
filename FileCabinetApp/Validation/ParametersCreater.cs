@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Text.Json;
-using FileCabinetApp.DTO;
 using Newtonsoft.Json;
 
 namespace FileCabinetApp.Validation

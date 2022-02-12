@@ -20,9 +20,9 @@ namespace FileCabinetApp
         private readonly Dictionary<int, long> recordIdDdictionary = new ();
         private int deletedRecords;
 
-        public FileCabinetFileService(int validatorIndex)
+        public FileCabinetFileService(string validatorName)
         {
-            this.validator = Defines.GetValidator(validatorIndex);
+            this.validator = Defines.GetValidator(validatorName);
             bool existNow = false;
             if (File.Exists(Defines.DBPath))
             {

@@ -4,8 +4,9 @@ namespace FileCabinetApp.Validation.Input
 {
     public class ValidatorLibrary
     {
-        public ValidatorLibrary(ValidationParameters validationData)
+        public ValidatorLibrary(string validatorName, ValidationParameters validationData)
         {
+            this.ValidatorName = validatorName;
             this.Parameters = validationData;
             this.FirstName = new FirstNameValidator(validationData.MinFirstNameLength, validationData.MaxFirstNameLength);
             this.LastName = new LastNameValidator(validationData.MinLastNameLength, validationData.MaxLastNameLength);
@@ -14,6 +15,8 @@ namespace FileCabinetApp.Validation.Input
             this.Number = new NumberValidator(validationData.NumberMax);
             this.Balance = new BalanceValidator(validationData.BalanceMax);
         }
+
+        public string ValidatorName { get; }
 
         public ValidationParameters Parameters { get; }
 
@@ -28,5 +31,10 @@ namespace FileCabinetApp.Validation.Input
         public NumberValidator Number { get; }
 
         public BalanceValidator Balance { get; }
+
+        public override string ToString()
+        {
+            return $"{this.ValidatorName}";
+        }
     }
 }

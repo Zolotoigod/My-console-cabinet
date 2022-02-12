@@ -27,7 +27,8 @@ namespace FileCabinetApp
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
             if (args != null)
             {
-                ProgramSetup.SetOptions(out service, out validators, args);
+                var startup = new Startup(args);
+                startup.Configurate(out service, out validators);
                 rootHandler = HandlerFabric.CrateCommandChain(service, Exit);
             }
 

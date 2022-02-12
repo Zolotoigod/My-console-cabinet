@@ -22,9 +22,9 @@ namespace FileCabinetApp
         private readonly Dictionary<int, FileCabinetRecord> recordDictionary = new ();
         private readonly IRecordValidator validator;
 
-        public FileCabinetMemoryService(int validatorIndex)
+        public FileCabinetMemoryService(string validatorName)
         {
-            this.validator = Defines.GetValidator(validatorIndex);
+            this.validator = Defines.GetValidator(validatorName);
         }
 
         public int CreateRecord(InputDataPack dataPack)

@@ -12,19 +12,7 @@ namespace FileCabinetApp
 
         public DataValidator()
         {
-            this.validators = new ValidatorLibrary(ParametersCreater.GetDefaultParams());
-        }
-
-        public DataValidator(int validationIndex)
-        {
-            if (validationIndex == 1)
-            {
-                this.validators = new ValidatorLibrary(ParametersCreater.GetCustomParams());
-            }
-            else
-            {
-                this.validators = new ValidatorLibrary(ParametersCreater.GetDefaultParams());
-            }
+            this.validators = new ValidatorLibrary("default", ParametersCreater.GetDefaultParams());
         }
 
         public DataValidator(ValidatorLibrary library)

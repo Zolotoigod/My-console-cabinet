@@ -25,10 +25,10 @@ namespace FileCabinetApp
 
         public static readonly int RecordSize = sizeof(short) + sizeof(int) + 120 + 120 + (3 * sizeof(int)) + 2 + sizeof(short) + sizeof(decimal);
 
-        public static IRecordValidator GetValidator(int index) => index switch
+        public static IRecordValidator GetValidator(string validatorName) => validatorName.ToLowerInvariant() switch
         {
-            1 => new ValidatorBuilder().CreateCustom(),
-            2 => new ValidatorBuilder().ReadConfig(),
+            "custom" => new ValidatorBuilder().CreateCustom(),
+            "config" => new ValidatorBuilder().ReadConfig(),
             _ => new ValidatorBuilder().CreateDefault(),
         };
 
